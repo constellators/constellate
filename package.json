@@ -1,0 +1,29 @@
+{
+  "name": "constellate",
+  "version": "0.0.0",
+  "description": "A monorepo toolkit for modern React applications.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ctrlplusb/constellate.git"
+  },
+  "keywords": [
+    "react",
+    "micro",
+    "microservices",
+    "node",
+    "express",
+    "ssr",
+    "lerna",
+    "monorepo"
+  ],
+  "author": "Sean Matheson <sean@ctrlplusb.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ctrlplusb/constellate/issues"
+  },
+  "homepage": "https://github.com/ctrlplusb/constellate#readme"
+}
