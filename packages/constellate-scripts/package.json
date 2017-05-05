@@ -1,7 +1,7 @@
 {
   "name": "constellate-scripts",
   "description": "Scripts for Constellate projects.",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "repository": "ctrlplusb/constellate",
   "license": "MIT",
   "engines": {
@@ -19,8 +19,8 @@
     "constellate-scripts": "./bin/constellate-scripts.js"
   },
   "dependencies": {
-    "constellate-babel": "0.0.2",
-    "constellate-webpack": "0.0.2",
+    "constellate-babel": "^0.0.3",
+    "constellate-webpack": "^0.0.3",
     "cross-spawn": "5.1.0",
     "pm2": "2.4.6",
     "webpack": "2.5.0",

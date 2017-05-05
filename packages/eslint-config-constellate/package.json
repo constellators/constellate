@@ -1,7 +1,7 @@
 {
   "name": "eslint-config-constellate",
   "description": "ESLint Rules for Constellate packages.",
-  "version": "0.0.1",
+  "version": "0.0.3",
   "repository": "ctrlplusb/constellate",
   "license": "MIT",
   "files": [
