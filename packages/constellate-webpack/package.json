@@ -1,0 +1,20 @@
+{
+  "name": "constellate-webpack",
+  "description": "Webpack bundling configuration for Constellate projects.",
+  "version": "0.0.2",
+  "repository": "ctrlplusb/constellate",
+  "engines": {
+    "node": ">=7"
+  },
+  "license": "MIT",
+  "files": [
+    "bundle.js",
+    "generateConfig.js"
+  ],
+  "dependencies": {
+    "babel-loader": "7.0.0",
+    "constellate-babel": "0.0.2",
+    "constellate-utils": "0.0.2",
+    "webpack": "2.5.0"
+  }
+}
