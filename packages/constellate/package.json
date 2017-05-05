@@ -1,6 +1,6 @@
 {
   "name": "constellate",
-  "description": "Toolkit for scalable React applications.",
+  "description": "Global executable bootstrapper for Constellate projects.",
   "version": "0.0.1",
   "repository": "ctrlplusb/constellate",
   "license": "MIT",

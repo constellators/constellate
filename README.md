@@ -1,2 +1,2 @@
 # constellate
-A monorepo toolkit for modern React applications.
+Scalable modern React applications.
