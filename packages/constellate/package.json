@@ -1,7 +1,7 @@
 {
   "name": "constellate",
   "description": "Global executable bootstrapper for Constellate projects.",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "repository": "ctrlplusb/constellate",
   "license": "MIT",
   "engines": {
