@@ -1,29 +1,15 @@
 {
-  "name": "constellate",
-  "version": "0.0.0",
-  "description": "A monorepo toolkit for modern React applications.",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/ctrlplusb/constellate.git"
-  },
-  "keywords": [
-    "react",
-    "micro",
-    "microservices",
-    "node",
-    "express",
-    "ssr",
-    "lerna",
-    "monorepo"
-  ],
-  "author": "Sean Matheson <sean@ctrlplusb.com>",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/ctrlplusb/constellate/issues"
-  },
-  "homepage": "https://github.com/ctrlplusb/constellate#readme"
+  "private": true,
+  "devDependencies": {
+    "babel-eslint": "^7.2.3",
+    "eslint": "^3.19.0",
+    "eslint-config-airbnb": "^14.1.0",
+    "husky": "^0.13.3",
+    "lerna": "^2.0.0-rc.4",
+    "lerna-changelog": "^0.4.0",
+    "lint-staged": "^3.4.1",
+    "prettier": "^1.3.1",
+    "prettier-eslint": "^6.2.0",
+    "prettier-eslint-cli": "^3.4.2"
+  }
 }

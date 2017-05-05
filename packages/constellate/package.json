@@ -1,0 +1,23 @@
+{
+  "name": "constellate",
+  "description": "Toolkit for scalable React applications.",
+  "version": "0.0.1",
+  "repository": "ctrlplusb/constellate",
+  "license": "MIT",
+  "engines": {
+    "node": ">=7"
+  },
+  "bugs": {
+    "url": "https://github.com/facebookincubator/create-react-app/issues"
+  },
+  "files": [
+    "index.js",
+    "constellate.js"
+  ],
+  "bin": {
+    "constellate": "./bin/constellate.js"
+  },
+  "dependencies": {
+    "chalk": "^1.1.3"
+  }
+}

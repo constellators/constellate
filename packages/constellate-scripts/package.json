@@ -1,0 +1,20 @@
+{
+  "name": "constellate-scripts",
+  "description": "Scripts for Constellate projects.",
+  "version": "0.0.1",
+  "repository": "ctrlplusb/constellate",
+  "license": "MIT",
+  "engines": {
+    "node": ">=7"
+  },
+  "bugs": {
+    "url": "https://github.com/ctrlplusb/constellate/issues"
+  },
+  "files": [
+    "bin",
+    "template"
+  ],
+  "bin": {
+    "constellate-scripts": "./bin/constellate-scripts.js"
+  }
+}
