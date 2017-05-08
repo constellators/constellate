@@ -9,5 +9,5 @@ const dependencyGraph = R.chain(packageDependencyGraph)
 
 // :: Array<PackageInfo> -> Array<string>
 module.exports = function getPackageBuildOrder(packages) {
-  return R.pipe(dependencyGraph, x => console.log('GRAPH', x) || x, toposort)(packages)
+  return R.pipe(dependencyGraph, toposort)(packages)
 }
