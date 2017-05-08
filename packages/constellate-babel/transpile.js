@@ -1,4 +1,3 @@
-const os = require('os')
 const path = require('path')
 const babel = require('babel-core')
 const pify = require('pify')
@@ -8,23 +7,23 @@ const fs = require('fs-extra')
 
 const generateConfig = require('./generateConfig')
 
+const maxConcurrentTranspiles = 4
+
 // :: (..args) => Promise<BabelTransformFileResult>
 const transformFile = pify(babel.transformFile)
 
-// :: int
-const cpuCount = os.cpus().length
-
+// :: Object
 const babelConfig = generateConfig()
 
+// :: string -> void
 const ensureParentDirectoryExists = (filePath) => {
   const dir = path.dirname(filePath)
   fs.ensureDirSync(dir)
 }
 
+// :: (string, Array<string>, string) -> Promise<void>
 module.exports = function transpile(srcRootPath, filePaths, destRootPath) {
-  const limit = pLimit(cpuCount)
-
-  // :: string -> Promise<BabelTransformFileResult>
+  // :: string -> Promise<void>
   const transpileFile = (filePath) => {
     const writeTranspiledFile = (result) => {
       const target = path.resolve(destRootPath, filePath)
@@ -35,7 +34,7 @@ module.exports = function transpile(srcRootPath, filePaths, destRootPath) {
     return transformFile(source, babelConfig).then(writeTranspiledFile)
   }
 
+  const limit = pLimit(maxConcurrentTranspiles)
   const queueTranspile = filePath => limit(() => transpileFile(filePath))
-
   return Promise.all(R.map(queueTranspile, filePaths))
 }
