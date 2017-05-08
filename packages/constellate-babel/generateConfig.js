@@ -1,5 +1,6 @@
 module.exports = function generateConfig() {
   return {
+    babelrc: false,
     presets: ['env', 'react'],
     plugins: [
       'transform-object-rest-spread',

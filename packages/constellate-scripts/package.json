@@ -19,10 +19,15 @@
     "constellate-scripts": "./bin/constellate-scripts.js"
   },
   "dependencies": {
+    "babel-cli": "6.24.1",
     "constellate-babel": "^0.0.3",
     "constellate-webpack": "^0.0.3",
     "cross-spawn": "5.1.0",
+    "globby": "6.1.0",
+    "p-series": "1.0.0",
     "pm2": "2.4.6",
+    "ramda": "0.23.0",
+    "toposort": "1.0.3",
     "webpack": "2.5.0",
     "webpack-dev-server": "2.4.5"
   }
