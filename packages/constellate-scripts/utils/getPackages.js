@@ -15,11 +15,12 @@ const getPackageInfo = (packageName) => {
     : {}
   return {
     name: packageName,
-    type: R.path(['constellate', 'type'], packageJson) === 'browser' ? 'browser' : 'node',
+    target: R.path(['constellate', 'target'], packageJson) === 'browser' ? 'browser' : 'node',
     paths: {
       root: thisPackagePath('./'),
       packageJson: packageJsonPath,
       modules: thisPackagePath('./modules'),
+      entry: thisPackagePath('./modules/index.js'),
       dist: thisPackagePath('./dist'),
     },
     packageJson,

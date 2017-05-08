@@ -1,29 +1,22 @@
+const path = require('path')
+const fs = require('fs-extra')
 const webpack = require('webpack')
-const execSync = require('child_process').execSync
-const pathResolve = require('path').resolve
 
 const generateConfig = require('./generateConfig')
 
+// :: Options -> Promise<void>
 module.exports = function bundle(options) {
-  const { optimize, packageConfig } = options
-  const { paths } = packageConfig
+  return new Promise((resolve, reject) => {
+    const { packageInfo } = options
 
-  // First clear the build output dir.
-  execSync(`$(npm bin)/rimraf ${pathResolve(paths.root, './dist')}`, {
-    stdio: 'inherit',
-    cwd: paths.root,
-  })
-
-  const configurations = [{ target: 'node' }, { target: 'web' }]
-
-  configurations.forEach((config) => {
-    const compiler = webpack(generateConfig(config))
+    const config = generateConfig({ packageInfo })
+    const compiler = webpack(config)
     compiler.run((err, stats) => {
       if (err) {
-        console.error(err)
-        return
+        reject(err)
+      } else {
+        resolve()
       }
-      console.log(stats.toString({ colors: true }))
     })
   })
 }

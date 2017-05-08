@@ -15,7 +15,7 @@ const getPackage = packageName => R.find(R.propEq('name', packageName), packages
 const packagesInBuildOrder = R.pipe(getPackageBuildOrder, R.map(getPackage))(packages)
 
 // :: PackageInfo -> void -> Promise<Any>
-const queueBuild = packageInfo => () => buildPackage(packageInfo)
+const queueBuild = packageInfo => () => buildPackage({ packageInfo })
 
 pSeries(R.map(queueBuild, packagesInBuildOrder))
   .then(() => console.log('Build complete'))
