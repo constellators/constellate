@@ -1,2 +1,2 @@
 # constellate
-Scalable modern React applications.
+Scalable Node applications.
