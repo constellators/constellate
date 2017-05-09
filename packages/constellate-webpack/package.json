@@ -1,7 +1,7 @@
 {
   "name": "constellate-webpack",
   "description": "Webpack bundling configuration for Constellate projects.",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "repository": "ctrlplusb/constellate",
   "engines": {
     "node": ">=7"
@@ -14,7 +14,7 @@
   ],
   "dependencies": {
     "babel-loader": "7.0.0",
-    "constellate-babel": "0.0.3",
+    "constellate-babel": "^0.0.4",
     "constellate-utils": "0.0.3",
     "fs-extra": "3.0.1",
     "webpack": "2.5.1",
