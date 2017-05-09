@@ -32,6 +32,8 @@ module.exports = function generateConfig(options) {
         NODE_ENV: isProd ? 'production' : 'development',
         // Is this a development build?
         CONSTELLATE_IS_DEV: JSON.stringify(isDev),
+        // Is this a browser build?
+        CONSTELLATE_IS_WEBPACK: JSON.stringify(true),
       }),
       // For our production build we need to make sure we pass the required
       // configuration to ensure that the output is minimized/optimized.

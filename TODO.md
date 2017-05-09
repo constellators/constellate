@@ -5,7 +5,8 @@
  - [ ] Make the Babel-ification process optional. In which case a symlink could be created from dist/index.js to modules/index.js.  Just don't use any syntax that requires Babel in your code.
  - [ ] Error handling.
  - [ ] Terminal feedback.
- - [ ] webpack-dev-server integration for `webapp` types.
+ - [X] webpack-dev-server integration for `webapp` types.
  - [ ] Make the node version configurable.
  - [X] Source map support for transpiled bundles.
+ - [ ] Rename webpack output to match package name so that build output is easier to interpret.
  - [ ] ...

@@ -9,7 +9,8 @@
   "license": "MIT",
   "files": [
     "bundle.js",
-    "generateConfig.js"
+    "generateConfig.js",
+    "startDevServer.js"
   ],
   "dependencies": {
     "babel-loader": "7.0.0",

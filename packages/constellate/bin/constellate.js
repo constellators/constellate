@@ -3,7 +3,7 @@
 const chalk = require('chalk')
 
 const currentNodeVersion = process.versions.node
-if (currentNodeVersion.split('.')[0] < 4) {
+if (currentNodeVersion.split('.')[0] < 7) {
   console.error(
     chalk.red(
       `You are running Node ${currentNodeVersion}.\n` +
