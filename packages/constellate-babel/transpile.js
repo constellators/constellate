@@ -8,7 +8,11 @@ const globby = require('globby')
 
 const generateConfig = require('./generateConfig')
 
-const maxConcurrentTranspiles = 4
+// Having concurrent babel transpilations seems to break the sourcemap output.
+// Incorrect sources get mapped - I wonder if there is a shared global state
+// that references the "current" file being transpiled for reference in a
+// sourcemap.
+const maxConcurrentTranspiles = 1
 
 // :: (..args) => Promise<BabelTransformFileResult>
 const transformFile = pify(babel.transformFile)
@@ -24,21 +28,19 @@ const getJsFilePaths = rootPath => globby(['**/*.js', '!__tests__', '!test.js'],
 
 // :: Options -> Promise<void>
 module.exports = function transpile({ packageInfo }) {
-  return getJsFilePaths(packageInfo.paths.modules).then((filePaths) => {
-    const srcRootPath = packageInfo.paths.modules
-    const destRootPath = packageInfo.paths.dist
-
+  return getJsFilePaths(packageInfo.paths.source).then((filePaths) => {
     // :: Object
     const babelConfig = generateConfig({ packageInfo })
 
     // :: string -> Promise<void>
     const transpileFile = (filePath) => {
       const writeTranspiledFile = (result) => {
-        const target = path.resolve(destRootPath, filePath)
+        const target = path.resolve(packageInfo.paths.dist, filePath)
         ensureParentDirectoryExists(target)
         fs.writeFileSync(target, result.code, { encoding: 'utf8' })
+        fs.writeFileSync(`${target}.map`, JSON.stringify(result.map), { encoding: 'utf8' })
       }
-      const source = path.resolve(srcRootPath, filePath)
+      const source = path.resolve(packageInfo.paths.source, filePath)
       return transformFile(source, babelConfig).then(writeTranspiledFile)
     }
 

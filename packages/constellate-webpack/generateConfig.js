@@ -15,7 +15,7 @@ module.exports = function generateConfig(options) {
 
   return {
     entry: {
-      index: [paths.entry],
+      index: [paths.sourceEntry],
     },
 
     output: {
@@ -60,7 +60,7 @@ module.exports = function generateConfig(options) {
           test: /\.js$/,
           loader: 'babel-loader',
           query: generateBabelConfig({ packageInfo }),
-          include: [paths.modules],
+          include: [paths.source],
         },
       ]),
     },

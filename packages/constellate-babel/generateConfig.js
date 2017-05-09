@@ -1,14 +1,27 @@
+const path = require('path')
+const removeNil = require('constellate-utils/arrays/removeNil')
+const ifElse = require('constellate-utils/logic/ifElse')
+
 // :: Options -> BabelConfig
 module.exports = function generateConfig({ packageInfo }) {
+  const isNodeTarget = packageInfo.target === 'node'
+  const isBrowserTarget = packageInfo.target === 'browser'
+  const ifNodeTarget = ifElse(isNodeTarget)
+  const ifBrowserTarget = ifElse(isBrowserTarget)
+
   return {
     babelrc: false,
+    // Source maps will be useful for debugging errors in our node executions.
+    sourceRoot: packageInfo.paths.source,
+    sourceMaps: ifNodeTarget('both', false),
     presets: [
       // We don't include es-module processing when targetting the browser as
       // webpack will take care of that for us.
       ['env', { es2015: { modules: packageInfo.target !== 'browser' } }],
       'react',
     ],
-    plugins: [
+    plugins: removeNil([
+      ifNodeTarget(() => path.resolve(__dirname, './plugins/sourceMapSupport.js')),
       'transform-object-rest-spread',
       'syntax-trailing-function-commas',
       'transform-class-properties',
@@ -31,6 +44,6 @@ module.exports = function generateConfig({ packageInfo }) {
       // React that the subtree hasn’t changed so React can completely
       // skip it when reconciling.
       // ifProd('transform-react-constant-elements'),
-    ],
+    ]),
   }
 }

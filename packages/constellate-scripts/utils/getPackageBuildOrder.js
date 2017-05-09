@@ -7,7 +7,18 @@ const packageDependencyGraph = packageInfo =>
 // :: Array<PackageInfo> -> Array<Array<string, string>>
 const dependencyGraph = R.chain(packageDependencyGraph)
 
+// :: PackageInfo -> bool
+const hasNoDependencies = ({ dependencies }) => dependencies.length === 0
+
 // :: Array<PackageInfo> -> Array<string>
 module.exports = function getPackageBuildOrder(packages) {
-  return R.pipe(dependencyGraph, toposort)(packages)
+  const packagesWithNoDependencies = R.pipe(R.filter(hasNoDependencies), R.map(R.prop('name')))(
+    packages
+  )
+  return R.pipe(
+    dependencyGraph,
+    toposort,
+    R.without(packagesWithNoDependencies),
+    R.concat(packagesWithNoDependencies)
+  )(packages)
 }

@@ -13,9 +13,10 @@
   ],
   "dependencies": {
     "babel-loader": "7.0.0",
-    "constellate-babel": "^0.0.3",
-    "constellate-utils": "^0.0.3",
+    "constellate-babel": "0.0.3",
+    "constellate-utils": "0.0.3",
     "fs-extra": "3.0.1",
-    "webpack": "2.5.0"
+    "webpack": "2.5.1",
+    "webpack-dev-server": "2.4.5"
   }
 }
