@@ -8,7 +8,7 @@ module.exports = function buildPackage({ packageInfo }) {
     fs.removeSync(packageInfo.paths.dist)
   }
 
-  switch (packageInfo.target) {
+  switch (packageInfo.config.target) {
     case 'browser':
       return bundle({ packageInfo })
     // DEFAULT: BABEL

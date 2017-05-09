@@ -35,10 +35,10 @@ module.exports = function transpile({ packageInfo }) {
     // :: string -> Promise<void>
     const transpileFile = (filePath) => {
       const writeTranspiledFile = (result) => {
-        const target = path.resolve(packageInfo.paths.dist, filePath)
-        ensureParentDirectoryExists(target)
-        fs.writeFileSync(target, result.code, { encoding: 'utf8' })
-        fs.writeFileSync(`${target}.map`, JSON.stringify(result.map), { encoding: 'utf8' })
+        const outFile = path.resolve(packageInfo.paths.dist, filePath)
+        ensureParentDirectoryExists(outFile)
+        fs.writeFileSync(outFile, result.code, { encoding: 'utf8' })
+        fs.writeFileSync(`${outFile}.map`, JSON.stringify(result.map), { encoding: 'utf8' })
       }
       const source = path.resolve(packageInfo.paths.source, filePath)
       return transformFile(source, babelConfig).then(writeTranspiledFile)

@@ -2,6 +2,11 @@ const fs = require('fs')
 const pathResolve = require('path').resolve
 const R = require('ramda')
 
+const defaultConfig = {
+  target: 'node',
+  role: 'library',
+}
+
 // :: string -> string -> string
 const resolvePackagePath = packageName => relativePath =>
   pathResolve(process.cwd(), `./packages/${packageName}`, relativePath)
@@ -10,22 +15,27 @@ const resolvePackagePath = packageName => relativePath =>
 const getPackageInfo = (packageName) => {
   const thisPackagePath = resolvePackagePath(packageName)
   const packageJsonPath = thisPackagePath('./package.json')
-  const packageJson = fs.existsSync(packageJsonPath)
-    ? JSON.parse(fs.readFileSync(packageJsonPath, { encoding: 'utf8' }))
-    : {}
+  const constellateConfigPath = thisPackagePath('./constellate.js')
+  const config = fs.existsSync(constellateConfigPath)
+    ? // eslint-disable-next-line global-require, import/no-dynamic-require
+      Object.assign({}, defaultConfig, require(constellateConfigPath)())
+    : defaultConfig
   return {
     name: packageName,
-    target: R.path(['constellate', 'target'], packageJson) || 'node',
-    role: R.path(['constellate', 'role'], packageJson) || 'library',
+    config,
     paths: {
       root: thisPackagePath('./'),
+      constellateConfig: constellateConfigPath,
       packageJson: packageJsonPath,
       source: thisPackagePath('./modules'),
       sourceEntry: thisPackagePath('./modules/index.js'),
       dist: thisPackagePath('./dist'),
       distEntry: thisPackagePath('./dist/index.js'),
     },
-    packageJson,
+    packageJson: fs.existsSync(packageJsonPath)
+      ? // eslint-disable-next-line global-require, import/no-dynamic-require
+        JSON.parse(fs.readFileSync(packageJsonPath, { encoding: 'utf8' }))
+      : {},
   }
 }
 

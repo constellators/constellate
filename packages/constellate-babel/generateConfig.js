@@ -4,8 +4,8 @@ const ifElse = require('constellate-utils/logic/ifElse')
 
 // :: Options -> BabelConfig
 module.exports = function generateConfig({ packageInfo }) {
-  const isNodeTarget = packageInfo.target === 'node'
-  const isBrowserTarget = packageInfo.target === 'browser'
+  const isNodeTarget = packageInfo.config.target === 'node'
+  const isBrowserTarget = packageInfo.config.target === 'browser'
   const ifNodeTarget = ifElse(isNodeTarget)
   const ifBrowserTarget = ifElse(isBrowserTarget)
 
@@ -17,7 +17,7 @@ module.exports = function generateConfig({ packageInfo }) {
     presets: [
       // We don't include es-module processing when targetting the browser as
       // webpack will take care of that for us.
-      ['env', { es2015: { modules: packageInfo.target !== 'browser' } }],
+      ['env', { es2015: { modules: packageInfo.config.target !== 'browser' } }],
       'react',
     ],
     plugins: removeNil([

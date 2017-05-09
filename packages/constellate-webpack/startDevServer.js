@@ -19,10 +19,6 @@ module.exports = function startDevServer(options) {
   const server = new WebpackDevServer(compiler, {
     publicPath: config.output.publicPath,
     stats: 'minimal',
-    // {
-    //   colors: true,
-    //   chunks: false,
-    // },
   })
 
   // TODO: Configurable port

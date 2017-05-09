@@ -27,16 +27,14 @@ const serverProcessMap = {}
 // Used to track running webapp processes.
 const webAppProcessMap = {}
 
-const isServerPackage = ({ role }) => role === 'server'
-const isWebAppPackage = ({ role }) => role === 'webapp'
+const isServerPackage = packageInfo => packageInfo.config.role === 'server'
+const isWebAppPackage = packageInfo => packageInfo.config.role === 'webapp'
 
 // :: PackageInfo -> void
 function startServerPackage(packageInfo) {
   const serverProcess = spawn('node', [packageInfo.paths.distEntry], {
     stdio: 'inherit',
   })
-
-  console.log(Object.keys(serverProcess))
 
   serverProcess.on('close', (code) => {
     if (serverProcessMap[packageInfo.name] === serverProcess) {
@@ -48,6 +46,7 @@ function startServerPackage(packageInfo) {
   serverProcessMap[packageInfo.name] = serverProcess
 }
 
+// :: string -> void
 function stopServerProcess(processName) {
   if (serverProcessMap[processName]) {
     console.log('Stopping', processName)
@@ -75,6 +74,7 @@ function startWebAppPackage(packageInfo) {
   webAppProcessMap[packageInfo.name] = webAppServer
 }
 
+// :: string -> void
 function stopWebAppProcess(processName) {
   if (webAppProcessMap[processName]) {
     console.log('Stopping', processName)
