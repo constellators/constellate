@@ -1,7 +1,7 @@
 {
   "name": "constellate-utils",
   "description": "Shared utilities used by the Constellate projects.",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "repository": "ctrlplusb/constellate",
   "license": "MIT",
   "engines": {
