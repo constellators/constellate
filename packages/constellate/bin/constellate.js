@@ -3,13 +3,9 @@
 /* eslint-disable global-require */
 
 const program = require('commander')
+const terminal = require('constellate-utils/terminal')
 const packageJson = require('../package.json')
-const getProjects = require('../utils/getProjects')
-
-function resolveProjects(projectsFilter) {
-  // TODO
-  return getProjects()
-}
+const resolveProjects = require('../utils/resolveProjects')
 
 function list(val) {
   return val.split('..')
@@ -22,9 +18,13 @@ program
   .description('build the projects')
   .option('-p, --projects <projects>', 'specify the projects to build', list)
   .action(({ projects }) => {
-    console.log('Building projects')
-    const build = require('../scripts/build')
-    build({ projects: resolveProjects(projects) })
+    terminal.unitOfWork({
+      work: () => {
+        const build = require('../scripts/build')
+        return resolveProjects(projects).then(resolved => build({ projects: resolved }))
+      },
+      text: 'Building projects',
+    })
   })
 
 program

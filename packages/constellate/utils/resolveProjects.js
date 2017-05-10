@@ -73,12 +73,14 @@ function orderProjectsByDependencies(projects) {
 }
 
 /**
- * Gets the projects for a project ordered based on their dependency graph.
- * i.e. build in order.
+ * Gets all the projects for the constellate application.
+ *
+ * The projects are ordered based on their dependency graph.
+ * i.e. build them in order.
  *
  * @return {Array<Project>} The project meta object
  */
-module.exports = function getProjects() {
+function getAllProjects() {
   // :: Array<Project>
   const projects = fs.readdirSync(pathResolve(process.cwd(), './projects')).map(getProject)
 
@@ -107,4 +109,32 @@ module.exports = function getProjects() {
   // We return the projects ordered based on their dependencies based order,
   // which mean building them in order would be "safe"/"correct".
   return orderProjectsByDependencies(projects)
+}
+
+/**
+ * Resolves the projects for the Constellate application.
+ *
+ * @param  {Array}  [projectFilters=[]]
+ *         The names of the projects to resolve. If none is specified then
+ *         all of them are resolved.
+ *
+ * @return {Promise} The resolved projects
+ */
+module.exports = function resolveProjects(projectFilters = []) {
+  return new Promise((resolve, reject) => {
+    const allProjects = getAllProjects()
+    if (allProjects.length === 0) {
+      reject(new Error('Could not find any projects.'))
+    } else if (projectFilters.length === 0) {
+      resolve(allProjects)
+    } else {
+      const allProjectNames = allProjects.map(R.prop('name'))
+      const invalidFilters = R.without(allProjectNames, projectFilters)
+      if (invalidFilters.length > 0) {
+        reject(new Error(`The following projects could not be resolved:\n[${invalidFilters}]`))
+      }
+      const findProject = name => R.find(p => p.name === name, allProjects)
+      resolve(projectFilters.map(findProject))
+    }
+  })
 }

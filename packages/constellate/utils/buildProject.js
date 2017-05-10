@@ -1,5 +1,5 @@
 const fs = require('fs-extra')
-const transpile = require('constellate-babel/transpile')
+const transpileProject = require('constellate-babel/transpileProject')
 const bundle = require('constellate-webpack/bundle')
 
 function packageBasedBuild(project) {
@@ -8,7 +8,7 @@ function packageBasedBuild(project) {
       return bundle({ project })
     // DEFAULT: BABEL
     default:
-      return transpile({ project })
+      return transpileProject({ project })
   }
 }
 
