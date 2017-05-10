@@ -1,4 +1,3 @@
-const R = require('ramda')
 const pSeries = require('p-series')
 const buildProject = require('./buildProject')
 

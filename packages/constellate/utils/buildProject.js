@@ -1,6 +1,7 @@
 const fs = require('fs-extra')
 const transpileProject = require('constellate-babel/transpileProject')
 const bundle = require('constellate-webpack/bundle')
+const terminal = require('constellate-utils/terminal')
 
 function packageBasedBuild(project) {
   switch (project.config.target) {
@@ -12,12 +13,18 @@ function packageBasedBuild(project) {
   }
 }
 
-// :: Project -> Promise<BuildResult>
+// :: Project -> Promise<UnitOfWork>
 module.exports = function buildProject({ project }) {
-  if (fs.existsSync(project.paths.dist)) {
-    fs.removeSync(project.paths.dist)
-  }
-  return packageBasedBuild(project)
-    .then(() => ({ project, success: true }))
-    .catch(err => ({ project, success: false, err }))
+  return terminal.unitOfWork({
+    work: () => {
+      if (fs.existsSync(project.paths.dist)) {
+        fs.removeSync(project.paths.dist)
+      }
+      return packageBasedBuild(project)
+    },
+    text: `Building ${project.name}`,
+    successText: `Built ${project.name}`,
+    errorText: `Failed to build ${project.name}`,
+    logError: true,
+  })
 }

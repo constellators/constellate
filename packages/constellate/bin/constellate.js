@@ -23,7 +23,10 @@ program
         const build = require('../scripts/build')
         return resolveProjects(projects).then(resolved => build({ projects: resolved }))
       },
-      text: 'Building projects',
+      text: 'Running build',
+      successText: 'Build succeeded',
+      errorText: 'Build failed',
+      exitOnError: true,
     })
   })
 
