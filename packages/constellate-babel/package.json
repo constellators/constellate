@@ -1,7 +1,7 @@
 {
   "name": "constellate-babel",
   "description": "The Babel configuration and transpiler for Constellate projects.",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "repository": "ctrlplusb/constellate",
   "engines": {
     "node": ">=7"
@@ -22,7 +22,7 @@
     "babel-preset-env": "1.4.0",
     "babel-preset-react": "6.24.1",
     "babel-template": "6.24.1",
-    "constellate-utils": "0.0.3",
+    "constellate-utils": "^0.0.5",
     "fs-extra": "3.0.1",
     "globby": "6.1.0",
     "p-limit": "1.1.0",
