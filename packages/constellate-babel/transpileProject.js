@@ -27,20 +27,20 @@ const ensureParentDirectoryExists = (filePath) => {
 const getJsFilePaths = rootPath => globby(['**/*.js', '!__tests__', '!test.js'], { cwd: rootPath })
 
 // :: Options -> Promise<void>
-module.exports = function transpile({ packageInfo }) {
-  return getJsFilePaths(packageInfo.paths.source).then((filePaths) => {
+module.exports = function transpileProject({ project }) {
+  return getJsFilePaths(project.paths.source).then((filePaths) => {
     // :: Object
-    const babelConfig = generateConfig({ packageInfo })
+    const babelConfig = generateConfig({ project })
 
     // :: string -> Promise<void>
     const transpileFile = (filePath) => {
       const writeTranspiledFile = (result) => {
-        const outFile = path.resolve(packageInfo.paths.dist, filePath)
+        const outFile = path.resolve(project.paths.dist, filePath)
         ensureParentDirectoryExists(outFile)
         fs.writeFileSync(outFile, result.code, { encoding: 'utf8' })
         fs.writeFileSync(`${outFile}.map`, JSON.stringify(result.map), { encoding: 'utf8' })
       }
-      const source = path.resolve(packageInfo.paths.source, filePath)
+      const source = path.resolve(project.paths.source, filePath)
       return transformFile(source, babelConfig).then(writeTranspiledFile)
     }
 

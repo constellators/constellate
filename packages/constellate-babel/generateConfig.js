@@ -3,21 +3,21 @@ const removeNil = require('constellate-utils/arrays/removeNil')
 const ifElse = require('constellate-utils/logic/ifElse')
 
 // :: Options -> BabelConfig
-module.exports = function generateConfig({ packageInfo }) {
-  const isNodeTarget = packageInfo.config.target === 'node'
-  const isBrowserTarget = packageInfo.config.target === 'browser'
+module.exports = function generateConfig({ project }) {
+  const isNodeTarget = project.config.target === 'node'
+  const isBrowserTarget = project.config.target === 'browser'
   const ifNodeTarget = ifElse(isNodeTarget)
   const ifBrowserTarget = ifElse(isBrowserTarget)
 
   return {
     babelrc: false,
     // Source maps will be useful for debugging errors in our node executions.
-    sourceRoot: packageInfo.paths.source,
+    sourceRoot: project.paths.source,
     sourceMaps: ifNodeTarget('both', false),
     presets: [
       // We don't include es-module processing when targetting the browser as
       // webpack will take care of that for us.
-      ['env', { es2015: { modules: packageInfo.config.target !== 'browser' } }],
+      ['env', { es2015: { modules: project.config.target !== 'browser' } }],
       'react',
     ],
     plugins: removeNil([

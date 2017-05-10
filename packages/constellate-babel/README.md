@@ -1,3 +1,7 @@
-# constellate-babel
+<p align="center">
+  <img src="https://cdn.rawgit.com/ctrlplusb/constellate/4e652615/assets/logo.png" />
+</p>
 
-This package includes the Babel configuration for [Constellate](https://github.com/ctrlplusb/constellate) projects.
+<h1 align="center">constellate-babel</h1>
+
+The Babel configuration and transpiler for [Constellate](https://github.com/ctrlplusb/constellate) projects.

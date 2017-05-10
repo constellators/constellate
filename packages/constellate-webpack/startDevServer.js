@@ -4,12 +4,12 @@ const generateConfig = require('./generateConfig')
 
 // :: Options -> Server
 module.exports = function startDevServer(options) {
-  const { packageInfo } = options
+  const { project } = options
 
-  const config = generateConfig({ packageInfo })
+  const config = generateConfig({ project })
   const compiler = webpack(config, (err, stats) => {
     if (err) {
-      console.error('Fatal error attempting to bundle', packageInfo.name)
+      console.error('Fatal error attempting to bundle', project.name)
       console.error(err)
     }
     if (stats.hasErrors()) {

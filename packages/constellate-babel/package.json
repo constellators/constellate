@@ -1,6 +1,6 @@
 {
   "name": "constellate-babel",
-  "description": "Babel configuration for Constellate projects.",
+  "description": "The Babel configuration and transpiler for Constellate projects.",
   "version": "0.0.4",
   "repository": "ctrlplusb/constellate",
   "engines": {
@@ -8,8 +8,9 @@
   },
   "license": "MIT",
   "files": [
+    "plugins",
     "generateConfig.js",
-    "transpile.js"
+    "transpileProject.js"
   ],
   "dependencies": {
     "babel-cli": "6.24.1",

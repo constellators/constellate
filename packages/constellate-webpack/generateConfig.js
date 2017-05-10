@@ -5,8 +5,8 @@ const ifElse = require('constellate-utils/logic/ifElse')
 const generateBabelConfig = require('constellate-babel/generateConfig')
 
 module.exports = function generateConfig(options) {
-  const { development, packageInfo } = options
-  const { paths } = packageInfo
+  const { development, project } = options
+  const { paths } = project
 
   const isProd = !development
   const isDev = !!development
@@ -61,7 +61,7 @@ module.exports = function generateConfig(options) {
         {
           test: /\.js$/,
           loader: 'babel-loader',
-          query: generateBabelConfig({ packageInfo }),
+          query: generateBabelConfig({ project }),
           include: [paths.source],
         },
       ]),
