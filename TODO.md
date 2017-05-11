@@ -1,21 +1,12 @@
 # Constellate Roadmap / Todo
 
- - [X] CHORE - Move constellate configuration into `constellate.js` files.
- - [ ] TEMPLATE - Application template
- - [ ] COMMAND - Create project command
- - [ ] TEMPLATE - Empty project
  - [ ] BUILD - Chokidar events should result in the absolute minimal amount of work being done. e.g. transpile a single file. remove a dir, etc
  - [ ] BUILD - Build process for Node bundles should have a secondary process that copies across non-JS files.
- - [ ] CONFIG - Make the Babel-ification process optional. In which case a symlink could be created from dist/index.js to modules/index.js.  Just don't use any syntax that requires Babel in your code.
- - [ ] UX - Dev Error resilience.
-   - [ ] Startup Errors
-   - [ ] Compile Time Errors
-   - [ ] Runtime Errors
- - [ ] UX - Terminal feedback.
- - [X] FEATURE - webpack-dev-server integration for `webapp` types.
+ - [X] CHORE - Move constellate configuration into `constellate.js` files.
+ - [ ] COMMAND - Create project command
  - [ ] CONFIG - Make the node version configurable.
- - [X] UX - Source map support for transpiled bundles.
- - [ ] UX - Rename webpack output to match package name so that build output is easier to interpret.
+ - [ ] CONFIG - Make the Babel-ification process optional. In which case a symlink could be created from dist/index.js to modules/index.js.  Just don't use any syntax that requires Babel in your code.
+ - [X] FEATURE - webpack-dev-server integration for `webapp` types.
  - [ ] FEATURE - Command hooks
    - [ ] prebuild
    - [ ] postbuild
@@ -24,4 +15,13 @@
    - [ ] prestart
    - [ ] poststart
  - [ ] FEATURE - Plugin architecture
+ - [ ] TEMPLATE - Application template
+ - [ ] TEMPLATE - Empty project
+ - [ ] UX - Develop command Error resilience.
+   - [ ] Startup Errors
+   - [ ] Compile Time Errors
+   - [ ] Runtime Errors
+ - [ ] UX - Terminal feedback.
+ - [X] UX - Source map support for transpiled bundles.
+ - [ ] UX - Rename webpack output to match package name so that build output is easier to interpret.
  - [ ] ...
