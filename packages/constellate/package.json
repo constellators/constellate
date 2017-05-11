@@ -1,7 +1,7 @@
 {
   "name": "constellate",
   "description": "The CLI to build, develop and deploy Constellate projects.",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "repository": "ctrlplusb/constellate",
   "license": "MIT",
   "engines": {
@@ -41,7 +41,7 @@
     "pify": "2.3.0",
     "ramda": "0.23.0",
     "toposort": "1.0.3",
-    "webpack-dev-server": "2.4.5",
-    "webpack": "2.5.1"
+    "webpack": "2.5.1",
+    "webpack-dev-server": "2.4.5"
   }
 }
