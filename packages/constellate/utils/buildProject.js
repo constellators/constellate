@@ -1,7 +1,7 @@
 const fs = require('fs-extra')
-const transpileProject = require('constellate-babel/transpileProject')
-const bundle = require('constellate-webpack/bundle')
 const terminal = require('constellate-utils/terminal')
+const transpileProject = require('../babel/transpileProject')
+const bundle = require('../webpack/bundle')
 
 function packageBasedBuild(project) {
   switch (project.config.target) {

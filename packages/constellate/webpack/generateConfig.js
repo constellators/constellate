@@ -2,7 +2,7 @@ const path = require('path')
 const webpack = require('webpack')
 const removeNil = require('constellate-utils/arrays/removeNil')
 const ifElse = require('constellate-utils/logic/ifElse')
-const generateBabelConfig = require('constellate-babel/generateConfig')
+const generateBabelConfig = require('../babel/generateConfig')
 
 module.exports = function generateConfig(options) {
   const { development, project } = options
