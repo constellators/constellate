@@ -23,7 +23,7 @@ program
         const build = require('../scripts/build')
         return resolveProjects(projects).then(resolved => build({ projects: resolved }))
       },
-      text: 'Running build',
+      text: 'Running build...',
       successText: 'Build succeeded',
       errorText: 'Build failed',
       exitOnError: true,
@@ -35,9 +35,9 @@ program
   .description('run development servers for the projects')
   .option('-p, --projects <projects>', 'specify the projects to develop', list)
   .action(({ projects }) => {
-    console.log('Running development servers')
+    terminal.info('Starting development environment...')
     const develop = require('../scripts/develop')
-    develop({ projects: resolveProjects(projects) })
+    resolveProjects(projects).then(resolved => develop({ projects: resolved }))
   })
 
 program.parse(process.argv)

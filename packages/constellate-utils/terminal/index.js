@@ -3,15 +3,21 @@ const figures = require('figures')
 const ora = require('ora')
 
 function error(msg) {
-  console.log(chalk.red(msg))
+  console.log(`${chalk.red(figures.warning)} ${chalk.red(msg)}`)
 }
 
 function warning(msg) {
-  console.log(chalk.yellow(msg))
+  console.log(`${chalk.yellow(figures.warning)} ${chalk.yellow(msg)}`)
 }
 
 function info(msg) {
-  console.log(chalk.blue(msg))
+  console.log(`${chalk.blue(figures.info)} ${chalk.blue(msg)}`)
+}
+
+function verbose(msg) {
+  if (process.env.DEBUG) {
+    console.log(msg)
+  }
 }
 
 /**
@@ -49,14 +55,28 @@ function unitOfWork({
   errorText,
   logError = false,
   exitOnError = false,
+  displayAsStatus = false,
 }) {
-  const status = ora({ text, color: 'blue', spinner }).start()
+  let status
+  if (displayAsStatus) {
+    status = ora({ text, color: 'blue', spinner }).start()
+  } else {
+    info(text)
+  }
   return work()
     .then(() => {
-      status.stopAndPersist({ text: successText || text, symbol: successSymbol })
+      if (displayAsStatus) {
+        status.stopAndPersist({ text: successText || text, symbol: successSymbol })
+      } else {
+        info(`${successSymbol} ${successText}`)
+      }
     })
     .catch((err) => {
-      status.stopAndPersist({ text: errorText || text, symbol: errorSymbol })
+      if (displayAsStatus) {
+        status.stopAndPersist({ text: errorText || text, symbol: errorSymbol })
+      } else {
+        error(`${errorSymbol} ${errorText}`)
+      }
       if (err && logError) {
         if (err.stack) {
           console.log(err.stack)
@@ -75,5 +95,6 @@ module.exports = {
   error,
   warning,
   info,
+  verbose,
   unitOfWork,
 }

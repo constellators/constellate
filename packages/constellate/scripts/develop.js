@@ -2,21 +2,10 @@ const path = require('path')
 const spawn = require('cross-spawn')
 const R = require('ramda')
 const chokidar = require('chokidar')
+const terminal = require('constellate-utils/terminal')
 const startDevServer = require('../webpack/startDevServer')
 const buildProjects = require('../projects/buildProjects')
 const buildProject = require('../projects/buildProject')
-
-process.on('SIGINT', () => {
-  // eslint-disable-next-line no-use-before-define
-  stopAllServerProjects()
-  // eslint-disable-next-line no-use-before-define
-  stopAllWebAppProjects()
-  // We give a bit of time before calling the process exit.
-  setTimeout(() => {
-    // console.log('Stopped.')
-    process.exit(1)
-  }, 5000) // TODO: make grace period configurable
-})
 
 // Used to track running server processes.
 const serverProjectMap = {}
@@ -37,27 +26,36 @@ function startServerProject(project) {
     if (serverProjectMap[project.name] === serverProject) {
       delete serverProjectMap[project.name]
     }
-    console.log(`${project.name} exited with code ${code}`)
+    terminal.verbose(`${project.name} exited with code ${code}`)
   })
 
   serverProjectMap[project.name] = serverProject
 }
 
-// :: string -> void
-function stopServerProject({ projectName }) {
-  if (serverProjectMap[projectName]) {
-    console.log('Stopping', projectName)
-    if (serverProjectMap[projectName].stdin) {
-      serverProjectMap[projectName].stdin.pause()
+// :: string -> Promise
+function stopServerProject(projectName) {
+  return new Promise((resolve) => {
+    const serverProcess = serverProjectMap[projectName]
+    if (serverProcess) {
+      terminal.verbose(`Stopping ${projectName}`)
+      serverProcess.on('close', () => {
+        resolve()
+      })
+      if (serverProcess.stdin) {
+        serverProcess.stdin.pause()
+      }
+      serverProcess.kill('SIGTERM')
+    } else {
+      resolve()
     }
-    serverProjectMap[projectName].kill('SIGTERM')
-  }
+  })
 }
 
 // :: Project -> void
 function reloadServerProject(project) {
-  stopServerProject(project.name)
-  startServerProject(project)
+  stopServerProject(project.name).then(() => buildProject({ project })).then(() => {
+    startServerProject(project)
+  })
 }
 
 // :: void -> void
@@ -95,24 +93,26 @@ function startProjects(projects) {
 // :: void -> void
 function watchProjects(projects) {
   const reloadProject = (project) => {
-    switch (project.role) {
+    terminal.verbose(`Handling change in ${project.name}`)
+    switch (project.config.role) {
       case 'server':
-        console.log('Reloading server project', project.name)
-        buildProject({ project }).then(() => {
-          reloadServerProject(project)
-        })
+        terminal.verbose('Reloading server project', project.name)
+        reloadServerProject(project)
         break
       default:
-      // do nothing
+        terminal.verbose(
+          `No reload strategy exists for type ${project.name} (${project.config.role})`
+        )
     }
   }
 
-  projects.forEach((project) => {
+  projects.filter(x => !isWebAppProject(x)).forEach((project) => {
+    terminal.verbose(`Setting up watcher for ${project.name}`)
     const watcher = chokidar.watch(
       [project.paths.source, path.resolve(project.paths.root, './package.json')],
       { ignoreInitial: true, cwd: project.paths.root, ignorePermissionErrors: true }
     )
-    const handleChange = () => reloadProject({ project })
+    const handleChange = () => reloadProject(project)
     watcher
       .on('add', handleChange)
       .on('change', handleChange)
@@ -122,6 +122,36 @@ function watchProjects(projects) {
   })
 }
 
+let shuttingDown = false
+
+function performGracefulShutdown(exitCode = 1) {
+  // Avoid multiple calls (e.g. if ctrl+c pressed multiple times)
+  if (shuttingDown) return
+  shuttingDown = true
+  // Perform the shutdown process...
+  terminal.unitOfWork({
+    work: () =>
+      new Promise((resolve) => {
+        stopAllServerProjects()
+        stopAllWebAppProjects()
+        // We give a bit of time before calling the process exit.
+        setTimeout(() => {
+          resolve()
+          // console.log('Stopped.')
+          process.exit(exitCode)
+        }, 5000) // TODO: make grace period configurable
+      }),
+    text: 'Shutting down development environment...',
+    successText: 'Development environment shut down',
+    errorText: 'Failed to shut down development environment',
+    logError: true,
+  })
+}
+
+process.on('SIGINT', () => {
+  performGracefulShutdown(0)
+})
+
 module.exports = function develop({ projects }) {
   return buildProjects({ projects })
     .then(() => {
@@ -130,6 +160,6 @@ module.exports = function develop({ projects }) {
     })
     .catch((err) => {
       console.error(err)
-      process.exit(2)
+      performGracefulShutdown(2)
     })
 }

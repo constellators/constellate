@@ -26,5 +26,6 @@ module.exports = function buildProject({ project }) {
     successText: `Built ${project.name}`,
     errorText: `Failed to build ${project.name}`,
     logError: true,
+    displayAsStatus: true,
   })
 }
