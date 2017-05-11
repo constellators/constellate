@@ -5,7 +5,7 @@
 const program = require('commander')
 const terminal = require('constellate-utils/terminal')
 const packageJson = require('../package.json')
-const resolveProjects = require('../utils/resolveProjects')
+const resolveProjects = require('../projects/resolveProjects')
 
 function list(val) {
   return val.split('..')

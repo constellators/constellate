@@ -2,9 +2,9 @@ const path = require('path')
 const spawn = require('cross-spawn')
 const R = require('ramda')
 const chokidar = require('chokidar')
-const startDevServer = require('constellate-webpack/startDevServer')
-const buildProjects = require('../utils/buildProjects')
-const buildProject = require('../utils/buildProject')
+const startDevServer = require('../webpack/startDevServer')
+const buildProjects = require('../projects/buildProjects')
+const buildProject = require('../projects/buildProject')
 
 process.on('SIGINT', () => {
   // eslint-disable-next-line no-use-before-define
