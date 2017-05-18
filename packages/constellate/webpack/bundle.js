@@ -1,8 +1,7 @@
-const path = require('path')
-const fs = require('fs-extra')
 const webpack = require('webpack')
 
 const generateConfig = require('./generateConfig')
+const extractError = require('./extractError')
 
 // :: Options -> Promise<void>
 module.exports = function bundle(options) {
@@ -12,8 +11,9 @@ module.exports = function bundle(options) {
     const config = generateConfig({ project })
     const compiler = webpack(config)
     compiler.run((err, stats) => {
-      if (err) {
-        reject(err)
+      const error = extractError(project, err, stats)
+      if (error) {
+        reject(error)
       } else {
         resolve()
       }

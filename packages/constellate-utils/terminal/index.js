@@ -55,27 +55,27 @@ function unitOfWork({
   errorText,
   logError = false,
   exitOnError = false,
-  displayAsStatus = false,
+  statusMode = false,
 }) {
   let status
-  if (displayAsStatus) {
+  if (statusMode) {
     status = ora({ text, color: 'blue', spinner }).start()
   } else {
-    info(text)
+    console.log(chalk.blue(text))
   }
   return work()
     .then(() => {
-      if (displayAsStatus) {
+      if (statusMode) {
         status.stopAndPersist({ text: successText || text, symbol: successSymbol })
       } else {
-        info(`${successSymbol} ${successText}`)
+        console.log(`${successSymbol} ${chalk.green(successText)}`)
       }
     })
     .catch((err) => {
-      if (displayAsStatus) {
+      if (statusMode) {
         status.stopAndPersist({ text: errorText || text, symbol: errorSymbol })
       } else {
-        error(`${errorSymbol} ${errorText}`)
+        console.log(`${errorSymbol} ${chalk.red(errorText)}`)
       }
       if (err && logError) {
         if (err.stack) {

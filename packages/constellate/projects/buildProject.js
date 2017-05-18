@@ -4,17 +4,14 @@ const transpileProject = require('../babel/transpileProject')
 const bundle = require('../webpack/bundle')
 
 function packageBasedBuild(project) {
-  switch (project.config.target) {
-    case 'browser':
-      return bundle({ project })
-    // DEFAULT: BABEL
-    default:
-      return transpileProject({ project })
+  if (project.config.browser) {
+    return bundle({ project })
   }
+  return transpileProject({ project })
 }
 
 // :: Project -> Promise<UnitOfWork>
-module.exports = function buildProject({ project }) {
+module.exports = function buildProject(project) {
   return terminal.unitOfWork({
     work: () => {
       if (fs.existsSync(project.paths.dist)) {
@@ -26,6 +23,6 @@ module.exports = function buildProject({ project }) {
     successText: `Built ${project.name}`,
     errorText: `Failed to build ${project.name}`,
     logError: true,
-    displayAsStatus: true,
+    statusMode: true,
   })
 }

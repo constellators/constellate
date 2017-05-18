@@ -1,29 +1,29 @@
 const webpack = require('webpack')
 const WebpackDevServer = require('webpack-dev-server')
+
+const terminal = require('constellate-utils/terminal')
+
 const generateConfig = require('./generateConfig')
+const extractError = require('./extractError')
 
 // :: Options -> Server
 module.exports = function startDevServer(options) {
   const { project } = options
 
-  const config = generateConfig({ project })
+  const config = generateConfig({ project, development: true })
   const compiler = webpack(config, (err, stats) => {
-    if (err) {
-      console.error('Fatal error attempting to bundle', project.name)
-      console.error(err)
+    const error = extractError(project, err, stats)
+    if (error) {
+      // We don't pass through the terminal as we want to maintain color.
+      console.log(error)
     }
-    if (stats.hasErrors()) {
-      console.error(stats.toString({ colors: true, chunks: false }))
-    }
-  })
-  const server = new WebpackDevServer(compiler, {
-    publicPath: config.output.publicPath,
-    stats: 'minimal',
   })
 
-  // TODO: Configurable port
-  server.listen(8080, '127.0.0.1', () => {
-    console.log('Starting server on http://localhost:8080')
+  const server = new WebpackDevServer(compiler, config.devServer)
+
+  const port = project.config.browser.develop.port
+  server.listen(port, '0.0.0.0', () => {
+    terminal.info(`${project.name} listening on http://0.0.0.0:${port}`)
   })
 
   return server

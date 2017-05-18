@@ -15,6 +15,5 @@
   },
   "scripts": {
     "updatedeps": "lerna exec --concurrency 1 -- npm-check -u"
-  },
-  "dependencies": {}
+  }
 }

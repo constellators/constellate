@@ -19,7 +19,7 @@ const getProject = (projectName) => {
   const constellateConfigPath = thisProjectPath('./constellate.js')
   const config = fs.existsSync(constellateConfigPath)
     ? // eslint-disable-next-line global-require, import/no-dynamic-require
-      Object.assign({}, defaultConfig, require(constellateConfigPath)())
+      Object.assign({}, defaultConfig, require(constellateConfigPath))
     : defaultConfig
   return {
     name: projectName,
@@ -28,6 +28,7 @@ const getProject = (projectName) => {
       root: thisProjectPath('./'),
       constellateConfig: constellateConfigPath,
       packageJson: packageJsonPath,
+      nodeModules: thisProjectPath('./node_modules'),
       source: thisProjectPath('./modules'),
       sourceEntry: thisProjectPath('./modules/index.js'),
       dist: thisProjectPath('./dist'),
@@ -39,10 +40,6 @@ const getProject = (projectName) => {
       : {},
   }
 }
-
-// :: (string, Project) -> Array<string>
-const getDependencies = (dependenciesType, project) =>
-  R.pipe(R.path(['packageJson', dependenciesType]), R.defaultTo({}), R.keys)(project)
 
 // :: Array<Project> -> Array<Project>
 function orderProjectsByDependencies(projects) {
@@ -84,31 +81,43 @@ function getAllProjects() {
   // :: Array<Project>
   const projects = fs.readdirSync(pathResolve(process.cwd(), './projects')).map(getProject)
 
-  // :: Array<String>
+  // :: Array<string>
   const projectNames = R.map(R.prop('name'), projects)
 
-  // :: String -> Boolean
-  const containsProjectName = R.contains(R.__, projectNames)
-
   // :: Project -> Array<String>
-  const getProjectDependencies = (project) => {
+  const getDependencies = (project) => {
+    // :: (string, Project) -> Array<string>
+    const readPackageDependencies = dependenciesType =>
+      R.pipe(R.path(['packageJson', dependenciesType]), R.defaultTo({}), R.keys)(project)
     const combinedDependencies = R.concat(
-      getDependencies('dependencies', project),
-      getDependencies('devDependencies', project)
+      readPackageDependencies('dependencies'),
+      readPackageDependencies('devDependencies')
     )
-    return R.pipe(R.uniq, R.filter(containsProjectName))(combinedDependencies)
+    // :: string -> boolean
+    const isContellateProject = R.contains(R.__, projectNames)
+    // :: Array<string> -> Array<string>
+    const filterToConstellateProjects = R.pipe(R.uniq, R.filter(isContellateProject))
+    return filterToConstellateProjects(combinedDependencies)
   }
 
-  // Attach dependencies to each project
-  projects.map(info =>
-    Object.assign(info, {
-      dependencies: getProjectDependencies(info),
-    })
-  )
+  const getDependants = (project) => {
+    // each dep resolve project
+    const dependants = projects.filter(({ name }) => R.contains(name, project.dependencies))
+    return dependants.concat(dependants.map(getDependants))
+  }
 
-  // We return the projects ordered based on their dependencies based order,
-  // which mean building them in order would be "safe"/"correct".
-  return orderProjectsByDependencies(projects)
+  return R.pipe(
+    // Attach dependencies to each project
+    R.map(project =>
+      Object.assign(project, {
+        dependencies: getDependencies(project),
+        dependants: getDependants(project),
+      })
+    ),
+    // Projects ordered based on their dependencies based order,
+    // which mean building them in order would be "safe"/"correct".
+    orderProjectsByDependencies
+  )(projects)
 }
 
 /**
