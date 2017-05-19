@@ -12,17 +12,12 @@ function packageBasedBuild(project) {
 
 // :: Project -> Promise<UnitOfWork>
 module.exports = function buildProject(project) {
-  return terminal.unitOfWork({
-    work: () => {
-      if (fs.existsSync(project.paths.dist)) {
-        fs.removeSync(project.paths.dist)
-      }
-      return packageBasedBuild(project)
-    },
-    text: `Building ${project.name}`,
-    successText: `Built ${project.name}`,
-    errorText: `Failed to build ${project.name}`,
-    logError: true,
-    statusMode: true,
-  })
+  terminal.info(`Building ${project.name}`)
+  // if (fs.existsSync(project.paths.dist)) {
+  //   terminal.verbose(`Removing dist dir for ${project.name}`)
+  //   fs.removeSync(project.paths.dist)
+  // }
+  return packageBasedBuild(project)
+    .then(() => terminal.success(`Built ${project.name}`))
+    .catch(() => terminal.error(`Failed to build ${project.name}`))
 }

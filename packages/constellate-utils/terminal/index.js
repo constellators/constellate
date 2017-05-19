@@ -1,9 +1,15 @@
 const chalk = require('chalk')
 const figures = require('figures')
 const ora = require('ora')
+const PrettyError = require('pretty-error')
 
-function error(msg) {
+const pe = new PrettyError()
+
+function error(msg, err) {
   console.log(`${chalk.red(figures.warning)} ${chalk.red(msg)}`)
+  if (err) {
+    pe.render(err)
+  }
 }
 
 function warning(msg) {
@@ -12,6 +18,10 @@ function warning(msg) {
 
 function info(msg) {
   console.log(`${chalk.blue(figures.info)} ${chalk.blue(msg)}`)
+}
+
+function success(msg) {
+  console.log(`${chalk.green(figures.tick)} ${chalk.green(msg)}`)
 }
 
 function verbose(msg) {
@@ -95,6 +105,7 @@ module.exports = {
   error,
   warning,
   info,
+  success,
   verbose,
   unitOfWork,
 }

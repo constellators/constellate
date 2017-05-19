@@ -3,6 +3,7 @@
 node-version
 dotenv
 consider using start script?
+review deps - tree-kill, pretty-error
 
  - [ ] BUILD - Chokidar events should result in the absolute minimal amount of work being done. e.g. transpile a single file. remove a dir, etc
  - [ ] BUILD - Build process for Node bundles should have a secondary process that copies across non-JS files.

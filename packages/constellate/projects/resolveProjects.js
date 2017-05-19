@@ -100,17 +100,34 @@ function getAllProjects() {
     return filterToConstellateProjects(combinedDependencies)
   }
 
+  // :: Project -> Array<string>
   const getDependants = (project) => {
-    // each dep resolve project
-    const dependants = projects.filter(({ name }) => R.contains(name, project.dependencies))
-    return dependants.concat(dependants.map(getDependants))
+    // We will recursively resolve the dependants for the project.
+    const loop = (targetProject) => {
+      const dependants = projects.filter(x => R.contains(targetProject.name, x.dependencies))
+      const dependantsDependants = R.chain(loop, dependants)
+      return dependants.concat(dependantsDependants)
+    }
+    return R.pipe(
+      // Do the recursive resolve
+      loop,
+      // Map to name of each project
+      R.map(R.prop('name')),
+      // Ensure we return unique results
+      R.uniq
+    )(project)
   }
 
-  return R.pipe(
+  const fullyResolvedProjects = R.pipe(
     // Attach dependencies to each project
     R.map(project =>
       Object.assign(project, {
         dependencies: getDependencies(project),
+      })
+    ),
+    // Attach dependants to each project
+    R.map(project =>
+      Object.assign(project, {
         dependants: getDependants(project),
       })
     ),
@@ -118,6 +135,8 @@ function getAllProjects() {
     // which mean building them in order would be "safe"/"correct".
     orderProjectsByDependencies
   )(projects)
+
+  return fullyResolvedProjects
 }
 
 /**
