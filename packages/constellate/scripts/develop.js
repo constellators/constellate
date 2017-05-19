@@ -8,6 +8,17 @@ const treeKill = require('tree-kill')
 const startDevServer = require('../webpack/startDevServer')
 const buildProject = require('../projects/buildProject')
 
+// Represents the current project being built
+let currentBuild = null
+
+// Represents the build backlog queue. FIFO.
+let buildQueue = []
+
+// :: Project -> Project -> bool
+const projectHasDependant = R.curry((dependant, project) =>
+  R.contains(dependant.name, project.dependants)
+)
+
 const createProjectWatcher = (onChange, project) => {
   terminal.verbose(`Creating watcher for ${project.name}.`)
   const watcher = chokidar.watch(
@@ -34,9 +45,12 @@ const createProjectConductor = (project) => {
         'node',
         ['--require', 'pretty-error/start', project.paths.distEntry],
         {
-          stdio: 'inherit',
+          stdio: [process.stdin, process.stdout, 'pipe'], //'inherit',
         }
       )
+      projectProcess.stderr.on('data', (data) => {
+        terminal.error(`Error running ${project.name}`, data.toString())
+      })
       projectProcess.on('close', (code) => {
         terminal.verbose(`Server process ${project.name} stopped (${code})`)
         runningServer = null
@@ -49,19 +63,9 @@ const createProjectConductor = (project) => {
               terminal.verbose(`Killing ${project.name}`)
               projectProcess.on('close', () => {
                 terminal.verbose(`Killed ${project.name}`)
-                // Ensure process and it's child processes are killed,
-                // avoiding hanging listeners etc.
                 killResolve()
               })
-              // if (projectProcess.stdin) {
-              //   projectProcess.stdin.pause()
-              // }
-              // // We will send a SIGTERM message to each process.
-              // // Hopefully they have a respective handler to do some process
-              // // clean up.
-              // projectProcess.kill('SIGTERM')
               projectProcess.kill('SIGTERM')
-              console.log('Sent the 💩')
             } else {
               terminal.verbose(`No process to kill for ${project.name}`)
               killResolve()
@@ -77,7 +81,7 @@ const createProjectConductor = (project) => {
   // TODO: On error nullify the server to allow for restart.
   function ensureWebDevServerRunningForProject() {
     runningServer = {
-      process: startDevServer({ project }),
+      process: startDevServer(project),
       kill: () =>
         new Promise((resolve) => {
           if (runningServer) {
@@ -96,38 +100,33 @@ const createProjectConductor = (project) => {
   return {
     // :: void -> Promise
     build: () => {
+      // BROWSER BUILD
       if (project.config.browser) {
+        // We only need one running instance as the
+        // webpack dev server will ensure hot reloading
+        // for us.
         if (!runningServer) {
-          console.log('BOOTING WEBDEVSERVER')
-          // We only need one running instance
           ensureWebDevServerRunningForProject()
         }
         return Promise.resolve()
       }
-      return kill().then(() => console.log('💩')).then(() => buildProject(project)).then(() => {
-        if (project.config.server) {
-          return ensureNodeServerRunningForProject()
-        }
-        return undefined
-      })
+
+      // NODE BUILD
+      return buildProject(project).then(() =>
+        kill().then(() => {
+          if (project.config.server) {
+            return ensureNodeServerRunningForProject()
+          }
+          return undefined
+        })
+      )
     },
     // :: void -> Promise
     kill,
   }
 }
 
-const conductor = (projects) => {
-  // Represents the current project being built
-  let currentBuild = null
-
-  // Represents the build backlog queue. FIFO.
-  let buildQueue = []
-
-  // :: Project -> Project -> bool
-  const projectHasDependant = R.curry((dependant, project) =>
-    R.contains(dependant.name, project.dependants)
-  )
-
+module.exports = function develop(projects) {
   // :: Project -> Array<Project>
   const getProjectDependants = project =>
     project.dependants.map(dependant => projects.find(R.propEq('name', dependant)))
@@ -176,8 +175,7 @@ const conductor = (projects) => {
       .then(() => ({ success: true }))
       // Build failed 😭
       .catch((err) => {
-        terminal.error(`Build failed on ${project.name}. Please fix the issue:`)
-        console.log(err)
+        terminal.error(`Please fix the issue on on ${project.name}:`, err)
         return { success: false }
       })
       // Finally...
@@ -252,39 +250,27 @@ const conductor = (projects) => {
     // Then call off the `.kill()` against all our project conductors.
     Promise.all(R.values(projectConductors).map(projectConductor => projectConductor.kill()))
       .then(
-        () =>
-          // We provide a grace period before doing a hard process exit on
-          // THIS master process.
-          new Promise((resolve) => {
-            setTimeout(() => {
-              resolve()
-              process.exit(exitCode)
-            }, 5000) // TODO: make grace period configurable
-          })
+        () => terminal.info('Till next time. *kiss*'),
+        err =>
+          terminal.error('An error occurred whilst shutting down the development environment', err)
       )
-      .then(() => terminal.info('Development environment shut down'))
-      .catch((err) => {
-        terminal.error('An error occurred whilst shutting down the development environment')
-        console.log(err)
-      })
+      .then(() => process.exit(exitCode))
   }
 
-  process.on('SIGINT', () => {
-    terminal.info('💀')
-    performGracefulShutdown(0)
+  // Ensure that we perform a graceful shutdown when any of the following
+  // signals are sent to our process.
+  ['SIGINT', 'SIGTERM'].forEach((signal) => {
+    process.on(signal, () => {
+      terminal.info(`Received ${signal} termination signal`)
+      performGracefulShutdown(0)
+    })
   })
 
-  // READY. SET.
-  projects.forEach(queueProjectForBuild)
+  // READY...
+  projects
+    // SET...
+    .forEach(queueProjectForBuild)
 
   // GO! 🚀
   buildNextInTheQueue()
-}
-
-module.exports = function develop({ projects }) {
-  conductor(projects)
-
-  // We create this interval to prevent the script from stopping.
-  // User needs to CTRL + C to stop.
-  setInterval(() => {}, 1000)
 }

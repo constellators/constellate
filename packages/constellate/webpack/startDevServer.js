@@ -6,10 +6,10 @@ const terminal = require('constellate-utils/terminal')
 const generateConfig = require('./generateConfig')
 const extractError = require('./extractError')
 
+// TODO: Need more thought process on the initial compiler error.
+// TODO: Wrap the result into something like { success: true, server }
 // :: Options -> Server
-module.exports = function startDevServer(options) {
-  const { project } = options
-
+module.exports = function startDevServer(project) {
   const config = generateConfig({ project, development: true })
   const compiler = webpack(config, (err, stats) => {
     const error = extractError(project, err, stats)

@@ -9,6 +9,7 @@ review deps - tree-kill, pretty-error
  - [ ] BUILD - Build process for Node bundles should have a secondary process that copies across non-JS files.
  - [X] CHORE - Move constellate configuration into `constellate.js` files.
  - [ ] COMMAND - Create project command
+ - [ ] COMMAND - Clean
  - [ ] CONFIG - Make the node version configurable.
  - [ ] CONFIG - Make the Babel-ification process optional. In which case a symlink could be created from dist/index.js to modules/index.js.  Just don't use any syntax that requires Babel in your code.
  - [ ] DEVELOP - Dependency based reloads.

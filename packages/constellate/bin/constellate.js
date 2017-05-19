@@ -19,10 +19,7 @@ function list(val) {
   return val.split('..')
 }
 
-console.log(`
-▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
-▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
-`)
+console.log(`\nConstellate v${packageJson.version}\n\n`)
 
 program.version(packageJson.version)
 
@@ -31,16 +28,11 @@ program
   .description('build the projects')
   .option('-p, --projects <projects>', 'specify the projects to build', list)
   .action(({ projects }) => {
-    terminal.unitOfWork({
-      work: () => {
-        const build = require('../scripts/build')
-        return resolveProjects(projects).then(resolved => build({ projects: resolved }))
-      },
-      text: 'Running build...',
-      successText: 'Build succeeded',
-      errorText: 'Build failed',
-      exitOnError: true,
-    })
+    terminal.info('Running build')
+    const build = require('../scripts/build')
+    return resolveProjects(projects)
+      .then(resolved => build({ projects: resolved }))
+      .then(() => terminal.success('Build succeeded'), err => terminal.error('Build failed', err))
   })
 
 program
@@ -48,9 +40,9 @@ program
   .description('run development servers for the projects')
   .option('-p, --projects <projects>', 'specify the projects to develop', list)
   .action(({ projects }) => {
-    terminal.info('Starting development environment...')
+    terminal.info('Starting develop mode')
     const develop = require('../scripts/develop')
-    resolveProjects(projects).then(resolved => develop({ projects: resolved }))
+    resolveProjects(projects).then(develop)
   })
 
 program.parse(process.argv)

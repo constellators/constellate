@@ -1,14 +1,12 @@
 const chalk = require('chalk')
 const figures = require('figures')
 const ora = require('ora')
-const PrettyError = require('pretty-error')
-
-const pe = new PrettyError()
 
 function error(msg, err) {
-  console.log(`${chalk.red(figures.warning)} ${chalk.red(msg)}`)
+  console.log(chalk.bgRed.black.bold(`${figures.warning} ${msg}`))
   if (err) {
-    pe.render(err)
+    console.log(err)
+    console.log('\n')
   }
 }
 
