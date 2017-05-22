@@ -2,8 +2,9 @@ const path = require('path')
 const spawn = require('cross-spawn')
 const chokidar = require('chokidar')
 const R = require('ramda')
+const getPort = require('get-port')
+
 const terminal = require('constellate-utils/terminal')
-const treeKill = require('tree-kill')
 
 const startDevServer = require('../webpack/startDevServer')
 const buildProject = require('../projects/buildProject')
@@ -42,10 +43,15 @@ const createProjectConductor = (project) => {
   function ensureNodeServerRunningForProject() {
     return new Promise((resolve) => {
       const projectProcess = spawn(
+        // Spawn a node process
         'node',
-        ['--require', 'pretty-error/start', project.paths.distEntry],
+        // That runs the dist entry file
+        [project.paths.distEntry],
+        // Ensure that output supports color etc
+        // We use pipe for the error so that we can log a header for ther error.
         {
-          stdio: [process.stdin, process.stdout, 'pipe'], //'inherit',
+          stdio: [process.stdin, process.stdout, 'pipe'],
+          cwd: project.paths.root,
         }
       )
       projectProcess.stderr.on('data', (data) => {
@@ -80,17 +86,23 @@ const createProjectConductor = (project) => {
 
   // TODO: On error nullify the server to allow for restart.
   function ensureWebDevServerRunningForProject() {
-    runningServer = {
-      process: startDevServer(project),
-      kill: () =>
-        new Promise((resolve) => {
-          if (runningServer) {
-            runningServer.process.close(() => resolve())
-          } else {
-            resolve()
-          }
-        }),
-    }
+    return new Promise((resolve) => {
+      getPort().then((port) => {
+        terminal.verbose(`Found free port ${port} for webpack dev server`)
+        runningServer = {
+          process: startDevServer(project, { port }),
+          kill: () =>
+            new Promise((killResolve) => {
+              if (runningServer) {
+                runningServer.process.close(() => killResolve())
+              } else {
+                killResolve()
+              }
+            }),
+        }
+        resolve()
+      })
+    })
   }
 
   function kill() {
@@ -100,13 +112,14 @@ const createProjectConductor = (project) => {
   return {
     // :: void -> Promise
     build: () => {
-      // BROWSER BUILD
-      if (project.config.browser) {
+      // WEB BUILD
+      if (project.config.web) {
         // We only need one running instance as the
         // webpack dev server will ensure hot reloading
         // for us.
         if (!runningServer) {
-          ensureWebDevServerRunningForProject()
+          terminal.verbose(`Starting a webpack-dev-server for ${project.name}`)
+          return ensureWebDevServerRunningForProject()
         }
         return Promise.resolve()
       }
@@ -230,9 +243,9 @@ module.exports = function develop(projects) {
   }
 
   const watchers = projects
-    // We don't want to include watchers on browser types as they will rely
-    // on webpack-dev-server for change monitoring.
-    .filter(x => !x.config.browser)
+    // We don't want to include watchers on web types as they will rely
+    // on webpack-dev-server for serving and watching.
+    .filter(x => !x.config.web)
     .map(project => createProjectWatcher(onChange(project), project))
 
   let shuttingDown = false

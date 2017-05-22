@@ -9,8 +9,9 @@ const extractError = require('./extractError')
 // TODO: Need more thought process on the initial compiler error.
 // TODO: Wrap the result into something like { success: true, server }
 // :: Options -> Server
-module.exports = function startDevServer(project) {
-  const config = generateConfig({ project, development: true })
+module.exports = function startDevServer(project, options) {
+  const { port } = options
+  const config = generateConfig(project, { development: true, devServerPort: port })
   const compiler = webpack(config, (err, stats) => {
     const error = extractError(project, err, stats)
     if (error) {
@@ -21,7 +22,6 @@ module.exports = function startDevServer(project) {
 
   const server = new WebpackDevServer(compiler, config.devServer)
 
-  const port = project.config.browser.develop.port
   server.listen(port, '0.0.0.0', () => {
     terminal.info(`${project.name} listening on http://0.0.0.0:${port}`)
   })

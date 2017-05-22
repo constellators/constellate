@@ -30,7 +30,7 @@ const getJsFilePaths = rootPath => globby(['**/*.js', '!__tests__', '!test.js'],
 module.exports = function transpileProject({ project }) {
   return getJsFilePaths(project.paths.source).then((filePaths) => {
     // :: Object
-    const babelConfig = generateConfig({ project })
+    const babelConfig = generateConfig(project)
 
     // :: string -> Promise<void>
     const transpileFile = (filePath) => {

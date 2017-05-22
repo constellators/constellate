@@ -4,7 +4,7 @@ const transpileProject = require('../babel/transpileProject')
 const bundle = require('../webpack/bundle')
 
 function packageBasedBuild(project) {
-  if (project.config.browser) {
+  if (project.config.web) {
     return bundle({ project })
   }
   return transpileProject({ project })
