@@ -19,7 +19,7 @@ function list(val) {
   return val.split('..')
 }
 
-console.log(`\nConstellate v${packageJson.version}\n\n`)
+console.log(`\nConstellate v${packageJson.version}\n`)
 
 program.version(packageJson.version)
 

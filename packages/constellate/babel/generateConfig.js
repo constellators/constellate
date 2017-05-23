@@ -8,8 +8,8 @@ const ifElse = require('constellate-utils/logic/ifElse')
 module.exports = function generateConfig(project, options = {}) {
   const { development = false } = options
 
-  const isNode = !project.config.server //  === 'node'
-  const isWeb = !project.config.web //  === 'web'
+  const isWeb = !!project.config.web
+  const isNode = !isWeb
   const ifNode = ifElse(isNode)
   const ifWeb = ifElse(isWeb)
 
@@ -23,12 +23,33 @@ module.exports = function generateConfig(project, options = {}) {
     // Source maps will be useful for debugging errors in our node executions.
     sourceRoot: project.paths.source,
     sourceMaps: ifNode('both', false),
-    presets: [
-      // We don't include es-module processing when targetting the web as
-      // webpack will take care of that for us.
-      ['env', { es2015: { modules: !isWeb } }],
+    presets: removeNil([
+      ifWeb([
+        'env',
+        {
+          targets: {
+            // React parses on ie 9, so we should too
+            ie: 9,
+            // We currently minify with uglify
+            // Remove after https://github.com/mishoo/UglifyJS2/issues/448
+            uglify: true,
+          },
+          // Disable polyfill transforms
+          useBuiltIns: false,
+          // Do not transform modules to CJS
+          modules: false,
+        },
+      ]),
+      ifNode([
+        'env',
+        {
+          targets: {
+            node: 'current',
+          },
+        },
+      ]),
       'react',
-    ],
+    ]),
     plugins: removeNil([
       'transform-object-rest-spread',
       'syntax-trailing-function-commas',

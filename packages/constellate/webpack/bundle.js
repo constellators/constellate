@@ -3,7 +3,7 @@ const webpack = require('webpack')
 const generateConfig = require('./generateConfig')
 const extractError = require('./extractError')
 
-// :: Options -> Promise<void>
+// :: Options -> Promise<Compiler, Error>
 module.exports = function bundle(options) {
   return new Promise((resolve, reject) => {
     const { project } = options
@@ -15,7 +15,7 @@ module.exports = function bundle(options) {
       if (error) {
         reject(error)
       } else {
-        resolve()
+        resolve(compiler)
       }
     })
   })

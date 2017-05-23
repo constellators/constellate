@@ -50,6 +50,7 @@ module.exports = function generateConfig(project, options = {}) {
       // The name format for any additional chunks produced for the bundle.
       chunkFilename: isDev ? '[name]-[hash].js' : '[name]-[chunkhash].js',
       publicPath: '/',
+      // Add /* filename */ comments to generated require()s in the output.
       pathinfo: isDev,
     },
 

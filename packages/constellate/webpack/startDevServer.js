@@ -6,7 +6,7 @@ const terminal = require('constellate-utils/terminal')
 const generateConfig = require('./generateConfig')
 const extractError = require('./extractError')
 
-// :: (Project, Options) -> Promise<WebpackDevServer>
+// :: (Project, Options) -> Promise<WebpackDevServer, Error>
 module.exports = function startDevServer(project, { port }) {
   return new Promise((resolve, reject) => {
     const config = generateConfig(project, { development: true, devServerPort: port })
