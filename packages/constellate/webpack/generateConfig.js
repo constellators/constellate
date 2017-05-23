@@ -5,6 +5,7 @@
  * https://github.com/facebookincubator/create-react-app
  */
 
+const path = require('path')
 const webpack = require('webpack')
 const AssetsPlugin = require('assets-webpack-plugin')
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
@@ -145,8 +146,18 @@ module.exports = function generateConfig(project, options = {}) {
       rules: removeNil([
         {
           test: /\.js$/,
-          loader: 'babel-loader',
-          options: generateBabelConfig(project, { development }),
+          use: [
+            {
+              loader: 'cache-loader',
+              options: {
+                cacheDirectory: path.resolve(project.paths.root, './.webpackcache'),
+              },
+            },
+            {
+              loader: 'babel-loader',
+              options: generateBabelConfig(project, { development }),
+            },
+          ],
           include: [project.paths.source],
         },
 

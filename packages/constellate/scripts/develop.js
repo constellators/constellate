@@ -87,21 +87,25 @@ const createProjectConductor = (project) => {
   // TODO: On error nullify the server to allow for restart.
   function ensureWebDevServerRunningForProject() {
     return new Promise((resolve) => {
-      getPort().then((port) => {
-        terminal.verbose(`Found free port ${port} for webpack dev server`)
-        runningServer = {
-          process: startDevServer(project, { port }),
-          kill: () =>
-            new Promise((killResolve) => {
-              if (runningServer) {
-                runningServer.process.close(() => killResolve())
-              } else {
-                killResolve()
-              }
-            }),
-        }
-        resolve()
-      })
+      getPort()
+        .then((port) => {
+          terminal.verbose(`Found free port ${port} for webpack dev server`)
+          return startDevServer(project, { port })
+        })
+        .then((webpackDevServer) => {
+          runningServer = {
+            process: webpackDevServer,
+            kill: () =>
+              new Promise((killResolve) => {
+                if (webpackDevServer) {
+                  webpackDevServer.close(() => killResolve())
+                } else {
+                  killResolve()
+                }
+              }),
+          }
+          resolve()
+        })
     })
   }
 
