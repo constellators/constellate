@@ -1,7 +1,7 @@
 {
   "name": "constellate-utils-web-project",
   "description": "Utils for working with web-type Constellate projects.",
-  "version": "0.0.1",
+  "version": "0.0.9",
   "repository": "ctrlplusb/constellate",
   "license": "MIT",
   "engines": {
