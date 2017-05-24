@@ -27,7 +27,7 @@ const ensureParentDirectoryExists = (filePath) => {
 const getJsFilePaths = rootPath => globby(['**/*.js', '!__tests__', '!test.js'], { cwd: rootPath })
 
 // :: Options -> Promise<void>
-module.exports = function transpileProject({ project }) {
+module.exports = function transpile(project) {
   return getJsFilePaths(project.paths.source).then((filePaths) => {
     // :: Object
     const babelConfig = generateConfig(project)

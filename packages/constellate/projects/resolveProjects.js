@@ -33,6 +33,7 @@ const getProject = (projectName) => {
       sourceEntry: thisProjectPath('./modules/index.js'),
       dist: thisProjectPath('./dist'),
       distEntry: thisProjectPath('./dist/index.js'),
+      webpackCache: thisProjectPath('./.webpackcache'),
     },
     packageJson: fs.existsSync(packageJsonPath)
       ? // eslint-disable-next-line global-require, import/no-dynamic-require

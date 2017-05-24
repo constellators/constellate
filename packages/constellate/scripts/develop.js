@@ -7,7 +7,9 @@ const getPort = require('get-port')
 const terminal = require('constellate-utils/terminal')
 
 const startDevServer = require('../webpack/startDevServer')
+const createCompiler = require('../webpack/createCompiler')
 const buildProject = require('../projects/buildProject')
+const cleanProjects = require('../projects/cleanProjects')
 
 // Represents the current project being built
 let currentBuild = null
@@ -86,26 +88,46 @@ const createProjectConductor = (project) => {
 
   // TODO: On error nullify the server to allow for restart.
   function ensureWebDevServerRunningForProject() {
-    return new Promise((resolve) => {
-      getPort()
-        .then((port) => {
-          terminal.verbose(`Found free port ${port} for webpack dev server`)
-          return startDevServer(project, { port })
-        })
-        .then((webpackDevServer) => {
-          runningServer = {
-            process: webpackDevServer,
-            kill: () =>
-              new Promise((killResolve) => {
-                if (webpackDevServer) {
-                  webpackDevServer.close(() => killResolve())
-                } else {
-                  killResolve()
-                }
-              }),
-          }
-          resolve()
-        })
+    return getPort()
+      .then((port) => {
+        terminal.verbose(`Found free port ${port} for webpack dev server`)
+        return startDevServer(project, { port })
+      })
+      .then((webpackDevServer) => {
+        runningServer = {
+          process: webpackDevServer,
+          kill: () =>
+            new Promise((killResolve) => {
+              if (webpackDevServer) {
+                webpackDevServer.close(() => killResolve())
+              } else {
+                killResolve()
+              }
+            }),
+        }
+      })
+  }
+
+  function ensureWebpackWatchRunningForProject() {
+    return createCompiler(project).then((compiler) => {
+      const watcher = compiler.watch(
+        {
+          quiet: true,
+          stats: 'none',
+        },
+        () => {}
+      )
+      runningServer = {
+        process: watcher,
+        kill: () =>
+          new Promise((killResolve) => {
+            if (watcher) {
+              watcher.close(() => killResolve())
+            } else {
+              killResolve()
+            }
+          }),
+      }
     })
   }
 
@@ -116,19 +138,28 @@ const createProjectConductor = (project) => {
   return {
     // :: void -> Promise
     build: () => {
-      // WEB BUILD
+      // WEB
+
       if (project.config.web) {
-        // We only need one running instance as the
-        // webpack dev server will ensure hot reloading
-        // for us.
-        if (!runningServer) {
-          terminal.verbose(`Starting a webpack-dev-server for ${project.name}`)
-          return ensureWebDevServerRunningForProject()
+        if (runningServer) {
+          // We only need one running instance.
+          return Promise.resolve()
         }
-        return Promise.resolve()
+        terminal.verbose(`Starting a webpack-dev-server for ${project.name}`)
+        return ensureWebDevServerRunningForProject()
       }
 
-      // NODE BUILD
+      // NODE
+
+      // if (project.config.compiler === 'webpack') {
+      //   if (runningServer) {
+      //     // We only need one running instance.
+      //     return Promise.resolve()
+      //   }
+      //   terminal.verbose(`Starting a webpack watcher for ${project.name}`)
+      //   return ensureWebpackWatchRunningForProject()
+      // }
+
       return buildProject(project).then(() =>
         kill().then(() => {
           if (project.config.server) {
@@ -144,6 +175,9 @@ const createProjectConductor = (project) => {
 }
 
 module.exports = function develop(projects) {
+  // Firstly clean up shop.
+  cleanProjects(projects)
+
   // :: Project -> Array<Project>
   const getProjectDependants = project =>
     project.dependants.map(dependant => projects.find(R.propEq('name', dependant)))

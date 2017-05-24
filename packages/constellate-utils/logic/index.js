@@ -1,3 +1,3 @@
-const ifElse = require('./ifElse')
+const onlyIf = require('./onlyIf')
 
-module.exports = { ifElse }
+module.exports = { onlyIf }

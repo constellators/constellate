@@ -1,6 +1,6 @@
 /**
- * Tons of "inspiration" (i.e. outright copy and paste) taken from @jaredpalmer's
- * amazing Razzle project, and @gaearon's superb Create React App project.
+ * Tons of inspiration taken from @jaredpalmer's amazing Razzle project,
+ * and Facebook/@gaearon's superb Create React App project.
  * https://github.com/jaredpalmer/razzle
  * https://github.com/facebookincubator/create-react-app
  */
@@ -9,7 +9,6 @@ const path = require('path')
 const webpack = require('webpack')
 const AssetsPlugin = require('assets-webpack-plugin')
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
-const StartServerPlugin = require('start-server-webpack-plugin')
 const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin')
 const WatchMissingNodeModulesPlugin = require('react-dev-utils/WatchMissingNodeModulesPlugin')
 const nodeExternals = require('webpack-node-externals')
@@ -17,72 +16,160 @@ const autoprefixer = require('autoprefixer')
 const R = require('ramda')
 
 const removeNil = require('constellate-utils/arrays/removeNil')
-const ifElse = require('constellate-utils/logic/ifElse')
+const onlyIf = require('constellate-utils/logic/onlyIf')
 
 const generateBabelConfig = require('../babel/generateConfig')
 
 module.exports = function generateConfig(project, options = {}) {
-  const { development = false, devServerPort } = options
+  const { devServerPort } = options
 
-  const isProd = !development
-  const isDev = !!development
-  const ifDev = ifElse(isDev)
-  const ifProd = ifElse(isProd)
+  const env = process.env.NODE_ENV
 
-  const isWeb = !!project.config.web
-  const isNode = !isWeb
+  const isServerRole = !!project.config.server
+  const isTargettingWeb = !!project.config.web
+  const isTargettingNode = !isTargettingWeb
 
   const webpackConfig = {
+    // Keep quiet in dev mode.
+    stats: onlyIf(env === 'development', 'none'),
+
+    target: isTargettingWeb ? 'web' : 'node',
+
     context: project.paths.root,
 
     entry: {
-      [project.name]: [
+      [project.name]: removeNil([
+        onlyIf(
+          isTargettingWeb && env === 'development',
+          `webpack-dev-server/client?http://0.0.0.0:${devServerPort}`
+        ),
+
+        onlyIf(isTargettingWeb && env === 'development', 'webpack/hot/dev-server'),
+
+        onlyIf(isServerRole && env === 'development', 'webpack/hot/poll?300'),
+
         // The application source entry.
         project.paths.sourceEntry,
-      ],
+      ]),
     },
 
     output: {
       // The dir in which our bundle should be output.
       path: project.paths.dist,
+
       // The filename format for the entry chunk.
-      filename: isDev ? '[name].js' : '[name]-[chunkhash].js',
+      // eslint-disable-next-line no-nested-ternary
+      filename: isTargettingNode
+        ? // For a node bundle we want to keep the same entry file name in
+          // order to support easy imports.
+          'index.js'
+        : isTargettingWeb && env === 'production'
+            ? // For a production build of a web target we want a cache busting
+              // name format.
+              '[name]-[chunkhash].js'
+            : // Else we use a predictable name format.
+              '[name].js',
+
       // The name format for any additional chunks produced for the bundle.
-      chunkFilename: isDev ? '[name]-[hash].js' : '[name]-[chunkhash].js',
-      publicPath: '/',
+      chunkFilename: env === 'development' ? '[name]-[hash].js' : '[name]-[chunkhash].js',
+
+      publicPath: isTargettingWeb && env === 'development'
+        ? // As we run a seperate webpack-dev-server in development we need an
+          // absolute http path for the public path.
+          `http://0.0.0.0:${devServerPort}/`
+        : '/',
+
       // Add /* filename */ comments to generated require()s in the output.
-      pathinfo: isDev,
+      pathinfo: env === 'development',
+
+      libraryTarget: isTargettingNode ? 'commonjs2' : 'var',
     },
 
+    resolve: {
+      extensions: ['.js', '.json', '.jsx'],
+    },
+
+    // For web target packages we rely on webpack-dev-server, but will provide
+    // the configuration here to make our configuration more centralised.
+    devServer: onlyIf(isTargettingWeb, {
+      contentBase: project.paths.dist,
+      host: '0.0.0.0',
+      disableHostCheck: true,
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+      },
+      compress: true,
+      port: devServerPort,
+      noInfo: true,
+      quiet: true,
+      historyApiFallback: true,
+      hot: true,
+      watchOptions: {
+        // Watching too many files can result in high CPU/memory usage.
+        // We will manually control reloads based on dependency changes.
+        ignored: /node_modules/,
+        // TODO: Allow watching of any dependencies that are Constellate projects.
+      },
+    }),
+
+    // We need to explictly set this for development build of a server role.
+    watch: onlyIf(env === 'development' && isServerRole, true),
+
+    // Ensure that webpack polyfills the following node features
+    node: onlyIf(isTargettingNode, { console: true }),
+
+    // The following makes sure that we don't bundle all our dependencies within
+    // our node bundle. This is important as not all deps will be supported by
+    // the bundling process. Instead they will be resolved at run time.
+    externals: onlyIf(isTargettingNode, [
+      nodeExternals({
+        // There are however some file types and dependencies that we do wish
+        // to processed by webpack:
+        whitelist: removeNil([
+          onlyIf(env === 'development' && isServerRole, 'webpack/hot/poll?300'),
+          'source-map-support/register',
+          /\.(eot|woff|woff2|ttf|otf)$/,
+          /\.(svg|png|jpg|jpeg|gif|ico)$/,
+          /\.(mp4|mp3|ogg|swf|webp)$/,
+          /\.(css|scss|sass|sss|less)$/,
+        ]),
+        modulesDir: project.paths.nodeModules,
+      }),
+    ]),
+
     // Source map settings.
-    devtool: isDev
+    devtool: env === 'development' || isTargettingNode
       ? // Produces an external source map (lives next to bundle output files).
+        // We always want source maps for node bundles to help with stack traces.
         'source-map'
       : // Only maps line numbers
         'cheap-eval-source-map',
 
     // https://webpack.js.org/configuration/performance/
     performance: {
-      hints: isDev ? false : 'warning',
+      hints: env === 'development' ? false : 'warning',
     },
 
     plugins: removeNil([
       new webpack.EnvironmentPlugin({
         // It is really important to use NODE_ENV=production in order to use
         // optimised versions of some node_modules, such as React.
-        NODE_ENV: isProd ? 'production' : 'development',
+        NODE_ENV: env,
         // Is this a development build?
-        CONSTELLATE_IS_DEV: JSON.stringify(isDev),
+        CONSTELLATE_IS_DEV: JSON.stringify(env === 'development'),
         // Is this a browser build?
         CONSTELLATE_IS_WEBPACK: JSON.stringify(true),
       }),
 
       // Generates a JSON file containing a map of all the output files for
       // our webpack bundle.
-      new AssetsPlugin({
-        filename: 'webpack-manifest.json',
-        path: project.paths.dist,
-      }),
+      onlyIf(
+        isTargettingWeb,
+        new AssetsPlugin({
+          filename: 'webpack-manifest.json',
+          path: project.paths.dist,
+        })
+      ),
 
       // Moment.js is an extremely popular library that bundles large locale files
       // by default due to how Webpack interprets its code. This is a practical
@@ -93,11 +180,12 @@ module.exports = function generateConfig(project, options = {}) {
 
       // This makes debugging much easier as webpack will add filenames to
       // modules
-      ifDev(() => new webpack.NamedModulesPlugin()),
+      onlyIf(env === 'development', () => new webpack.NamedModulesPlugin()),
 
-      // For our production build we need to make sure we pass the required
+      // For our production web targets we need to make sure we pass the required
       // configuration to ensure that the output is minimized/optimized.
-      ifProd(
+      onlyIf(
+        isTargettingWeb && env === 'production',
         () =>
           new webpack.optimize.UglifyJsPlugin({
             // sourceMap: config('includeSourceMapsForOptimisedClientBundle'),
@@ -115,9 +203,10 @@ module.exports = function generateConfig(project, options = {}) {
           })
       ),
 
-      // For our production client we need to make sure we pass the required
+      // For our production web targets we need to make sure we pass the required
       // configuration to ensure that the output is minimized/optimized.
-      ifProd(
+      onlyIf(
+        isTargettingWeb && env === 'production',
         () =>
           new webpack.LoaderOptionsPlugin({
             minimize: true,
@@ -127,20 +216,48 @@ module.exports = function generateConfig(project, options = {}) {
       // Watcher doesn't work well if you mistype casing in a path so we use
       // a plugin that prints an error when you attempt to do this.
       // See https://github.com/facebookincubator/create-react-app/issues/240
-      ifDev(() => new CaseSensitivePathsPlugin()),
+      onlyIf(env === 'development', () => new CaseSensitivePathsPlugin()),
 
       // If you require a missing module and then `npm install` it, you still have
       // to restart the development server for Webpack to discover it. This plugin
       // makes the discovery automatic so you don't have to restart.
       // See https://github.com/facebookincubator/create-react-app/issues/186
-      ifDev(() => new WatchMissingNodeModulesPlugin(project.paths.nodeModules)),
+      onlyIf(
+        env === 'development',
+        () => new WatchMissingNodeModulesPlugin(project.paths.nodeModules)
+      ),
 
       // We don't want webpack errors to occur during development as it will
       // kill our dev servers.
-      ifDev(() => new webpack.NoEmitOnErrorsPlugin()),
+      onlyIf(env === 'development', () => new webpack.NoEmitOnErrorsPlugin()),
 
       // We need this plugin to enable hot reloading of our client.
-      ifDev(() => new webpack.HotModuleReplacementPlugin()),
+      onlyIf(env === 'development', () => new webpack.HotModuleReplacementPlugin()),
+
+      // For a production build of a web target we need to extract the CSS into
+      // CSS files.
+      onlyIf(
+        isTargettingWeb && env === 'production',
+        () =>
+          new ExtractTextPlugin({
+            filename: '[name].[contenthash:8].css',
+            allChunks: true,
+          })
+      ),
+
+      // This grants us source map support, which combined with our webpack
+      // source maps will give us nice stack traces for our node executed
+      // bundles.
+      // We use the BannerPlugin to make sure all of our chunks will get the
+      // source maps support installed.
+      onlyIf(
+        isTargettingNode,
+        new webpack.BannerPlugin({
+          banner: 'require("source-map-support").install();',
+          raw: true,
+          entryOnly: false,
+        })
+      ),
     ]),
 
     module: {
@@ -156,7 +273,7 @@ module.exports = function generateConfig(project, options = {}) {
             },
             {
               loader: 'babel-loader',
-              options: generateBabelConfig(project, { development }),
+              options: generateBabelConfig(project),
             },
           ],
           include: [project.paths.source],
@@ -168,81 +285,24 @@ module.exports = function generateConfig(project, options = {}) {
           options: {
             // We only emit files when building a web bundle, node bundles only
             // need the file paths.
-            emitFile: isWeb,
+            emitFile: isTargettingWeb,
             // Any files under this size will be "inlined" as a base64 encoding.
             limit: 10000,
           },
         },
-      ]),
-    },
-  }
 
-  if (isWeb) {
-    webpackConfig.target = 'web'
-
-    webpackConfig.entry[project.name] = removeNil([
-      'babel-polyfill',
-      ifDev(`webpack-dev-server/client?http://0.0.0.0:${devServerPort}`),
-      ifDev('webpack/hot/dev-server'),
-      ...webpackConfig.entry[project.name],
-    ])
-
-    webpackConfig.plugins = removeNil([
-      ...webpackConfig.plugins,
-      // For the production build of the client we need to extract the CSS into
-      // CSS files.
-      ifProd(
-        () =>
-          new ExtractTextPlugin({
-            filename: '[name].[contenthash:8].css',
-            allChunks: true,
-          })
-      ),
-    ])
-
-    webpackConfig.module.rules = removeNil([
-      ...webpackConfig.module.rules,
-      // For development clients we will use the style loader which will allow
-      // hot reloading of the CSS.
-      ifDev(() => ({
-        test: /\.css$/,
-        loader: [
-          'style-loader',
-          {
-            loader: 'css-loader',
-            options: {
-              importLoaders: 1,
-              // Include sourcemaps for dev experience++.
-              sourceMap: true,
-            },
-          },
-          {
-            loader: 'postcss-loader',
-            options: {
-              ident: 'postcss',
-              plugins: () => [
-                autoprefixer({
-                  browsers: ['>1%', 'last 4 versions', 'Firefox ESR', 'not ie < 9'],
-                }),
-              ],
-            },
-          },
-        ],
-        include: [project.paths.source, project.paths.nodeModules],
-      })),
-      // For a production client build we use the ExtractTextPlugin which
-      // will extract our CSS into CSS files.
-      // Note: The ExtractTextPlugin needs to be registered within the
-      // plugins section too.
-      ifProd(() => ({
-        test: /\.css$/,
-        loader: ExtractTextPlugin.extract({
-          fallback: 'style-loader',
-          use: [
+        // For development web targets we will use the style loader which will
+        // allow hot reloading of the CSS.
+        onlyIf(isTargettingWeb && env === 'development', () => ({
+          test: /\.css$/,
+          loader: [
+            'style-loader',
             {
               loader: 'css-loader',
               options: {
                 importLoaders: 1,
+                // Include sourcemaps for dev experience++.
+                sourceMap: true,
               },
             },
             {
@@ -257,105 +317,52 @@ module.exports = function generateConfig(project, options = {}) {
               },
             },
           ],
-        }),
-        include: [project.paths.source, project.paths.nodeModules],
-      })),
-    ])
+          include: [project.paths.source, project.paths.nodeModules],
+        })),
 
-    if (isDev) {
-      webpackConfig.stats = 'none'
+        // For a production web target we use the ExtractTextPlugin which
+        // will extract our CSS into CSS files.
+        // Note: The ExtractTextPlugin needs to be registered within the
+        // plugins section too.
+        onlyIf(isTargettingWeb && env === 'production', () => ({
+          test: /\.css$/,
+          loader: ExtractTextPlugin.extract({
+            fallback: 'style-loader',
+            use: [
+              {
+                loader: 'css-loader',
+                options: {
+                  importLoaders: 1,
+                },
+              },
+              {
+                loader: 'postcss-loader',
+                options: {
+                  ident: 'postcss',
+                  plugins: () => [
+                    autoprefixer({
+                      browsers: ['>1%', 'last 4 versions', 'Firefox ESR', 'not ie < 9'],
+                    }),
+                  ],
+                },
+              },
+            ],
+          }),
+          include: [project.paths.source, project.paths.nodeModules],
+        })),
 
-      // As we run a seperate webpack-dev-server in development we need an
-      // absolute http path for the public path.
-      webpackConfig.output.publicPath = `http://0.0.0.0:${devServerPort}/`
-
-      // For browser packages we rely on webpack-dev-server, but will provide
-      // the configuration here to make our configuration more centralised.
-      webpackConfig.devServer = {
-        host: '0.0.0.0',
-        disableHostCheck: true,
-        headers: {
-          'Access-Control-Allow-Origin': '*',
-        },
-        compress: true,
-        port: devServerPort,
-        noInfo: true,
-        quiet: true,
-        historyApiFallback: true,
-        hot: true,
-        watchOptions: {
-          // Watching too many files can result in high CPU/memory usage.
-          // We will manually control reloads based on dependency changes.
-          // ignored: /node_modules/,
-          // TODO: Allow watching of any dependencies that are Constellate projects.
-        },
-      }
-    }
-  } else if (isNode) {
-    webpackConfig.target = 'node'
-
-    webpackConfig.entry[project.name] = removeNil([
-      ifDev('webpack/hot/poll?300'),
-      ...webpackConfig.entry[project.name],
-    ])
-
-    // For a node bundle we don't use the webpack-dev-server therefore we
-    // need to explictly enable watch mode.
-    webpackConfig.watch = isDev
-
-    // Ensure that webpack polyfills the following node features
-    webpackConfig.node = { console: true }
-
-    // The following makes sure that we don't bundle all our dependencies within
-    // our node bundle. This is important as not all deps will be supported by
-    // the bundling process. Instead they will be resolved at run time.
-    webpackConfig.externals = [
-      nodeExternals({
-        // There are however some file types and dependencies that we do wish
-        // to include in our bundle:
-        whitelist: removeNil([
-          ifDev('webpack/hot/poll?300'),
-          'source-map-support/register',
-          /\.(eot|woff|woff2|ttf|otf)$/,
-          /\.(svg|png|jpg|jpeg|gif|ico)$/,
-          /\.(mp4|mp3|ogg|swf|webp)$/,
-          /\.(css|scss|sass|sss|less)$/,
-        ]),
-      }),
-    ]
-
-    webpackConfig.plugins = removeNil([
-      ...webpackConfig.plugins,
-      // This grants us source map support, which combined with our webpack
-      // source maps will give us nice stack traces for our node executed
-      // bundles.
-      // We use the BannerPlugin to make sure all of our chunks will get the
-      // source maps support installed.
-      new webpack.BannerPlugin({
-        banner: 'require("source-map-support").install();',
-        raw: true,
-        entryOnly: false,
-      }),
-      // This allows us to run our bundled server after it is compiled
-      // TODO: Expose a mechanism to pass-through arguments to the process.
-      ifDev(new StartServerPlugin(`${project.name}.js`)),
-    ])
-
-    webpackConfig.module.rules = removeNil([
-      ...webpackConfig.module.rules,
-      {
-        test: /\.css$/,
-        // When targetting the server we use the "/locals" version of the
+        // When targetting node we use the "/locals" version of the
         // css loader, as we don't need any css files.
-        loaders: ['css-loader/locals'],
-        include: [project.paths.source, project.paths.nodeModules],
-      },
-    ])
+        onlyIf(isTargettingNode, {
+          test: /\.css$/,
+          loaders: ['css-loader/locals'],
+          include: [project.paths.source, project.paths.nodeModules],
+        }),
+      ]),
+    },
   }
 
   const webpackPlugin = R.path(['plugins', 'webpack'], project)
 
-  return webpackPlugin
-    ? webpackPlugin(webpackConfig, { project, development, webpack })
-    : webpackConfig
+  return webpackPlugin ? webpackPlugin(webpackConfig, { project, webpack }) : webpackConfig
 }
