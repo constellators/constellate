@@ -1,7 +1,7 @@
 {
   "name": "constellate",
   "description": "The CLI to build, develop and deploy Constellate projects.",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "repository": "ctrlplusb/constellate",
   "license": "MIT",
   "engines": {
@@ -46,7 +46,7 @@
     "case-sensitive-paths-webpack-plugin": "^2.0.0",
     "chokidar": "^1.7.0",
     "commander": "^2.9.0",
-    "constellate-utils": "^0.0.9",
+    "constellate-utils": "^0.0.10",
     "cross-spawn": "^5.1.0",
     "css-loader": "^0.28.2",
     "extract-text-webpack-plugin": "^2.1.0",
