@@ -1,5 +1,5 @@
 const fs = require('fs')
-const pathResolve = require('path').resolve
+const path = require('path')
 const toposort = require('toposort')
 const R = require('ramda')
 
@@ -10,10 +10,10 @@ const defaultConfig = {
 
 // :: string -> string -> string
 const resolveProjectPath = projectName => relativePath =>
-  pathResolve(process.cwd(), `./projects/${projectName}`, relativePath)
+  path.resolve(process.cwd(), `./projects/${projectName}`, relativePath)
 
 // :: string -> Project
-const getProject = (projectName) => {
+const toProject = (projectName) => {
   const thisProjectPath = resolveProjectPath(projectName)
   const packageJsonPath = thisProjectPath('./package.json')
   const constellateConfigPath = thisProjectPath('./constellate.js')
@@ -79,8 +79,15 @@ function orderProjectsByDependencies(projects) {
  * @return {Array<Project>} The project meta object
  */
 function getAllProjects() {
+  const projectsRoot = path.resolve(process.cwd(), './projects')
+
   // :: Array<Project>
-  const projects = fs.readdirSync(pathResolve(process.cwd(), './projects')).map(getProject)
+  const projects = fs
+    .readdirSync(projectsRoot)
+    // only include directories
+    .filter(file => fs.lstatSync(path.join(projectsRoot, file)).isDirectory())
+    // convert into a Project
+    .map(toProject)
 
   // :: Array<string>
   const projectNames = R.map(R.prop('name'), projects)
