@@ -2,13 +2,13 @@
   "name": "constellate-utils-web-project",
   "description": "Utils for working with web-type Constellate projects.",
   "version": "0.0.10",
-  "repository": "ctrlplusb/constellate",
+  "repository": "constellators/constellate",
   "license": "MIT",
   "engines": {
     "node": ">=7"
   },
   "bugs": {
-    "url": "https://github.com/ctrlplusb/constellate/issues"
+    "url": "https://github.com/constellators/constellate/issues"
   },
   "files": [
     "getAssets.js"

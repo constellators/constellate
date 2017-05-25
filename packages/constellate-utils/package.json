@@ -1,14 +1,14 @@
 {
   "name": "constellate-utils",
-  "description": "Shared utilities used by the Constellate projects.",
+  "description": "Shared utils for the Constellate projects.",
   "version": "0.0.10",
-  "repository": "ctrlplusb/constellate",
+  "repository": "constellators/constellate",
   "license": "MIT",
   "engines": {
     "node": ">=7"
   },
   "bugs": {
-    "url": "https://github.com/ctrlplusb/constellate/issues"
+    "url": "https://github.com/constellators/constellate/issues"
   },
   "files": [
     "arrays",
