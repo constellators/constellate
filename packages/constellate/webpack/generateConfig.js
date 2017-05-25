@@ -25,8 +25,8 @@ module.exports = function generateConfig(project, options = {}) {
 
   const env = process.env.NODE_ENV
 
-  const isServerRole = !!project.config.server
-  const isTargettingWeb = !!project.config.web
+  const isServerRole = project.config.role === 'server'
+  const isTargettingWeb = project.config.target === 'web'
   const isTargettingNode = !isTargettingWeb
 
   const webpackConfig = {

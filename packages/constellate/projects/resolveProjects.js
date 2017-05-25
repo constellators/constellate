@@ -6,6 +6,7 @@ const R = require('ramda')
 const defaultConfig = {
   target: 'node',
   role: 'library',
+  compiler: 'babel',
 }
 
 // :: string -> string -> string

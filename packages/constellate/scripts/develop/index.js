@@ -1,147 +1,21 @@
-const path = require('path')
-const spawn = require('cross-spawn')
-const chokidar = require('chokidar')
 const R = require('ramda')
-const getPort = require('get-port')
-
 const terminal = require('constellate-utils/terminal')
-
-const startDevServer = require('../webpack/startDevServer')
-const buildProject = require('../projects/buildProject')
-const cleanProjects = require('../projects/cleanProjects')
-
-// Represents the current project being built
-let currentBuild = null
-
-// Represents the build backlog queue. FIFO.
-let buildQueue = []
-
-// :: Project -> Project -> bool
-const projectHasDependant = R.curry((dependant, project) =>
-  R.contains(dependant.name, project.dependants)
-)
-
-const createProjectWatcher = (onChange, project) => {
-  terminal.verbose(`Creating watcher for ${project.name}.`)
-  const watcher = chokidar.watch(
-    // TODO: Add the paths to the build folders of each of it's dependencies.
-    [project.paths.source, path.resolve(project.paths.root, './package.json')],
-    { ignoreInitial: true, cwd: project.paths.root, ignorePermissionErrors: true }
-  )
-  watcher
-    .on('add', onChange)
-    .on('change', onChange)
-    .on('unlink', onChange)
-    .on('addDir', onChange)
-    .on('unlinkDir', onChange)
-  return watcher
-}
-
-const createProjectConductor = (project) => {
-  let runningServer
-
-  // :: Project -> Promise
-  function ensureNodeServerRunningForProject() {
-    return new Promise((resolve) => {
-      const projectProcess = spawn(
-        // Spawn a node process
-        'node',
-        // That runs the build entry file
-        [project.paths.buildEntry],
-        // Ensure that output supports color etc
-        // We use pipe for the error so that we can log a header for ther error.
-        {
-          stdio: [process.stdin, process.stdout, 'pipe'],
-          cwd: project.paths.root,
-        }
-      )
-      projectProcess.stderr.on('data', (data) => {
-        terminal.error(`Error running ${project.name}`, data.toString())
-      })
-      projectProcess.on('close', (code) => {
-        terminal.verbose(`Server process ${project.name} stopped (${code})`)
-        runningServer = null
-      })
-      runningServer = {
-        process: projectProcess,
-        kill: () =>
-          new Promise((killResolve) => {
-            if (runningServer) {
-              terminal.verbose(`Killing ${project.name}`)
-              projectProcess.on('close', () => {
-                terminal.verbose(`Killed ${project.name}`)
-                killResolve()
-              })
-              projectProcess.kill('SIGTERM')
-            } else {
-              terminal.verbose(`No process to kill for ${project.name}`)
-              killResolve()
-            }
-          }),
-      }
-      resolve()
-    }).catch((err) => {
-      terminal.error(`Error starting ${project.name}`, err)
-    })
-  }
-
-  // TODO: On error nullify the server to allow for restart.
-  function ensureWebDevServerRunningForProject() {
-    return getPort()
-      .then((port) => {
-        terminal.verbose(`Found free port ${port} for webpack dev server`)
-        return startDevServer(project, { port })
-      })
-      .then((webpackDevServer) => {
-        runningServer = {
-          process: webpackDevServer,
-          kill: () =>
-            new Promise((killResolve) => {
-              if (webpackDevServer) {
-                webpackDevServer.close(() => killResolve())
-              } else {
-                killResolve()
-              }
-            }),
-        }
-      })
-  }
-
-  function kill() {
-    return runningServer ? runningServer.kill() : Promise.resolve()
-  }
-
-  return {
-    // :: void -> Promise
-    build: () => {
-      // WEB
-
-      if (project.config.web) {
-        if (runningServer) {
-          // We only need one running instance.
-          return Promise.resolve()
-        }
-        terminal.verbose(`Starting a webpack-dev-server for ${project.name}`)
-        return ensureWebDevServerRunningForProject()
-      }
-
-      // NODE
-
-      return buildProject(project).then(() =>
-        kill().then(() => {
-          if (project.config.server) {
-            return ensureNodeServerRunningForProject()
-          }
-          return undefined
-        })
-      )
-    },
-    // :: void -> Promise
-    kill,
-  }
-}
+const cleanProjects = require('../../projects/cleanProjects')
+const createProjectConductor = require('./createProjectConductor')
+const createProjectWatcher = require('./createProjectWatcher')
 
 module.exports = function develop(projects) {
+  // Represents the current project being built
+  let currentBuild = null
+
+  // Represents the build backlog queue. FIFO.
+  let buildQueue = []
+
+  // :: Project -> Project -> bool
+  const projectHasDependant = R.curry((dependant, project) =>
+    R.contains(dependant.name, project.dependants)
+  )
+
   // Firstly clean up shop.
   cleanProjects(projects)
 
@@ -250,12 +124,12 @@ module.exports = function develop(projects) {
   const watchers = projects
     // We don't want to include watchers on web types as they will rely
     // on webpack-dev-server for serving and watching.
-    .filter(x => !x.config.web)
+    .filter(x => !x.config.target === 'web')
     .map(project => createProjectWatcher(onChange(project), project))
 
   let shuttingDown = false
 
-  function performGracefulShutdown(exitCode = 1) {
+  function performGracefulShutdown() {
     // Avoid multiple calls (e.g. if ctrl+c pressed multiple times)
     if (shuttingDown) return
     shuttingDown = true
@@ -267,21 +141,29 @@ module.exports = function develop(projects) {
 
     // Then call off the `.kill()` against all our project conductors.
     Promise.all(R.values(projectConductors).map(projectConductor => projectConductor.kill()))
-      .then(
-        () => terminal.info('Till next time. *kiss*'),
-        err =>
-          terminal.error('An error occurred whilst shutting down the development environment', err)
-      )
-      .then(() => process.exit(exitCode))
+      .catch((err) => {
+        terminal.error('An error occurred whilst shutting down the development environment', err)
+        process.exit(1)
+      })
+      .then(() => process.exit(0))
+
+    setTimeout(() => {
+      terminal.verbose('Forcing shutdown after grace period')
+      process.exit(0)
+    }, 5 * 1000)
   }
 
   // Ensure that we perform a graceful shutdown when any of the following
   // signals are sent to our process.
   ['SIGINT', 'SIGTERM'].forEach((signal) => {
     process.on(signal, () => {
-      terminal.info(`Received ${signal} termination signal`)
-      performGracefulShutdown(0)
+      terminal.verbose(`Received ${signal} termination signal`)
+      performGracefulShutdown()
     })
+  })
+
+  process.on('exit', () => {
+    terminal.info('Till next time. *kiss*')
   })
 
   // READY...
@@ -291,4 +173,9 @@ module.exports = function develop(projects) {
 
   // GO! 🚀
   buildNextInTheQueue()
+
+  // prevent node process from exiting. (until CTRL + C is pressed at least)
+  process.stdin.read()
+
+  terminal.info('Press CTRL + C to exit')
 }

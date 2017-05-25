@@ -13,7 +13,7 @@ const onlyIf = require('constellate-utils/logic/onlyIf')
 
 // :: Options -> BabelConfig
 module.exports = function generateConfig(project) {
-  const isTargettingWeb = !!project.config.web
+  const isTargettingWeb = project.config.target === 'web'
   const isTargettingNode = !isTargettingWeb
 
   const usingWebpackAsCompiler = R.path(['config', 'compiler'], project) === 'webpack'

@@ -38,7 +38,8 @@ program
     const build = require('../scripts/build')
     return resolveProjects(projects)
       .then(build)
-      .then(() => terminal.success('Build succeeded'), err => terminal.error('Build failed', err))
+      .then(() => terminal.success('Build succeeded'))
+      .catch(err => terminal.error('Build failed', err))
   })
 
 program
@@ -50,7 +51,8 @@ program
     const clean = require('../scripts/clean')
     return resolveProjects(projects)
       .then(clean)
-      .then(() => terminal.success('Clean finished'), err => terminal.error('Clean failed', err))
+      .then(() => terminal.success('Clean finished'))
+      .catch(err => terminal.error('Clean failed', err))
   })
 
 program
@@ -67,6 +69,25 @@ program
 
     const develop = require('../scripts/develop')
     resolveProjects(projects).then(develop)
+  })
+
+program
+  .command('package')
+  .description('packages up the projects, ready for publishing or deployment')
+  .option('-p, --projects <projects>', 'specify the projects to package', list)
+  .action(({ projects }) => {
+    terminal.info('Starting packaging')
+
+    // If no NODE_ENV is set we will default to 'production'.
+    if (!process.env.NODE_ENV) {
+      process.env.NODE_ENV = 'production'
+    }
+
+    const packageProjects = require('../scripts/packageProjects')
+    resolveProjects(projects)
+      .then(packageProjects)
+      .then(() => terminal.success('Packaging completed'))
+      .catch(err => terminal.error('Packaging failed', err))
   })
 
 program.parse(process.argv)

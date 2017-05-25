@@ -38,5 +38,6 @@
  - [ ] UX - Terminal feedback.
  - [X] UX - Source map support for transpiled bundles.
  - [X] UX - Rename webpack output to match package name so that build output is easier to interpret.
+ - [ ] UX - Ensure proper webpack error handling https://webpack.js.org/api/node/#error-handling
  - [X] WEBPACK - Use https://github.com/Urthen/case-sensitive-paths-webpack-plugin
  - [ ] ...

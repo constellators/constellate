@@ -6,7 +6,7 @@ const transpile = require('../babel/transpile')
 const bundle = require('../webpack/bundle')
 
 function packageBasedBuild(project) {
-  if (project.config.web || R.path(['config', 'compiler'], project) === 'webpack') {
+  if (project.config.target === 'web' || R.path(['config', 'compiler'], project) === 'webpack') {
     terminal.verbose(`Bundling ${project.name}`)
     return bundle(project)
   }
