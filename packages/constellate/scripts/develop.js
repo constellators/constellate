@@ -24,7 +24,7 @@ const projectHasDependant = R.curry((dependant, project) =>
 const createProjectWatcher = (onChange, project) => {
   terminal.verbose(`Creating watcher for ${project.name}.`)
   const watcher = chokidar.watch(
-    // TODO: Add the paths to the dist folders of each of it's dependencies.
+    // TODO: Add the paths to the build folders of each of it's dependencies.
     [project.paths.source, path.resolve(project.paths.root, './package.json')],
     { ignoreInitial: true, cwd: project.paths.root, ignorePermissionErrors: true }
   )
@@ -46,8 +46,8 @@ const createProjectConductor = (project) => {
       const projectProcess = spawn(
         // Spawn a node process
         'node',
-        // That runs the dist entry file
-        [project.paths.distEntry],
+        // That runs the build entry file
+        [project.paths.buildEntry],
         // Ensure that output supports color etc
         // We use pipe for the error so that we can log a header for ther error.
         {

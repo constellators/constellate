@@ -9,7 +9,7 @@
  - [ ] COMMAND - Deploy
  - [ ] CONFIG - Make the node version configurable.
  - [ ] CONFIG - Strategy for consuming dotenv?
- - [ ] CONFIG - Make the Babel-ification process optional. In which case a symlink could be created from dist/index.js to modules/index.js.  Just don't use any syntax that requires Babel in your code.
+ - [ ] CONFIG - Make the Babel-ification process optional. In which case a symlink could be created from build/index.js to modules/index.js.  Just don't use any syntax that requires Babel in your code.
  - [ ] DEVELOP - Dependency based reloads.
  - [ ] DEVELOP - Manual reload override.
  - [ ] DEVELOP - CONFIG - Allow for explicit dependency rebuild ignore.

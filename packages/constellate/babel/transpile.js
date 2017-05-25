@@ -35,7 +35,7 @@ module.exports = function transpile(project) {
     // :: string -> Promise<void>
     const transpileFile = (filePath) => {
       const writeTranspiledFile = (result) => {
-        const outFile = path.resolve(project.paths.dist, filePath)
+        const outFile = path.resolve(project.paths.build, filePath)
         ensureParentDirectoryExists(outFile)
         fs.writeFileSync(outFile, result.code, { encoding: 'utf8' })
         fs.writeFileSync(`${outFile}.map`, JSON.stringify(result.map), { encoding: 'utf8' })

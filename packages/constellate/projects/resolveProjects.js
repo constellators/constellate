@@ -31,8 +31,8 @@ const toProject = (projectName) => {
       nodeModules: thisProjectPath('./node_modules'),
       source: thisProjectPath('./modules'),
       sourceEntry: thisProjectPath('./modules/index.js'),
-      dist: thisProjectPath('./dist'),
-      distEntry: thisProjectPath('./dist/index.js'),
+      build: thisProjectPath('./build'),
+      buildEntry: thisProjectPath('./build/index.js'),
       webpackCache: thisProjectPath('./.webpackcache'),
     },
     packageJson: fs.existsSync(packageJsonPath)

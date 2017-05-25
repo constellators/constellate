@@ -53,7 +53,7 @@ module.exports = function generateConfig(project, options = {}) {
 
     output: {
       // The dir in which our bundle should be output.
-      path: project.paths.dist,
+      path: project.paths.build,
 
       // The filename format for the entry chunk.
       // eslint-disable-next-line no-nested-ternary
@@ -90,7 +90,7 @@ module.exports = function generateConfig(project, options = {}) {
     // For web target packages we rely on webpack-dev-server, but will provide
     // the configuration here to make our configuration more centralised.
     devServer: onlyIf(isTargettingWeb, {
-      contentBase: project.paths.dist,
+      contentBase: project.paths.build,
       host: '0.0.0.0',
       disableHostCheck: true,
       headers: {
@@ -162,7 +162,7 @@ module.exports = function generateConfig(project, options = {}) {
         isTargettingWeb,
         new AssetsPlugin({
           filename: 'webpack-manifest.json',
-          path: project.paths.dist,
+          path: project.paths.build,
         })
       ),
 
