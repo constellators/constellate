@@ -19,7 +19,7 @@ module.exports = function startDevServer(project, { port }) {
         const server = new WebpackDevServer(compiler, config.devServer)
 
         server.listen(port, '0.0.0.0', () => {
-          terminal.info(`${project.name} listening on http://0.0.0.0:${port}`)
+          terminal.verbose(`${project.name} listening on http://0.0.0.0:${port}`)
         })
 
         resolve(server)

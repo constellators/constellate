@@ -7,7 +7,6 @@ const getPort = require('get-port')
 const terminal = require('constellate-utils/terminal')
 
 const startDevServer = require('../webpack/startDevServer')
-const createCompiler = require('../webpack/createCompiler')
 const buildProject = require('../projects/buildProject')
 const cleanProjects = require('../projects/cleanProjects')
 
@@ -108,29 +107,6 @@ const createProjectConductor = (project) => {
       })
   }
 
-  function ensureWebpackWatchRunningForProject() {
-    return createCompiler(project).then((compiler) => {
-      const watcher = compiler.watch(
-        {
-          quiet: true,
-          stats: 'none',
-        },
-        () => {}
-      )
-      runningServer = {
-        process: watcher,
-        kill: () =>
-          new Promise((killResolve) => {
-            if (watcher) {
-              watcher.close(() => killResolve())
-            } else {
-              killResolve()
-            }
-          }),
-      }
-    })
-  }
-
   function kill() {
     return runningServer ? runningServer.kill() : Promise.resolve()
   }
@@ -150,15 +126,6 @@ const createProjectConductor = (project) => {
       }
 
       // NODE
-
-      // if (project.config.compiler === 'webpack') {
-      //   if (runningServer) {
-      //     // We only need one running instance.
-      //     return Promise.resolve()
-      //   }
-      //   terminal.verbose(`Starting a webpack watcher for ${project.name}`)
-      //   return ensureWebpackWatchRunningForProject()
-      // }
 
       return buildProject(project).then(() =>
         kill().then(() => {
