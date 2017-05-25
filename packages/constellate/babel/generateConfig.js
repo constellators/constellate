@@ -130,7 +130,7 @@ module.exports = function generateConfig(project) {
       // if webpack is being used as a transpiler as it will inline sourcemap
       // support.
       onlyIf(
-        isTargettingNode && usingWebpackAsCompiler,
+        isTargettingNode && !usingWebpackAsCompiler,
         path.resolve(__dirname, './plugins/sourceMapSupport.js')
       ),
     ]),
