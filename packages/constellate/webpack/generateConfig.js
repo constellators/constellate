@@ -46,8 +46,6 @@ module.exports = function generateConfig(project, options = {}) {
 
         onlyIf(isTargettingWeb && env === 'development', 'webpack/hot/dev-server'),
 
-        onlyIf(isServerRole && env === 'development', 'webpack/hot/poll?300'),
-
         // The application source entry.
         project.paths.sourceEntry,
       ]),
@@ -126,7 +124,6 @@ module.exports = function generateConfig(project, options = {}) {
         // There are however some file types and dependencies that we do wish
         // to processed by webpack:
         whitelist: removeNil([
-          onlyIf(env === 'development' && isServerRole, 'webpack/hot/poll?300'),
           'source-map-support/register',
           /\.(eot|woff|woff2|ttf|otf)$/,
           /\.(svg|png|jpg|jpeg|gif|ico)$/,
@@ -155,8 +152,6 @@ module.exports = function generateConfig(project, options = {}) {
         // It is really important to use NODE_ENV=production in order to use
         // optimised versions of some node_modules, such as React.
         NODE_ENV: env,
-        // Is this a development build?
-        CONSTELLATE_IS_DEV: JSON.stringify(env === 'development'),
         // Is this a browser build?
         CONSTELLATE_IS_WEBPACK: JSON.stringify(true),
       }),
@@ -229,10 +224,13 @@ module.exports = function generateConfig(project, options = {}) {
 
       // We don't want webpack errors to occur during development as it will
       // kill our dev servers.
-      onlyIf(env === 'development', () => new webpack.NoEmitOnErrorsPlugin()),
+      onlyIf(isTargettingWeb && env === 'development', () => new webpack.NoEmitOnErrorsPlugin()),
 
       // We need this plugin to enable hot reloading of our client.
-      onlyIf(env === 'development', () => new webpack.HotModuleReplacementPlugin()),
+      onlyIf(
+        isTargettingWeb && env === 'development',
+        () => new webpack.HotModuleReplacementPlugin()
+      ),
 
       // For a production build of a web target we need to extract the CSS into
       // CSS files.
@@ -257,6 +255,17 @@ module.exports = function generateConfig(project, options = {}) {
           raw: true,
           entryOnly: false,
         })
+      ),
+
+      // This will inject the module.hot.accept code in the entry file for our
+      // development build.
+      onlyIf(
+        isTargettingWeb && env === 'development',
+        () =>
+          // eslint-disable-next-line global-require
+          new (require('./plugins/InjectHMRCodeForEntryModule.js'))({
+            entryFile: project.paths.sourceEntry,
+          })
       ),
     ]),
 

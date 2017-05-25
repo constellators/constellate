@@ -1,5 +1,7 @@
 const template = require('babel-template')
 
+// We wrap our code with a check for the webpack inject env var to ensure that
+// we don't initialise source maps twice.
 const sourceMapImportAST = template(`
   if (!process.env.CONSTELLATE_IS_WEBPACK) {
     try {

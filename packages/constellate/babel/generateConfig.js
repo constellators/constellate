@@ -12,9 +12,7 @@ const removeNil = require('constellate-utils/arrays/removeNil')
 const onlyIf = require('constellate-utils/logic/onlyIf')
 
 // :: Options -> BabelConfig
-module.exports = function generateConfig(project, options = {}) {
-  const { development = false } = options
-
+module.exports = function generateConfig(project) {
   const isTargettingWeb = !!project.config.web
   const isTargettingNode = !isTargettingWeb
 
@@ -114,15 +112,6 @@ module.exports = function generateConfig(project, options = {}) {
       // Removes PropTypes code as it's just dead weight for a production build.
       onlyIf(env === 'production', 'babel-plugin-transform-react-remove-prop-types'),
 
-      // If we are transpiling a node project then we inject some code to
-      // include source maps support on the transpiled code.  Don't do this
-      // if webpack is being used as a transpiler as it will inline sourcemap
-      // support.
-      onlyIf(
-        isTargettingNode && usingWebpackAsCompiler,
-        path.resolve(__dirname, './plugins/sourceMapSupport.js')
-      ),
-
       // The following two plugins are currently necessary to make React warnings
       // include more valuable information. They are included here because they are
       // currently not enabled in babel-preset-react. See the below threads for more info:
@@ -135,10 +124,19 @@ module.exports = function generateConfig(project, options = {}) {
 
       // Adds component stack to warning messages
       onlyIf(env === 'development' || env === 'test', 'transform-react-jsx-source'),
+
+      // If we are transpiling a node project then we inject some code to
+      // include source maps support on the transpiled code.  Don't do this
+      // if webpack is being used as a transpiler as it will inline sourcemap
+      // support.
+      onlyIf(
+        isTargettingNode && usingWebpackAsCompiler,
+        path.resolve(__dirname, './plugins/sourceMapSupport.js')
+      ),
     ]),
   }
 
   const babelPlugin = R.path(['plugins', 'babel'], project)
 
-  return babelPlugin ? babelPlugin(babelConfig, { project, development }) : babelConfig
+  return babelPlugin ? babelPlugin(babelConfig, { project }) : babelConfig
 }
