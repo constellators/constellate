@@ -24,6 +24,18 @@ console.log(`\nConstellate v${packageJson.version}\n`)
 program.version(packageJson.version)
 
 program
+  .command('link')
+  .description('links your constellate projects based on their configuration')
+  .action(({ projects }) => {
+    terminal.info('Linking projects')
+    const link = require('../scripts/link')
+    resolveProjects(projects)
+      .then(link)
+      .then(() => terminal.success('Linking succeeded'))
+      .catch(err => terminal.error('Linking failed', err))
+  })
+
+program
   .command('build')
   .description('build the projects')
   .option('-p, --projects <projects>', 'specify the projects to build', list)

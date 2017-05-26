@@ -11,7 +11,7 @@
     "url": "https://github.com/constellators/constellate/issues"
   },
   "files": [
-    "getAssets.js"
+    "getWebProjectManifest.js"
   ],
   "dependencies": {
     "fs-extra": "^3.0.1"
