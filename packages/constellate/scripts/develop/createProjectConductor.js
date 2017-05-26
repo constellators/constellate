@@ -57,10 +57,11 @@ module.exports = function createProjectConductor(project, watcher) {
       .then((port) => {
         terminal.verbose(`Found free port ${port} for webpack dev server`)
         return startDevServer(project, { port })
-          .then(() => {
+          .then((webpackDevServer) => {
             // No need for the watcher now as webpack-dev-server has an inbuilt
             // watcher.
             watcher.stop()
+            return webpackDevServer
           })
           .catch((err) => {
             // Ensure we fire up a watcher so that we can track when the issue
