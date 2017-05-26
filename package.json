@@ -16,6 +16,8 @@
     "prettier-eslint-cli": "^4.0.1"
   },
   "scripts": {
+    "bootstrap": "lerna bootstrap",
+    "publish": "lerna publish",
     "update": "lerna exec --concurrency 1 -- npm-check -u"
   }
 }
