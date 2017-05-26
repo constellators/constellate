@@ -30,10 +30,10 @@
        - [ ] Chrome
        - [ ] IE 9
        - [ ] Safari
- - [ ] UX - Develop command Error resilience.
-   - [ ] Startup Errors
-   - [ ] Compile Time Errors
-   - [ ] Runtime Errors
+ - [X] UX - Develop command Error resilience.
+   - [X] Startup Errors
+   - [X] Compile Time Errors
+   - [X] Runtime Errors
  - [X] UX - Add "unhandled promise" error handler to script root.
  - [ ] UX - Terminal feedback.
  - [X] UX - Source map support for transpiled bundles.

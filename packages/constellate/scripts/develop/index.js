@@ -1,3 +1,5 @@
+/* eslint-disable no-use-before-define */
+
 const R = require('ramda')
 const terminal = require('constellate-utils/terminal')
 const cleanProjects = require('../../projects/cleanProjects')
@@ -23,13 +25,32 @@ module.exports = function develop(projects) {
   const getProjectDependants = project =>
     project.dependants.map(dependant => projects.find(R.propEq('name', dependant)))
 
-  // :: Object<string, ProjectConductor>
-  const projectConductors = projects.reduce(
-    (acc, project) => Object.assign(acc, { [project.name]: createProjectConductor(project) }),
+  // eslint-disable-next-line no-unused-vars
+  const onChange = project => (changes) => {
+    // TODO: Clever "minimal" changes build? Need to pass along some info?
+    queueProjectForBuild(project)
+    // If no active build running then we will call off to run next item in
+    // the queue.
+    if (!currentBuild) {
+      buildNextInTheQueue()
+    }
+  }
+
+  // :: Object<string, ProjectWatcher>
+  const watchers = projects.reduce(
+    (acc, project) =>
+      Object.assign(acc, { [project.name]: createProjectWatcher(onChange(project), project) }),
     {}
   )
 
-  /* eslint-disable no-use-before-define */
+  // :: Object<string, ProjectConductor>
+  const projectConductors = projects.reduce(
+    (acc, project) =>
+      Object.assign(acc, {
+        [project.name]: createProjectConductor(project, watchers[project.name]),
+      }),
+    {}
+  )
 
   const queueProjectForBuild = (project) => {
     terminal.verbose(`Attempting to queue ${project.name} for build`)
@@ -67,7 +88,7 @@ module.exports = function develop(projects) {
       .then(() => ({ success: true }))
       // Build failed 😭
       .catch((err) => {
-        terminal.error(`Please fix the issue on on ${project.name}:`, err)
+        terminal.error(`Error! Please fix the following issue with ${project.name}:`, err)
         return { success: false }
       })
       // Finally...
@@ -108,24 +129,21 @@ module.exports = function develop(projects) {
     }
   }
 
-  /* eslint-enable no-use-before-define */
+  // READY...
+  projects.forEach(queueProjectForBuild)
 
-  // eslint-disable-next-line no-unused-vars
-  const onChange = project => (changes) => {
-    // TODO: Clever "minimal" changes build? Need to pass along some info?
-    queueProjectForBuild(project)
-    // If no active build running then we will call off to run next item in
-    // the queue.
-    if (!currentBuild) {
-      buildNextInTheQueue()
-    }
-  }
+  // SET...
+  Object.keys(watchers).forEach(projectName => watchers[projectName].start())
 
-  const watchers = projects
-    // We don't want to include watchers on web types as they will rely
-    // on webpack-dev-server for serving and watching.
-    .filter(x => !x.config.target === 'web')
-    .map(project => createProjectWatcher(onChange(project), project))
+  // GO! 🚀
+  buildNextInTheQueue()
+
+  // prevent node process from exiting. (until CTRL + C is pressed at least)
+  process.stdin.read()
+
+  terminal.info('Press CTRL + C to exit')
+
+  // GRACEFUL SHUTTING DOWN HANDLED BELOW:
 
   let shuttingDown = false
 
@@ -136,8 +154,8 @@ module.exports = function develop(projects) {
 
     terminal.info('Shutting down development environment...')
 
-    // Firstly shut down all our file watchers.
-    watchers.forEach(watcher => watcher.close())
+    // Firstly kill all our watchers.
+    Object.keys(watchers).forEach(projectName => watchers[projectName].stop())
 
     // Then call off the `.kill()` against all our project conductors.
     Promise.all(R.values(projectConductors).map(projectConductor => projectConductor.kill()))
@@ -165,17 +183,4 @@ module.exports = function develop(projects) {
   process.on('exit', () => {
     terminal.info('Till next time. *kiss*')
   })
-
-  // READY...
-  projects
-    // SET...
-    .forEach(queueProjectForBuild)
-
-  // GO! 🚀
-  buildNextInTheQueue()
-
-  // prevent node process from exiting. (until CTRL + C is pressed at least)
-  process.stdin.read()
-
-  terminal.info('Press CTRL + C to exit')
 }

@@ -4,7 +4,7 @@ const terminal = require('constellate-utils/terminal')
 const startDevServer = require('../../webpack/startDevServer')
 const buildProject = require('../../projects/buildProject')
 
-module.exports = function createProjectConductor(project) {
+module.exports = function createProjectConductor(project, watcher) {
   let runningServer
 
   // :: Project -> Promise
@@ -57,6 +57,18 @@ module.exports = function createProjectConductor(project) {
       .then((port) => {
         terminal.verbose(`Found free port ${port} for webpack dev server`)
         return startDevServer(project, { port })
+          .then(() => {
+            // No need for the watcher now as webpack-dev-server has an inbuilt
+            // watcher.
+            watcher.stop()
+          })
+          .catch((err) => {
+            // Ensure we fire up a watcher so that we can track when the issue
+            // is fixed.
+            watcher.start()
+            // Throw the error along
+            throw err
+          })
       })
       .then((webpackDevServer) => {
         runningServer = {
