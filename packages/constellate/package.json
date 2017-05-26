@@ -1,7 +1,7 @@
 {
   "name": "constellate",
   "description": "The ❤️ of Constellate applications.",
-  "version": "0.0.16",
+  "version": "0.0.17",
   "repository": "constellators/constellate",
   "license": "MIT",
   "engines": {
@@ -46,7 +46,7 @@
     "case-sensitive-paths-webpack-plugin": "^2.0.0",
     "chokidar": "^1.7.0",
     "commander": "^2.9.0",
-    "constellate-utils": "^0.0.11",
+    "constellate-utils": "^0.0.17",
     "cross-spawn": "^5.1.0",
     "css-loader": "^0.28.2",
     "eslint-config-constellate": "^0.0.11",
