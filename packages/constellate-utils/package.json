@@ -1,7 +1,7 @@
 {
   "name": "constellate-utils",
   "description": "Utils for working with Constellate projects.",
-  "version": "0.0.17",
+  "version": "0.0.18",
   "repository": "constellators/constellate",
   "license": "MIT",
   "engines": {
