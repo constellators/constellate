@@ -10,7 +10,7 @@ process.on('unhandledRejection', (err) => {
 })
 
 const program = require('commander')
-const terminal = require('constellate-utils/terminal')
+const terminal = require('constellate-dev-utils/terminal')
 
 const packageJson = require('../package.json')
 const resolveProjects = require('../projects/resolveProjects')

@@ -1,5 +1,5 @@
 const pSeries = require('p-series')
-const terminal = require('constellate-utils/terminal')
+const terminal = require('constellate-dev-utils/terminal')
 const buildProjects = require('../projects/buildProjects')
 
 function packageProject(project) {

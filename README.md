@@ -4,6 +4,4 @@
 
 <h1 align="center">constellate</h1>
 
-Scalable Node applications.
-
-Coming soon.
+Rapid Javascript monorepos.

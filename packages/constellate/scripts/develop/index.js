@@ -1,7 +1,7 @@
 /* eslint-disable no-use-before-define */
 
 const R = require('ramda')
-const terminal = require('constellate-utils/terminal')
+const terminal = require('constellate-dev-utils/terminal')
 const cleanProjects = require('../../projects/cleanProjects')
 const createProjectConductor = require('./createProjectConductor')
 const createProjectWatcher = require('./createProjectWatcher')

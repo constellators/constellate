@@ -4,15 +4,22 @@
  - [X] CHORE - Move constellate configuration into `constellate.js` files.
  - [ ] COMMAND - Create project
  - [X] COMMAND - Clean
+ - [ ] COMMAND - Link
  - [ ] COMMAND - Package
  - [ ] COMMAND - Publish
  - [ ] COMMAND - Deploy
  - [ ] CONFIG - Make the node version configurable.
- - [ ] CONFIG - Strategy for consuming dotenv?
  - [ ] CONFIG - Make the Babel-ification process optional. In which case a symlink could be created from build/index.js to modules/index.js.  Just don't use any syntax that requires Babel in your code.
  - [ ] DEVELOP - Dependency based reloads.
  - [ ] DEVELOP - Manual reload override.
  - [ ] DEVELOP - CONFIG - Allow for explicit dependency rebuild ignore.
+ - [ ] DOCS
+   - [ ] Intro
+   - [ ] Video overview
+   - [ ] Blog post
+   - [ ] SIGTERM
+   - [ ] constellate.app.js
+   - [ ] constellate.proj.js
  - [X] FEATURE - webpack-dev-server integration for `webapp` types.
  - [ ] FEATURE - Command hooks
    - [ ] prebuild
@@ -34,6 +41,7 @@
    - [X] Startup Errors
    - [X] Compile Time Errors
    - [X] Runtime Errors
+   - [ ] Warn if a constellate dep is not yet linked
  - [X] UX - Add "unhandled promise" error handler to script root.
  - [ ] UX - Terminal feedback.
  - [X] UX - Source map support for transpiled bundles.

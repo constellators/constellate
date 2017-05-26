@@ -1,6 +1,6 @@
 const spawn = require('cross-spawn')
 const getPort = require('get-port')
-const terminal = require('constellate-utils/terminal')
+const terminal = require('constellate-dev-utils/terminal')
 const startDevServer = require('../../webpack/startDevServer')
 const buildProject = require('../../projects/buildProject')
 

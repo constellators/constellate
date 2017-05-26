@@ -8,8 +8,8 @@
 const path = require('path')
 const R = require('ramda')
 
-const removeNil = require('constellate-utils/arrays/removeNil')
-const onlyIf = require('constellate-utils/logic/onlyIf')
+const removeNil = require('constellate-dev-utils/arrays/removeNil')
+const onlyIf = require('constellate-dev-utils/logic/onlyIf')
 
 // :: Options -> BabelConfig
 module.exports = function generateConfig(project) {

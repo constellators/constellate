@@ -16,6 +16,6 @@
     "prettier-eslint-cli": "^4.0.1"
   },
   "scripts": {
-    "updatedeps": "lerna exec --concurrency 1 -- npm-check -u"
+    "update": "lerna exec --concurrency 1 -- npm-check -u"
   }
 }

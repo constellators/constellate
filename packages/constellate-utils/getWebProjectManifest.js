@@ -8,7 +8,13 @@ const requireFn = typeof __non_webpack_require__ !== 'undefined'
     __non_webpack_require__
   : require
 
-module.exports = function getAssets(projectName) {
+/**
+ * Gets the manifest for the constellate web project by the given name.
+ *
+ * @param  {string} projectName The project's name
+ * @return {Object}             The manifest
+ */
+module.exports = function getWebProjectManifest(projectName) {
   const target = path.resolve(
     process.cwd(),
     `./node_modules/${projectName}/build/webpack-manifest.json`
@@ -22,7 +28,10 @@ module.exports = function getAssets(projectName) {
     return {}
   }
   return {
-    js: manifest[projectName].js,
-    css: manifest[projectName].css,
+    main: {
+      js: manifest[projectName].js,
+      css: manifest[projectName].css,
+    },
+    manifest,
   }
 }

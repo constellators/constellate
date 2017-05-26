@@ -1,6 +1,6 @@
 const R = require('ramda')
 
-const terminal = require('constellate-utils/terminal')
+const terminal = require('constellate-dev-utils/terminal')
 
 const transpile = require('../babel/transpile')
 const bundle = require('../webpack/bundle')

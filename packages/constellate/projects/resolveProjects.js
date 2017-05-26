@@ -17,7 +17,7 @@ const resolveProjectPath = projectName => relativePath =>
 const toProject = (projectName) => {
   const thisProjectPath = resolveProjectPath(projectName)
   const packageJsonPath = thisProjectPath('./package.json')
-  const constellateConfigPath = thisProjectPath('./constellate.js')
+  const constellateConfigPath = thisProjectPath('./constellate.proj.js')
   const config = fs.existsSync(constellateConfigPath)
     ? // eslint-disable-next-line global-require, import/no-dynamic-require
       Object.assign({}, defaultConfig, require(constellateConfigPath))

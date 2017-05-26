@@ -1,7 +1,7 @@
 const webpack = require('webpack')
 const WebpackDevServer = require('webpack-dev-server')
-const terminal = require('constellate-utils/terminal')
-const throttle = require('constellate-utils/fns/throttle')
+const terminal = require('constellate-dev-utils/terminal')
+const throttle = require('constellate-dev-utils/fns/throttle')
 const generateConfig = require('./generateConfig')
 const extractError = require('./extractError')
 

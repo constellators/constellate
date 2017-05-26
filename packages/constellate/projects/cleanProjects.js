@@ -1,6 +1,6 @@
 const fs = require('fs-extra')
 
-const terminal = require('constellate-utils/terminal')
+const terminal = require('constellate-dev-utils/terminal')
 
 module.exports = function cleanProjects(projects) {
   projects.forEach((project) => {

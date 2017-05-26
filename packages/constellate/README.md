@@ -4,10 +4,4 @@
 
 <h1 align="center">constellate</h1>
 
-The CLI to build, develop and deploy [Constellate](https://github.com/constellators/constellate) projects.
-
-----
-
-### DOCS TODO
-
-  - Using SIGTERM to do some graceful shutdown
+The ❤️ of [Constellate](https://github.com/constellators/constellate) applications.
