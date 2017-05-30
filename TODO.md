@@ -6,13 +6,14 @@ use why-is-node-running for helpful errors
  - [ ] BUILD - Chokidar events should result in the absolute minimal amount of work being done. e.g. transpile a single file. remove a dir, etc
  - [X] CHORE - Move constellate configuration into `constellate.js` files.
  - [ ] COMMAND - Create project
- - [ ] COMMAND - Bootstrap
+ - [X] COMMAND - Bootstrap
+ - [X] COMMAND - Update
  - [X] COMMAND - Clean
  - [X] COMMAND - Build
  - [X] COMMAND - Develop
  - [ ] COMMAND - Publish
  - [ ] COMMAND - Deploy
- - [ ] CONFIG - Make the node version configurable.
+ - [ ] CONFIG - Make the target node version configurable.
  - [ ] CONFIG - Make the Babel-ification process optional. In which case a symlink could be created from build/index.js to modules/index.js.  Just don't use any syntax that requires Babel in your code.
  - [X] DEVELOP - Dependency based reloads.
  - [ ] DEVELOP - Manual reload override.
@@ -45,11 +46,10 @@ use why-is-node-running for helpful errors
    - [X] Startup Errors
    - [X] Compile Time Errors
    - [X] Runtime Errors
-   - [ ] Warn if a constellate dep is not yet linked
  - [X] UX - Add "unhandled promise" error handler to script root.
- - [ ] UX - Terminal feedback.
+ - [X] UX - Terminal feedback.
  - [X] UX - Source map support for transpiled bundles.
  - [X] UX - Rename webpack output to match package name so that build output is easier to interpret.
- - [ ] UX - Ensure proper webpack error handling https://webpack.js.org/api/node/#error-handling
+ - [X] UX - Ensure proper webpack error handling https://webpack.js.org/api/node/#error-handling
  - [X] WEBPACK - Use https://github.com/Urthen/case-sensitive-paths-webpack-plugin
  - [ ] ...

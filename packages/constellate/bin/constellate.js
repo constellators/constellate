@@ -29,12 +29,10 @@ program
   .option('-p, --projects <projects>', 'specify the projects to bootstrap', list)
   .action(({ projects }) => {
     terminal.info('Running bootstrap')
-
     // If no NODE_ENV is set we will default to 'production'.
     if (!process.env.NODE_ENV) {
       process.env.NODE_ENV = 'production'
     }
-
     const bootstrap = require('../scripts/bootstrap')
     return resolveProjects(projects)
       .then(bootstrap)
@@ -43,17 +41,32 @@ program
   })
 
 program
+  .command('update')
+  .description('runs an interactive dependency update process for the projects')
+  .option('-p, --projects <projects>', 'specify the projects to update', list)
+  .action(({ projects }) => {
+    terminal.info('Running update')
+    // If no NODE_ENV is set we will default to 'production'.
+    if (!process.env.NODE_ENV) {
+      process.env.NODE_ENV = 'production'
+    }
+    const update = require('../scripts/update')
+    return resolveProjects(projects)
+      .then(update)
+      .then(() => terminal.success('Update succeeded'))
+      .catch(err => terminal.error('Update failed', err))
+  })
+
+program
   .command('build')
   .description('build the projects')
   .option('-p, --projects <projects>', 'specify the projects to build', list)
   .action(({ projects }) => {
     terminal.info('Running build')
-
     // If no NODE_ENV is set we will default to 'production'.
     if (!process.env.NODE_ENV) {
       process.env.NODE_ENV = 'production'
     }
-
     const build = require('../scripts/build')
     return resolveProjects(projects)
       .then(build)
@@ -79,12 +92,10 @@ program
   .option('-p, --projects <projects>', 'specify the projects to develop', list)
   .action(({ projects }) => {
     terminal.info('Starting develop mode')
-
     // If no NODE_ENV is set we will default to 'development'.
     if (!process.env.NODE_ENV) {
       process.env.NODE_ENV = 'development'
     }
-
     const develop = require('../scripts/develop')
     resolveProjects(projects).then(develop)
   })
