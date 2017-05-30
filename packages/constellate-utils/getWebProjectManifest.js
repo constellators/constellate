@@ -17,20 +17,20 @@ const requireFn = typeof __non_webpack_require__ !== 'undefined'
 module.exports = function getWebProjectManifest(projectName) {
   const target = path.resolve(
     process.cwd(),
-    `./node_modules/${projectName}/modules/webpack-manifest.json`
+    `./node_modules/${projectName}/modules/webpack-manifest.json`,
   )
   if (!fs.existsSync(target)) {
     throw new Error(`No manifest found at ${target}`)
   }
   // eslint-disable-next-line global-require,import/no-dynamic-require
   const manifest = requireFn(target)
-  if (!manifest[projectName]) {
+  if (!manifest.index) {
     return {}
   }
   return {
     main: {
-      js: manifest[projectName].js,
-      css: manifest[projectName].css,
+      js: manifest.index.js,
+      css: manifest.index.css,
     },
     manifest,
   }

@@ -20,7 +20,7 @@ module.exports = function createProjectConductor(projects, project, watcher) {
         {
           stdio: [process.stdin, process.stdout, 'pipe'],
           cwd: project.paths.root,
-        }
+        },
       )
       projectProcess.stderr.on('data', (data) => {
         terminal.error(`Error running ${project.name}`, data.toString())
@@ -110,7 +110,7 @@ module.exports = function createProjectConductor(projects, project, watcher) {
             return ensureNodeServerRunning()
           }
           return undefined
-        })
+        }),
       )
     },
     // :: void -> Promise

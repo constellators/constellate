@@ -6,14 +6,15 @@ use why-is-node-running for helpful errors
  - [ ] BUILD - Chokidar events should result in the absolute minimal amount of work being done. e.g. transpile a single file. remove a dir, etc
  - [X] CHORE - Move constellate configuration into `constellate.js` files.
  - [ ] COMMAND - Create project
+ - [ ] COMMAND - Bootstrap
  - [X] COMMAND - Clean
- - [ ] COMMAND - Link
- - [ ] COMMAND - Package
+ - [X] COMMAND - Build
+ - [X] COMMAND - Develop
  - [ ] COMMAND - Publish
  - [ ] COMMAND - Deploy
  - [ ] CONFIG - Make the node version configurable.
  - [ ] CONFIG - Make the Babel-ification process optional. In which case a symlink could be created from build/index.js to modules/index.js.  Just don't use any syntax that requires Babel in your code.
- - [ ] DEVELOP - Dependency based reloads.
+ - [X] DEVELOP - Dependency based reloads.
  - [ ] DEVELOP - Manual reload override.
  - [ ] DEVELOP - CONFIG - Allow for explicit dependency rebuild ignore.
  - [ ] DOCS

@@ -24,15 +24,22 @@ console.log(`\nConstellate v${packageJson.version}\n`)
 program.version(packageJson.version)
 
 program
-  .command('link')
-  .description('links your constellate projects based on their configuration')
+  .command('bootstrap')
+  .description('bootstraps the projects')
+  .option('-p, --projects <projects>', 'specify the projects to bootstrap', list)
   .action(({ projects }) => {
-    terminal.info('Linking projects')
-    const link = require('../scripts/link')
-    resolveProjects(projects)
-      .then(link)
-      .then(() => terminal.success('Linking succeeded'))
-      .catch(err => terminal.error('Linking failed', err))
+    terminal.info('Running bootstrap')
+
+    // If no NODE_ENV is set we will default to 'production'.
+    if (!process.env.NODE_ENV) {
+      process.env.NODE_ENV = 'production'
+    }
+
+    const bootstrap = require('../scripts/bootstrap')
+    return resolveProjects(projects)
+      .then(bootstrap)
+      .then(() => terminal.success('Bootstrap succeeded'))
+      .catch(err => terminal.error('Bootstrap failed', err))
   })
 
 program
@@ -56,12 +63,11 @@ program
 
 program
   .command('clean')
-  .description('cleans the projects')
-  .option('-p, --projects <projects>', 'specify the projects to clean', list)
-  .action(({ projects }) => {
+  .description('Deletes the node_modules and build files for all the projects')
+  .action(() => {
     terminal.info('Running clean')
     const clean = require('../scripts/clean')
-    return resolveProjects(projects)
+    return resolveProjects()
       .then(clean)
       .then(() => terminal.success('Clean finished'))
       .catch(err => terminal.error('Clean failed', err))
@@ -81,25 +87,6 @@ program
 
     const develop = require('../scripts/develop')
     resolveProjects(projects).then(develop)
-  })
-
-program
-  .command('package')
-  .description('packages up the projects, ready for publishing or deployment')
-  .option('-p, --projects <projects>', 'specify the projects to package', list)
-  .action(({ projects }) => {
-    terminal.info('Starting packaging')
-
-    // If no NODE_ENV is set we will default to 'production'.
-    if (!process.env.NODE_ENV) {
-      process.env.NODE_ENV = 'production'
-    }
-
-    const packageProjects = require('../scripts/packageProjects')
-    resolveProjects(projects)
-      .then(packageProjects)
-      .then(() => terminal.success('Packaging completed'))
-      .catch(err => terminal.error('Packaging failed', err))
   })
 
 program.parse(process.argv)

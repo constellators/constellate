@@ -2,7 +2,7 @@
 
 const R = require('ramda')
 const terminal = require('constellate-dev-utils/terminal')
-const cleanProjects = require('../../projects/cleanProjects')
+const cleanBuild = require('../../projects/cleanBuild')
 const createProjectConductor = require('./createProjectConductor')
 const createProjectWatcher = require('./createProjectWatcher')
 
@@ -15,11 +15,11 @@ module.exports = function develop(projects) {
 
   // :: Project -> Project -> bool
   const projectHasDependant = R.curry((dependant, project) =>
-    R.contains(dependant.name, project.dependants)
+    R.contains(dependant.name, project.dependants),
   )
 
   // Firstly clean up shop.
-  cleanProjects(projects)
+  cleanBuild()
 
   // :: Project -> Array<Project>
   const getProjectDependants = project =>
@@ -40,7 +40,7 @@ module.exports = function develop(projects) {
   const watchers = projects.reduce(
     (acc, project) =>
       Object.assign(acc, { [project.name]: createProjectWatcher(onChange(project), project) }),
-    {}
+    {},
   )
 
   // :: Object<string, ProjectConductor>
@@ -49,7 +49,7 @@ module.exports = function develop(projects) {
       Object.assign(acc, {
         [project.name]: createProjectConductor(projects, project, watchers[project.name]),
       }),
-    {}
+    {},
   )
 
   const queueProjectForBuild = (project) => {
@@ -113,7 +113,7 @@ module.exports = function develop(projects) {
   const buildNextInTheQueue = () => {
     if (currentBuild) {
       terminal.warning(
-        'Tried to build next item in queue even though there is an active build running'
+        'Tried to build next item in queue even though there is an active build running',
       )
       return
     }

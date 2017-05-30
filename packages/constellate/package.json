@@ -11,6 +11,7 @@
     "url": "https://github.com/constellators/constellate/issues"
   },
   "files": [
+    "app",
     "babel",
     "bin",
     "projects",
