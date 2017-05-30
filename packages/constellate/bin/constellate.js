@@ -100,4 +100,18 @@ program
     resolveProjects(projects).then(develop)
   })
 
+program
+  .command('publish')
+  .description('publishes the projects')
+  // .option('-p, --projects <projects>', 'specify the projects to publish', list)
+  .action(() => {
+    terminal.info('Starting publish process')
+    // If no NODE_ENV is set we will default to 'production'.
+    if (!process.env.NODE_ENV) {
+      process.env.NODE_ENV = 'production'
+    }
+    const publish = require('../scripts/publish')
+    resolveProjects().then(publish)
+  })
+
 program.parse(process.argv)

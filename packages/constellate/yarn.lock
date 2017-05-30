@@ -1102,9 +1102,9 @@ caniuse-lite@^1.0.30000670:
   version "1.0.30000674"
   resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30000674.tgz#3eabc5e40ae2dce6375dd292f116b9e25bd505a7"
 
-case-sensitive-paths-webpack-plugin@^2.1.0:
-  version "2.1.0"
-  resolved "https://registry.yarnpkg.com/case-sensitive-paths-webpack-plugin/-/case-sensitive-paths-webpack-plugin-2.1.0.tgz#3f7baaeb51fc4ac757a794a5841dde1637d5ec5f"
+case-sensitive-paths-webpack-plugin@^2.1.1:
+  version "2.1.1"
+  resolved "https://registry.yarnpkg.com/case-sensitive-paths-webpack-plugin/-/case-sensitive-paths-webpack-plugin-2.1.1.tgz#3d29ced8c1f124bf6f53846fb3f5894731fdc909"
 
 caseless@~0.12.0:
   version "0.12.0"
@@ -1307,9 +1307,9 @@ constants-browserify@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/constants-browserify/-/constants-browserify-1.0.0.tgz#c20b96d8c617748aaf1c16021760cd27fcb8cb75"
 
-constellate-dev-utils@^0.0.21:
-  version "0.0.21"
-  resolved "https://registry.yarnpkg.com/constellate-dev-utils/-/constellate-dev-utils-0.0.21.tgz#30fc5fc1ceddea044b18868a9aad24515fe32183"
+constellate-dev-utils@^0.0.22:
+  version "0.0.22"
+  resolved "https://registry.yarnpkg.com/constellate-dev-utils/-/constellate-dev-utils-0.0.22.tgz#6ebee6b11b7a6607b39a34f94fa07ded0460c6a7"
   dependencies:
     chalk "^1.1.3"
     figures "^2.0.0"
@@ -1796,14 +1796,14 @@ eslint-config-airbnb@^15.0.1:
   dependencies:
     eslint-config-airbnb-base "^11.2.0"
 
-eslint-config-constellate@^0.0.21:
-  version "0.0.21"
-  resolved "https://registry.yarnpkg.com/eslint-config-constellate/-/eslint-config-constellate-0.0.21.tgz#123228eb26537b1a88cce26812ffa6fff3174b48"
+eslint-config-constellate@^0.0.22:
+  version "0.0.22"
+  resolved "https://registry.yarnpkg.com/eslint-config-constellate/-/eslint-config-constellate-0.0.22.tgz#98e434c79bb438cfdc6a05fff2427809518a21fa"
   dependencies:
     babel-eslint "7.2.3"
     eslint "^3.19.0"
     eslint-config-airbnb "^15.0.1"
-    eslint-plugin-flowtype "^2.33.0"
+    eslint-plugin-flowtype "^2.34.0"
     eslint-plugin-import "^2.3.0"
     eslint-plugin-jsx-a11y "^5.0.3"
     eslint-plugin-react "^7.0.1"
@@ -1823,9 +1823,9 @@ eslint-module-utils@^2.0.0:
     debug "2.2.0"
     pkg-dir "^1.0.0"
 
-eslint-plugin-flowtype@^2.33.0:
-  version "2.33.0"
-  resolved "https://registry.yarnpkg.com/eslint-plugin-flowtype/-/eslint-plugin-flowtype-2.33.0.tgz#b2783814ed2ddcf729953b8f65ff73c90cabee4b"
+eslint-plugin-flowtype@^2.34.0:
+  version "2.34.0"
+  resolved "https://registry.yarnpkg.com/eslint-plugin-flowtype/-/eslint-plugin-flowtype-2.34.0.tgz#b9875f314652e5081623c9d2b18a346bbb759c09"
   dependencies:
     lodash "^4.15.0"
 

@@ -13,7 +13,7 @@ module.exports = function update(projects) {
 
   if (['npm', 'yarn'].find(R.equals(client)) == null) {
     throw new Error(
-      `Unsupported packageClient specified in constellate app configuration: ${client}`,
+      `Unsupported packageClient specified in constellate app configuration: ${client}`
     )
   }
 
@@ -29,7 +29,7 @@ module.exports = function update(projects) {
       {
         cwd: project.paths.root,
         stdio: 'inherit',
-      },
+      }
     )
   })
 

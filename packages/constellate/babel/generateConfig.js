@@ -51,7 +51,7 @@ module.exports = function generateConfig(project) {
         'env',
         {
           targets: {
-            node: 'current',
+            node: project.config.nodeVersion,
           },
           // If we are using webpack as a compiler then we will need to ignore
           // transpilation of es-modules as they are handled by webpack.

@@ -42,7 +42,7 @@ module.exports = function generateConfig(project, options = {}) {
       index: removeNil([
         onlyIf(
           isTargettingWeb && env === 'development',
-          `webpack-dev-server/client?http://0.0.0.0:${devServerPort}`,
+          `webpack-dev-server/client?http://0.0.0.0:${devServerPort}`
         ),
 
         onlyIf(isTargettingWeb && env === 'development', 'webpack/hot/dev-server'),
@@ -164,7 +164,7 @@ module.exports = function generateConfig(project, options = {}) {
         new AssetsPlugin({
           filename: 'webpack-manifest.json',
           path: project.paths.buildModules,
-        }),
+        })
       ),
 
       // Moment.js is an extremely popular library that bundles large locale files
@@ -196,7 +196,7 @@ module.exports = function generateConfig(project, options = {}) {
               comments: false,
               screw_ie8: true,
             },
-          }),
+          })
       ),
 
       // For our production web targets we need to make sure we pass the required
@@ -206,7 +206,7 @@ module.exports = function generateConfig(project, options = {}) {
         () =>
           new webpack.LoaderOptionsPlugin({
             minimize: true,
-          }),
+          })
       ),
 
       // Watcher doesn't work well if you mistype casing in a path so we use
@@ -220,7 +220,7 @@ module.exports = function generateConfig(project, options = {}) {
       // See https://github.com/facebookincubator/create-react-app/issues/186
       onlyIf(
         env === 'development',
-        () => new WatchMissingNodeModulesPlugin(project.paths.nodeModules),
+        () => new WatchMissingNodeModulesPlugin(project.paths.nodeModules)
       ),
 
       // We don't want webpack errors to occur during development as it will
@@ -230,7 +230,7 @@ module.exports = function generateConfig(project, options = {}) {
       // We need this plugin to enable hot reloading of our client.
       onlyIf(
         isTargettingWeb && env === 'development',
-        () => new webpack.HotModuleReplacementPlugin(),
+        () => new webpack.HotModuleReplacementPlugin()
       ),
 
       // For a production build of a web target we need to extract the CSS into
@@ -241,7 +241,7 @@ module.exports = function generateConfig(project, options = {}) {
           new ExtractTextPlugin({
             filename: '[name].[contenthash:8].css',
             allChunks: true,
-          }),
+          })
       ),
 
       // This grants us source map support, which combined with our webpack
@@ -255,7 +255,7 @@ module.exports = function generateConfig(project, options = {}) {
           banner: 'require("source-map-support").install();',
           raw: true,
           entryOnly: false,
-        }),
+        })
       ),
 
       // This will inject the module.hot.accept code in the entry file for our
@@ -266,7 +266,7 @@ module.exports = function generateConfig(project, options = {}) {
           // eslint-disable-next-line global-require
           new (require('./plugins/InjectHMRCodeForEntryModule.js'))({
             entryFile: project.paths.modulesEntry,
-          }),
+          })
       ),
     ]),
 

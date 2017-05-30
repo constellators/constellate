@@ -23,7 +23,7 @@ module.exports = function buildProject(projects, project) {
       findProject,
       R.path(['paths', 'packageJson']),
       x => readPkg.sync(x, { normalize: false }),
-      R.prop('name'),
+      R.prop('name')
     )(projectName)
 
   function packageBasedBuild() {
@@ -46,6 +46,10 @@ module.exports = function buildProject(projects, project) {
     // Create a package.json file for the build of the project
     const sourcePkgJson = readPkg.sync(project.paths.packageJson, { normalize: false })
     const buildPkgJson = Object.assign({}, sourcePkgJson, {
+      engines: {
+        node: `>=${project.config.nodeVersion}`,
+      },
+      version: constellateAppConfig.version,
       dependencies: Object.assign(
         {},
         (project.config.dependencies || []).reduce(
@@ -53,9 +57,9 @@ module.exports = function buildProject(projects, project) {
             Object.assign(acc, {
               [getPackageName(dependencyName)]: `^${constellateAppConfig.version}`,
             }),
-          {},
+          {}
         ),
-        sourcePkgJson.dependencies || {},
+        sourcePkgJson.dependencies || {}
       ),
       main: 'modules/index.js',
       files: ['modules'],
@@ -69,7 +73,7 @@ module.exports = function buildProject(projects, project) {
     // reinstall the dependencies.
     fs.ensureSymlinkSync(
       project.paths.nodeModules,
-      path.resolve(project.paths.buildRoot, './node_modules'),
+      path.resolve(project.paths.buildRoot, './node_modules')
     )
 
     // Finally bundle/transpile the source

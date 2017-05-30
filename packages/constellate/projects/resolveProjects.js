@@ -2,8 +2,8 @@ const fs = require('fs')
 const path = require('path')
 const toposort = require('toposort')
 const R = require('ramda')
-const readPkg = require('read-pkg')
 const terminal = require('constellate-dev-utils/terminal')
+const getAppConfig = require('../app/getAppConfig')
 
 const defaultConfig = {
   target: 'node',
@@ -17,12 +17,17 @@ const resolveProjectPath = projectName => relativePath =>
 
 // :: string -> Project
 const toProject = (projectName) => {
+  const appConfig = getAppConfig()
+
   const thisProjectPath = resolveProjectPath(projectName)
   const constellateConfigPath = thisProjectPath('./constellate.js')
-  const config = fs.existsSync(constellateConfigPath)
-    ? // eslint-disable-next-line global-require, import/no-dynamic-require
-      Object.assign({}, defaultConfig, require(constellateConfigPath))
-    : defaultConfig
+  const config = Object.assign(
+    {},
+    defaultConfig,
+    appConfig.projectDefaults || {},
+    // eslint-disable-next-line global-require, import/no-dynamic-require
+    fs.existsSync(constellateConfigPath) ? require(constellateConfigPath) : {}
+  )
   const buildRoot = path.resolve(process.cwd(), `./build/${projectName}`)
   return {
     name: projectName,
@@ -55,7 +60,7 @@ function orderByLinkedDependencies(projects) {
 
   // :: Array<Project>
   const projectsWithNoDependencies = R.pipe(R.filter(hasNoDependencies), R.map(R.prop('name')))(
-    projects,
+    projects
   )
 
   // :: string -> Project
@@ -66,7 +71,7 @@ function orderByLinkedDependencies(projects) {
     toposort,
     R.without(projectsWithNoDependencies),
     R.concat(projectsWithNoDependencies),
-    findProjectByName,
+    findProjectByName
   )(projects)
 }
 
@@ -98,7 +103,7 @@ function getAllProjects() {
       const dependency = R.find(R.propEq('name', dependencyName), projects)
       if (!dependency) {
         terminal.warning(
-          `Could not find ${dependencyName} referenced as dependency for ${project.name}`,
+          `Could not find ${dependencyName} referenced as dependency for ${project.name}`
         )
         return acc
       }
@@ -114,21 +119,21 @@ function getAllProjects() {
     R.map(project =>
       Object.assign(project, {
         dependencies: getDependencies(project),
-      }),
+      })
     ),
     // Projects that directly depend on this project.
     R.map(project =>
       Object.assign(project, {
         dependants: getDependants(project),
-      }),
+      })
     ),
     // Projects ordered based on their dependencies based order,
     // which mean building them in order should be safe.
-    orderByLinkedDependencies,
+    orderByLinkedDependencies
   )(projects)
 
   terminal.verbose(
-    `Project build order: \n\t- ${fullyResolvedProjects.map(R.prop('name')).join('\n\t- ')}`,
+    `Project build order: \n\t- ${fullyResolvedProjects.map(R.prop('name')).join('\n\t- ')}`
   )
 
   return fullyResolvedProjects

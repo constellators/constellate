@@ -1,11 +1,11 @@
 {
   "name": "constellate-utils",
   "description": "Utils for working with Constellate projects.",
-  "version": "0.0.23",
+  "version": "0.0.25",
   "repository": "constellators/constellate",
   "license": "MIT",
   "engines": {
-    "node": ">=8"
+    "node": ">=6"
   },
   "bugs": {
     "url": "https://github.com/constellators/constellate/issues"

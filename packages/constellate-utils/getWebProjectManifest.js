@@ -17,7 +17,7 @@ const requireFn = typeof __non_webpack_require__ !== 'undefined'
 module.exports = function getWebProjectManifest(projectName) {
   const target = path.resolve(
     process.cwd(),
-    `./node_modules/${projectName}/modules/webpack-manifest.json`,
+    `./node_modules/${projectName}/modules/webpack-manifest.json`
   )
   if (!fs.existsSync(target)) {
     throw new Error(`No manifest found at ${target}`)
