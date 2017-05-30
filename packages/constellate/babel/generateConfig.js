@@ -24,7 +24,7 @@ module.exports = function generateConfig(project) {
     babelrc: false,
 
     // Handy for sourcemaps generation.
-    sourceRoot: project.paths.source,
+    sourceRoot: project.paths.modules,
 
     // Source maps will be useful for debugging errors in our node executions.
     sourceMaps: isTargettingNode ? 'both' : false,
@@ -130,7 +130,7 @@ module.exports = function generateConfig(project) {
       // if webpack is being used as a transpiler as it will inline sourcemap
       // support.
       onlyIf(
-        isTargettingNode && !usingWebpackAsCompiler,
+        isTargettingNode && !usingWebpackAsCompiler && env === 'development',
         path.resolve(__dirname, './plugins/sourceMapSupport.js')
       ),
     ]),

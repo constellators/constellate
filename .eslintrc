@@ -17,14 +17,6 @@
     "no-confusing-arrow": 0,
     // Do not care.
     "no-underscore-dangle": 0,
-    // Node currently does not support trailing function commas
-    "comma-dangle": ["error", {
-      "arrays": "always-multiline",
-      "objects": "always-multiline",
-      "imports": "always-multiline",
-      "exports": "always-multiline",
-      "functions": "never",
-    }],
     // We want the console
     "no-console": 0
   }

@@ -2,6 +2,7 @@ const fs = require('fs')
 const path = require('path')
 const toposort = require('toposort')
 const R = require('ramda')
+const readPkg = require('read-pkg')
 const terminal = require('constellate-dev-utils/terminal')
 
 const defaultConfig = {
@@ -16,25 +17,36 @@ const resolveProjectPath = projectName => relativePath =>
 
 // :: string -> Project
 const toProject = (projectName) => {
+  const buildRoot = path.resolve(process.cwd(), `./build/${projectName}`)
+
   const thisProjectPath = resolveProjectPath(projectName)
   const constellateConfigPath = thisProjectPath('./constellate.js')
   const config = fs.existsSync(constellateConfigPath)
     ? // eslint-disable-next-line global-require, import/no-dynamic-require
       Object.assign({}, defaultConfig, require(constellateConfigPath))
     : defaultConfig
+
+  const packageJsonPath = thisProjectPath('./package.json')
+  const packageJson = readPkg.sync(packageJsonPath)
+
+  const packageDependenciesAsLocalFiles =
+    !!packageJson.private && !!config.dependencies && config.dependencies.length > 0
+
   return {
     name: projectName,
     config,
+    packageDependenciesAsLocalFiles,
     paths: {
       root: thisProjectPath('./'),
       constellateConfig: constellateConfigPath,
-      packageJson: thisProjectPath('./package.json'),
+      packageJson: packageJsonPath,
       nodeModules: thisProjectPath('./node_modules'),
-      source: thisProjectPath('./modules'),
-      sourceEntry: thisProjectPath('./modules/index.js'),
-      build: thisProjectPath('./build'),
-      buildEntry: thisProjectPath('./build/index.js'),
-      webpackCache: thisProjectPath('./.webpackcache'),
+      modules: thisProjectPath('./modules'),
+      modulesEntry: thisProjectPath('./modules/index.js'),
+      buildRoot,
+      buildModules: path.resolve(buildRoot, './modules'),
+      buildModulesEntry: path.resolve(buildRoot, './modules/index.js'),
+      webpackCache: path.resolve(buildRoot, './.webpackcache'),
     },
   }
 }
@@ -87,38 +99,40 @@ function getAllProjects() {
     .map(toProject)
 
   // :: Project -> Array<string>
-  const getConfiguredLinks = project => R.path(['config', 'link'], project) || []
+  const getConfiguredDependencies = project => R.path(['config', 'dependencies'], project) || []
 
   // :: Project -> Array<string>
-  const getLinkedDependencies = project =>
-    getConfiguredLinks(project).reduce((acc, linkName) => {
-      const link = R.find(R.propEq('name', linkName), projects)
-      if (!link) {
-        terminal.warning(`Could not find ${linkName} referenced as link for ${project.name}`)
+  const getDependencies = project =>
+    getConfiguredDependencies(project).reduce((acc, dependencyName) => {
+      const dependency = R.find(R.propEq('name', dependencyName), projects)
+      if (!dependency) {
+        terminal.warning(
+          `Could not find ${dependencyName} referenced as dependency for ${project.name}`
+        )
         return acc
       }
-      return acc.concat([linkName])
+      return acc.concat([dependencyName])
     }, [])
 
   // :: Project -> Array<string>
-  const getLinkedDependants = project =>
-    projects.filter(x => R.contains(project.name, getConfiguredLinks(x))).map(R.prop('name'))
+  const getDependants = project =>
+    projects.filter(x => R.contains(project.name, getConfiguredDependencies(x))).map(R.prop('name'))
 
   const fullyResolvedProjects = R.pipe(
     // The projects this project directly depends on.
     R.map(project =>
       Object.assign(project, {
-        dependencies: getLinkedDependencies(project),
+        dependencies: getDependencies(project),
       })
     ),
     // Projects that directly depend on this project.
     R.map(project =>
       Object.assign(project, {
-        dependants: getLinkedDependants(project),
+        dependants: getDependants(project),
       })
     ),
     // Projects ordered based on their dependencies based order,
-    // which mean building them in order would be "safe"/"correct".
+    // which mean building them in order should be safe.
     orderByLinkedDependencies
   )(projects)
 

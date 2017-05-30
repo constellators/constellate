@@ -1102,9 +1102,9 @@ caniuse-lite@^1.0.30000670:
   version "1.0.30000674"
   resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30000674.tgz#3eabc5e40ae2dce6375dd292f116b9e25bd505a7"
 
-case-sensitive-paths-webpack-plugin@^2.0.0:
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/case-sensitive-paths-webpack-plugin/-/case-sensitive-paths-webpack-plugin-2.0.0.tgz#60142d7d0beabdb35676ef0aeace3027da0578ba"
+case-sensitive-paths-webpack-plugin@^2.1.0:
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/case-sensitive-paths-webpack-plugin/-/case-sensitive-paths-webpack-plugin-2.1.0.tgz#3f7baaeb51fc4ac757a794a5841dde1637d5ec5f"
 
 caseless@~0.12.0:
   version "0.12.0"
@@ -1307,13 +1307,13 @@ constants-browserify@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/constants-browserify/-/constants-browserify-1.0.0.tgz#c20b96d8c617748aaf1c16021760cd27fcb8cb75"
 
-constellate-dev-utils@^0.0.19:
-  version "0.0.19"
-  resolved "https://registry.yarnpkg.com/constellate-dev-utils/-/constellate-dev-utils-0.0.19.tgz#cdf7744ee5c2c2782609eedf2f5abd4cb9891e97"
+constellate-dev-utils@^0.0.21:
+  version "0.0.21"
+  resolved "https://registry.yarnpkg.com/constellate-dev-utils/-/constellate-dev-utils-0.0.21.tgz#30fc5fc1ceddea044b18868a9aad24515fe32183"
   dependencies:
     chalk "^1.1.3"
     figures "^2.0.0"
-    ramda "^0.23.0"
+    ramda "^0.24.0"
 
 contains-path@^0.1.0:
   version "0.1.0"
@@ -1796,9 +1796,9 @@ eslint-config-airbnb@^15.0.1:
   dependencies:
     eslint-config-airbnb-base "^11.2.0"
 
-eslint-config-constellate@^0.0.18:
-  version "0.0.18"
-  resolved "https://registry.yarnpkg.com/eslint-config-constellate/-/eslint-config-constellate-0.0.18.tgz#cb1382dc1eeb6c751dc85b160658bdc80f992d62"
+eslint-config-constellate@^0.0.21:
+  version "0.0.21"
+  resolved "https://registry.yarnpkg.com/eslint-config-constellate/-/eslint-config-constellate-0.0.21.tgz#123228eb26537b1a88cce26812ffa6fff3174b48"
   dependencies:
     babel-eslint "7.2.3"
     eslint "^3.19.0"
@@ -3961,10 +3961,6 @@ querystringify@0.0.x:
 querystringify@~1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/querystringify/-/querystringify-1.0.0.tgz#6286242112c5b712fa654e526652bf6a13ff05cb"
-
-ramda@^0.23.0:
-  version "0.23.0"
-  resolved "https://registry.yarnpkg.com/ramda/-/ramda-0.23.0.tgz#ccd13fff73497a93974e3e86327bfd87bd6e8e2b"
 
 ramda@^0.24.0:
   version "0.24.0"

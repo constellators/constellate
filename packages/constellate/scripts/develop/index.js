@@ -47,7 +47,7 @@ module.exports = function develop(projects) {
   const projectConductors = projects.reduce(
     (acc, project) =>
       Object.assign(acc, {
-        [project.name]: createProjectConductor(project, watchers[project.name]),
+        [project.name]: createProjectConductor(projects, project, watchers[project.name]),
       }),
     {}
   )

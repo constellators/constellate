@@ -5,7 +5,6 @@
  * https://github.com/facebookincubator/create-react-app
  */
 
-const path = require('path')
 const webpack = require('webpack')
 const AssetsPlugin = require('assets-webpack-plugin')
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
@@ -47,13 +46,13 @@ module.exports = function generateConfig(project, options = {}) {
         onlyIf(isTargettingWeb && env === 'development', 'webpack/hot/dev-server'),
 
         // The application source entry.
-        project.paths.sourceEntry,
+        project.paths.modulesEntry,
       ]),
     },
 
     output: {
       // The dir in which our bundle should be output.
-      path: project.paths.build,
+      path: project.paths.buildModules,
 
       // The filename format for the entry chunk.
       // eslint-disable-next-line no-nested-ternary
@@ -90,7 +89,7 @@ module.exports = function generateConfig(project, options = {}) {
     // For web target packages we rely on webpack-dev-server, but will provide
     // the configuration here to make our configuration more centralised.
     devServer: onlyIf(isTargettingWeb, {
-      contentBase: project.paths.build,
+      contentBase: project.paths.buildModules,
       host: '0.0.0.0',
       disableHostCheck: true,
       headers: {
@@ -162,7 +161,7 @@ module.exports = function generateConfig(project, options = {}) {
         isTargettingWeb,
         new AssetsPlugin({
           filename: 'webpack-manifest.json',
-          path: project.paths.build,
+          path: project.paths.buildModules,
         })
       ),
 
@@ -249,7 +248,7 @@ module.exports = function generateConfig(project, options = {}) {
       // We use the BannerPlugin to make sure all of our chunks will get the
       // source maps support installed.
       onlyIf(
-        isTargettingNode,
+        isTargettingNode && env === 'development',
         new webpack.BannerPlugin({
           banner: 'require("source-map-support").install();',
           raw: true,
@@ -264,7 +263,7 @@ module.exports = function generateConfig(project, options = {}) {
         () =>
           // eslint-disable-next-line global-require
           new (require('./plugins/InjectHMRCodeForEntryModule.js'))({
-            entryFile: project.paths.sourceEntry,
+            entryFile: project.paths.modulesEntry,
           })
       ),
     ]),
@@ -277,7 +276,7 @@ module.exports = function generateConfig(project, options = {}) {
             {
               loader: 'cache-loader',
               options: {
-                cacheDirectory: path.resolve(project.paths.root, './.webpackcache'),
+                cacheDirectory: project.paths.webpackCache,
               },
             },
             {
@@ -285,7 +284,7 @@ module.exports = function generateConfig(project, options = {}) {
               options: generateBabelConfig(project),
             },
           ],
-          include: [project.paths.source],
+          include: [project.paths.modules],
         },
 
         {
@@ -326,7 +325,7 @@ module.exports = function generateConfig(project, options = {}) {
               },
             },
           ],
-          include: [project.paths.source, project.paths.nodeModules],
+          include: [project.paths.modules, project.paths.nodeModules],
         })),
 
         // For a production web target we use the ExtractTextPlugin which
@@ -357,7 +356,7 @@ module.exports = function generateConfig(project, options = {}) {
               },
             ],
           }),
-          include: [project.paths.source, project.paths.nodeModules],
+          include: [project.paths.modules, project.paths.nodeModules],
         })),
 
         // When targetting node we use the "/locals" version of the
@@ -365,7 +364,7 @@ module.exports = function generateConfig(project, options = {}) {
         onlyIf(isTargettingNode, {
           test: /\.css$/,
           loaders: ['css-loader/locals'],
-          include: [project.paths.source, project.paths.nodeModules],
+          include: [project.paths.modules, project.paths.nodeModules],
         }),
       ]),
     },

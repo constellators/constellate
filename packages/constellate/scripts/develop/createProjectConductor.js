@@ -4,7 +4,7 @@ const terminal = require('constellate-dev-utils/terminal')
 const startDevServer = require('../../webpack/startDevServer')
 const buildProject = require('../../projects/buildProject')
 
-module.exports = function createProjectConductor(project, watcher) {
+module.exports = function createProjectConductor(projects, project, watcher) {
   let runningServer
 
   // :: Project -> Promise
@@ -14,7 +14,7 @@ module.exports = function createProjectConductor(project, watcher) {
         // Spawn a node process
         'node',
         // That runs the build entry file
-        [project.paths.buildEntry],
+        [project.paths.buildModulesEntry],
         // Ensure that output supports color etc
         // We use pipe for the error so that we can log a header for ther error.
         {
@@ -104,7 +104,7 @@ module.exports = function createProjectConductor(project, watcher) {
 
       // else is targetting node
 
-      return buildProject(project).then(() =>
+      return buildProject(projects, project).then(() =>
         kill().then(() => {
           if (project.config.role === 'server') {
             return ensureNodeServerRunning()

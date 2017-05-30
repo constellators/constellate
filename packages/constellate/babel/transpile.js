@@ -28,20 +28,20 @@ const getJsFilePaths = rootPath => globby(['**/*.js', '!__tests__', '!test.js'],
 
 // :: Options -> Promise<void>
 module.exports = function transpile(project) {
-  return getJsFilePaths(project.paths.source).then((filePaths) => {
+  return getJsFilePaths(project.paths.modules).then((filePaths) => {
     // :: Object
     const babelConfig = generateConfig(project)
 
     // :: string -> Promise<void>
     const transpileFile = (filePath) => {
       const writeTranspiledFile = (result) => {
-        const outFile = path.resolve(project.paths.build, filePath)
+        const outFile = path.resolve(project.paths.buildModules, filePath)
         ensureParentDirectoryExists(outFile)
         fs.writeFileSync(outFile, result.code, { encoding: 'utf8' })
         fs.writeFileSync(`${outFile}.map`, JSON.stringify(result.map), { encoding: 'utf8' })
       }
-      const source = path.resolve(project.paths.source, filePath)
-      return transformFile(source, babelConfig).then(writeTranspiledFile)
+      const module = path.resolve(project.paths.modules, filePath)
+      return transformFile(module, babelConfig).then(writeTranspiledFile)
     }
 
     const limit = pLimit(maxConcurrentTranspiles)
