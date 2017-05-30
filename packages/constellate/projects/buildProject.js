@@ -13,6 +13,8 @@ const createLinksForProject = require('./createLinksForProject')
 module.exports = function buildProject(projects, project) {
   terminal.verbose(`Building ${project.name}`)
 
+  const findProject = projectName => R.find(R.propEq('name', projectName), projects)
+
   function packageBasedBuild() {
     // Create symlinks of (built) dependencies into the source node_modules for
     // the project.
@@ -23,35 +25,40 @@ module.exports = function buildProject(projects, project) {
     const buildPkgJson = Object.assign({}, sourcePkgJson, {
       dependencies: Object.assign(
         {},
-        (project.config.dependencies || []).reduce(
-          (acc, dependencyName) =>
-            Object.assign(acc, {
-              [dependencyName]: project.packageDependenciesAsLocalFiles
-                ? `file:./local_modules/${dependencyName}`
-                : // TODO: Proper version injection
-                  '^0.0.1',
-            }),
-          {}
-        ),
-        sourcePkgJson.dependencies || {}
+        (project.config.dependencies || [])
+          .reduce(
+            (acc, dependencyName) =>
+              Object.assign(
+                acc,
+                R.pipe(
+                  findProject,
+                  R.path(['paths', 'packageJson']),
+                  x => readPkg.sync(x, { normalize: false }),
+                  R.prop('dependencies'),
+                  R.defaultTo({}),
+                )(dependencyName),
+              ),
+            {},
+          ),
+        sourcePkgJson.dependencies || {},
       ),
       main: 'modules/index.js',
-      files: ['modules'].concat(project.packageDependenciesAsLocalFiles ? ['local_modules'] : []),
+      files: ['modules'], // .concat(project.packageDependenciesAsLocalFiles ? ['local_modules'] : []),
     })
     writePkg.sync(project.paths.buildRoot, buildPkgJson)
 
     // Sym link source node_modules to the build package
     fs.ensureSymlinkSync(
       project.paths.nodeModules,
-      path.resolve(project.paths.buildRoot, './node_modules')
+      path.resolve(project.paths.buildRoot, './node_modules'),
     )
 
     // Create sym links for dependencies if packageDependenciesAsLocalFiles
     if (project.packageDependenciesAsLocalFiles) {
       (project.config.dependencies || []).forEach((dependencyName) => {
         fs.ensureSymlinkSync(
-          R.find(R.propEq('name', dependencyName), projects).paths.buildRoot,
-          path.resolve(project.paths.buildRoot, `./local_modules/${dependencyName}`)
+          findProject(dependencyName).paths.buildRoot,
+          path.resolve(project.paths.buildModules, `./node_modules/${dependencyName}`),
         )
       })
     }
