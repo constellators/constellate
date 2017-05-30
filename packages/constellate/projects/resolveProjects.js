@@ -2,6 +2,7 @@ const fs = require('fs')
 const path = require('path')
 const toposort = require('toposort')
 const R = require('ramda')
+const terminal = require('constellate-dev-utils/terminal')
 
 const defaultConfig = {
   target: 'node',
@@ -16,8 +17,7 @@ const resolveProjectPath = projectName => relativePath =>
 // :: string -> Project
 const toProject = (projectName) => {
   const thisProjectPath = resolveProjectPath(projectName)
-  const packageJsonPath = thisProjectPath('./package.json')
-  const constellateConfigPath = thisProjectPath('./constellate.proj.js')
+  const constellateConfigPath = thisProjectPath('./constellate.js')
   const config = fs.existsSync(constellateConfigPath)
     ? // eslint-disable-next-line global-require, import/no-dynamic-require
       Object.assign({}, defaultConfig, require(constellateConfigPath))
@@ -28,7 +28,7 @@ const toProject = (projectName) => {
     paths: {
       root: thisProjectPath('./'),
       constellateConfig: constellateConfigPath,
-      packageJson: packageJsonPath,
+      packageJson: thisProjectPath('./package.json'),
       nodeModules: thisProjectPath('./node_modules'),
       source: thisProjectPath('./modules'),
       sourceEntry: thisProjectPath('./modules/index.js'),
@@ -36,17 +36,13 @@ const toProject = (projectName) => {
       buildEntry: thisProjectPath('./build/index.js'),
       webpackCache: thisProjectPath('./.webpackcache'),
     },
-    packageJson: fs.existsSync(packageJsonPath)
-      ? // eslint-disable-next-line global-require, import/no-dynamic-require
-        JSON.parse(fs.readFileSync(packageJsonPath, { encoding: 'utf8' }))
-      : {},
   }
 }
 
 // :: Array<Project> -> Array<Project>
-function orderProjectsByDependencies(projects) {
+function orderByLinkedDependencies(projects) {
   const packageDependencyGraph = project =>
-    R.pipe(R.prop('dependencies'), R.map(dependency => [dependency, project.name]))(project)
+    R.pipe(R.prop('dependencies'), R.map(dependencyName => [dependencyName, project.name]))(project)
 
   // :: Array<Project> -> Array<Array<string, string>>
   const dependencyGraph = R.chain(packageDependencyGraph)
@@ -60,14 +56,14 @@ function orderProjectsByDependencies(projects) {
   )
 
   // :: string -> Project
-  const findProjectByName = name => R.find(R.propEq('name', name), projects)
+  const findProjectByName = R.map(name => R.find(R.propEq('name', name), projects))
 
   return R.pipe(
     dependencyGraph,
     toposort,
     R.without(projectsWithNoDependencies),
     R.concat(projectsWithNoDependencies),
-    R.map(findProjectByName)
+    findProjectByName
   )(projects)
 }
 
@@ -90,60 +86,45 @@ function getAllProjects() {
     // convert into a Project
     .map(toProject)
 
-  // :: Array<string>
-  const projectNames = R.map(R.prop('name'), projects)
-
-  // :: Project -> Array<String>
-  const getDependencies = (project) => {
-    // :: (string, Project) -> Array<string>
-    const readPackageDependencies = dependenciesType =>
-      R.pipe(R.path(['packageJson', dependenciesType]), R.defaultTo({}), R.keys)(project)
-    const combinedDependencies = R.concat(
-      readPackageDependencies('dependencies'),
-      readPackageDependencies('devDependencies')
-    )
-    // :: string -> boolean
-    const isContellateProject = R.contains(R.__, projectNames)
-    // :: Array<string> -> Array<string>
-    const filterToConstellateProjects = R.pipe(R.uniq, R.filter(isContellateProject))
-    return filterToConstellateProjects(combinedDependencies)
-  }
+  // :: Project -> Array<string>
+  const getConfiguredLinks = project => R.path(['config', 'link'], project) || []
 
   // :: Project -> Array<string>
-  const getDependants = (project) => {
-    // We will recursively resolve the dependants for the project.
-    const loop = (targetProject) => {
-      const dependants = projects.filter(x => R.contains(targetProject.name, x.dependencies))
-      const dependantsDependants = R.chain(loop, dependants)
-      return dependants.concat(dependantsDependants)
-    }
-    return R.pipe(
-      // Do the recursive resolve
-      loop,
-      // Map to name of each project
-      R.map(R.prop('name')),
-      // Ensure we return unique results
-      R.uniq
-    )(project)
-  }
+  const getLinkedDependencies = project =>
+    getConfiguredLinks(project).reduce((acc, linkName) => {
+      const link = R.find(R.propEq('name', linkName), projects)
+      if (!link) {
+        terminal.warning(`Could not find ${linkName} referenced as link for ${project.name}`)
+        return acc
+      }
+      return acc.concat([linkName])
+    }, [])
+
+  // :: Project -> Array<string>
+  const getLinkedDependants = project =>
+    projects.filter(x => R.contains(project.name, getConfiguredLinks(x))).map(R.prop('name'))
 
   const fullyResolvedProjects = R.pipe(
-    // Attach dependencies to each project
+    // The projects this project directly depends on.
     R.map(project =>
       Object.assign(project, {
-        dependencies: getDependencies(project),
+        dependencies: getLinkedDependencies(project),
       })
     ),
-    // Attach dependants to each project
+    // Projects that directly depend on this project.
     R.map(project =>
       Object.assign(project, {
-        dependants: getDependants(project),
+        dependants: getLinkedDependants(project),
       })
     ),
     // Projects ordered based on their dependencies based order,
     // which mean building them in order would be "safe"/"correct".
-    orderProjectsByDependencies
+    orderByLinkedDependencies
   )(projects)
+
+  terminal.verbose(
+    `Project build order: \n\t- ${fullyResolvedProjects.map(R.prop('name')).join('\n\t- ')}`
+  )
 
   return fullyResolvedProjects
 }

@@ -7,10 +7,10 @@
     "eslint-plugin-import": "^2.2.0",
     "eslint-plugin-jsx-a11y": "^5.0.3",
     "eslint-plugin-react": "^7.0.1",
-    "husky": "^0.13.3",
+    "husky": "^0.13.4",
     "lerna": "^2.0.0-rc.5",
     "lerna-changelog": "^0.4.0",
-    "lint-staged": "^3.4.2",
+    "lint-staged": "^3.5.1",
     "prettier": "^1.3.1",
     "prettier-eslint": "^6.2.3",
     "prettier-eslint-cli": "^4.0.1"
@@ -18,6 +18,6 @@
   "scripts": {
     "bootstrap": "lerna bootstrap",
     "publish": "lerna publish",
-    "update": "lerna exec --concurrency 1 -- npm-check -u"
+    "update": "lerna exec --concurrency 1 -- yarn upgrade-interactive"
   }
 }

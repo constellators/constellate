@@ -1,5 +1,8 @@
 # Constellate Roadmap / Todo
 
+implement fkill
+use why-is-node-running for helpful errors
+
  - [ ] BUILD - Chokidar events should result in the absolute minimal amount of work being done. e.g. transpile a single file. remove a dir, etc
  - [X] CHORE - Move constellate configuration into `constellate.js` files.
  - [ ] COMMAND - Create project
