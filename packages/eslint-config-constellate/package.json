@@ -1,7 +1,7 @@
 {
   "name": "eslint-config-constellate",
   "description": "The ESLint configuration for Constellate applications.",
-  "version": "0.0.21",
+  "version": "0.0.22",
   "repository": "constellators/constellate",
   "license": "MIT",
   "files": [
