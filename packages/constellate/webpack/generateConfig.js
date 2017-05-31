@@ -10,7 +10,6 @@ const AssetsPlugin = require('assets-webpack-plugin')
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
 const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin')
 const WatchMissingNodeModulesPlugin = require('react-dev-utils/WatchMissingNodeModulesPlugin')
-const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin')
 const nodeExternals = require('webpack-node-externals')
 const autoprefixer = require('autoprefixer')
 const R = require('ramda')
@@ -232,26 +231,6 @@ module.exports = function generateConfig(project, options = {}) {
             entryFile: project.paths.modulesEntry,
           })
       ),
-
-      // Recognizes certain classes of webpack errors and cleans, aggregates and
-      // prioritizes them to provide a better Developer Experience.
-      new FriendlyErrorsWebpackPlugin({
-        compilationSuccessInfo: {
-          // messages: ['You application is running here http://localhost:3000'],
-          // notes: ['Some additionnal notes to be displayed unpon successful compilation'],
-        },
-        onErrors(severity, errors) {
-          // You can listen to errors transformed and prioritized by the plugin
-          // severity can be 'error' or 'warning'
-        },
-        // should the console be cleared between each compilation?
-        // default is true
-        clearConsole: false,
-
-        // add formatters and transformers (see below)
-        additionalFormatters: [],
-        additionalTransformers: [],
-      }),
     ]),
 
     module: {

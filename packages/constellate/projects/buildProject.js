@@ -83,11 +83,11 @@ module.exports = function buildProject(projects, project) {
     return transpile(project)
   }
 
-  terminal.info(`Building ${project.name}...`)
+  terminal.info(`Building ${project.name}`)
 
   return packageBasedBuild()
     .then(() => {
-      terminal.success(`Built ${project.name}`)
+      terminal.verbose(`Built ${project.name}`)
     })
     .catch((err) => {
       terminal.error(`Build failed for ${project.name}`)

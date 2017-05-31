@@ -8,6 +8,8 @@ const extractError = require('./extractError')
 // :: (Project, Options) -> Promise<WebpackDevServer, Error>
 module.exports = function startDevServer(project, { port }) {
   return new Promise((resolve, reject) => {
+    const hasResolved = false
+
     const config = generateConfig(project, { development: true, devServerPort: port })
     const compiler = webpack(config)
     const server = new WebpackDevServer(compiler, config.devServer)
@@ -17,21 +19,15 @@ module.exports = function startDevServer(project, { port }) {
 
     terminal.info(`Building ${project.name}`)
 
-    let showNextSuccess = true
-    const hasResolved = false
     compiler.plugin(
       'done',
       throttle(500, (doneStats) => {
         const doneError = extractError(project, null, doneStats)
         if (doneError) {
-          // Failed
           terminal.error(`Error! Please fix the following issue with ${project.name}`, doneError)
-          showNextSuccess = true
-        } else if (showNextSuccess) {
-          terminal.success(`Built ${project.name}`)
-          showNextSuccess = false
+        } else {
+          terminal.verbose(`Built ${project.name}`)
         }
-
         if (!hasResolved) {
           if (doneError) {
             reject(doneError)
