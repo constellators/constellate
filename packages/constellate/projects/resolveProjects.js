@@ -9,6 +9,7 @@ const defaultConfig = {
   target: 'node',
   role: 'library',
   compiler: 'babel',
+  nodeVersion: process.versions.node,
 }
 
 // :: string -> string -> string
@@ -20,13 +21,12 @@ const toProject = (projectName) => {
   const appConfig = getAppConfig()
 
   const thisProjectPath = resolveProjectPath(projectName)
-  const constellateConfigPath = thisProjectPath('./constellate.js')
+  // const constellateConfigPath = thisProjectPath('./constellate.js')
   const config = Object.assign(
     {},
     defaultConfig,
     appConfig.projectDefaults || {},
-    // eslint-disable-next-line global-require, import/no-dynamic-require
-    fs.existsSync(constellateConfigPath) ? require(constellateConfigPath) : {}
+    R.path(['projects', projectName], appConfig) || {}
   )
   const buildRoot = path.resolve(process.cwd(), `./build/${projectName}`)
   return {
@@ -34,7 +34,6 @@ const toProject = (projectName) => {
     config,
     paths: {
       root: thisProjectPath('./'),
-      constellateConfig: constellateConfigPath,
       packageJson: thisProjectPath('./package.json'),
       nodeModules: thisProjectPath('./node_modules'),
       modules: thisProjectPath('./modules'),

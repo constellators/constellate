@@ -40,7 +40,7 @@ module.exports = function buildProject(projects, project) {
         fs.removeSync(target)
       }
       fs.ensureSymlinkSync(dependency.paths.buildRoot, target)
-      terminal.info(`Linked ${dependencyName} to ${project.name}`)
+      terminal.verbose(`Linked ${dependencyName} to ${project.name}`)
     })
 
     // Create a package.json file for the build of the project
@@ -83,7 +83,7 @@ module.exports = function buildProject(projects, project) {
     return transpile(project)
   }
 
-  terminal.info(`Building ${project.name}`)
+  terminal.info(`Building ${project.name}...`)
 
   return packageBasedBuild()
     .then(() => {

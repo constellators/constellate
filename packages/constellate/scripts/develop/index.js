@@ -7,6 +7,8 @@ const createProjectConductor = require('./createProjectConductor')
 const createProjectWatcher = require('./createProjectWatcher')
 
 module.exports = function develop(projects) {
+  terminal.info('Press CTRL + C to exit')
+
   // Represents the current project being built
   let currentBuild = null
 
@@ -15,7 +17,7 @@ module.exports = function develop(projects) {
 
   // :: Project -> Project -> bool
   const projectHasDependant = R.curry((dependant, project) =>
-    R.contains(dependant.name, project.dependants),
+    R.contains(dependant.name, project.dependants)
   )
 
   // Firstly clean up shop.
@@ -40,7 +42,7 @@ module.exports = function develop(projects) {
   const watchers = projects.reduce(
     (acc, project) =>
       Object.assign(acc, { [project.name]: createProjectWatcher(onChange(project), project) }),
-    {},
+    {}
   )
 
   // :: Object<string, ProjectConductor>
@@ -49,7 +51,7 @@ module.exports = function develop(projects) {
       Object.assign(acc, {
         [project.name]: createProjectConductor(projects, project, watchers[project.name]),
       }),
-    {},
+    {}
   )
 
   const queueProjectForBuild = (project) => {
@@ -113,7 +115,7 @@ module.exports = function develop(projects) {
   const buildNextInTheQueue = () => {
     if (currentBuild) {
       terminal.warning(
-        'Tried to build next item in queue even though there is an active build running',
+        'Tried to build next item in queue even though there is an active build running'
       )
       return
     }
@@ -137,11 +139,6 @@ module.exports = function develop(projects) {
 
   // GO! 🚀
   buildNextInTheQueue()
-
-  // prevent node process from exiting. (until CTRL + C is pressed at least)
-  process.stdin.read()
-
-  terminal.info('Press CTRL + C to exit')
 
   // GRACEFUL SHUTTING DOWN HANDLED BELOW:
 
@@ -183,4 +180,7 @@ module.exports = function develop(projects) {
   process.on('exit', () => {
     terminal.info('Till next time. *kiss*')
   })
+
+  // prevent node process from exiting. (until CTRL + C is pressed at least)
+  process.stdin.read()
 }
