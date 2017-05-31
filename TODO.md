@@ -2,6 +2,8 @@
 
 implement fkill
 use why-is-node-running for helpful errors
+auto-add source-map-support to build dependencies
+need another web-util to resolve static path for web project
 
  - [ ] BUILD - Chokidar events should result in the absolute minimal amount of work being done. e.g. transpile a single file. remove a dir, etc
  - [X] CHORE - Move constellate configuration into `constellate.js` files.

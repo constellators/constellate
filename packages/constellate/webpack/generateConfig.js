@@ -24,7 +24,6 @@ module.exports = function generateConfig(project, options = {}) {
 
   const env = process.env.NODE_ENV
 
-  const isServerRole = project.config.role === 'server'
   const isTargettingWeb = project.config.target === 'web'
   const isTargettingNode = !isTargettingWeb
 
@@ -39,17 +38,10 @@ module.exports = function generateConfig(project, options = {}) {
     entry: {
       // We name it "index" to make it easy to resolve the entry files within
       // the bundled output.
-      index: removeNil([
-        onlyIf(
-          isTargettingWeb && env === 'development',
-          `webpack-dev-server/client?http://0.0.0.0:${devServerPort}`
-        ),
-
-        onlyIf(isTargettingWeb && env === 'development', 'webpack/hot/dev-server'),
-
+      index: [
         // The application source entry.
         project.paths.modulesEntry,
-      ]),
+      ],
     },
 
     output: {
@@ -58,16 +50,12 @@ module.exports = function generateConfig(project, options = {}) {
 
       // The filename format for the entry chunk.
       // eslint-disable-next-line no-nested-ternary
-      filename: isTargettingNode
-        ? // For a node bundle we want to keep the same entry file name in
-          // order to support easy imports.
-          'index.js'
-        : isTargettingWeb && env === 'production'
-            ? // For a production build of a web target we want a cache busting
-              // name format.
-              '[name]-[chunkhash].js'
-            : // Else we use a predictable name format.
-              '[name].js',
+      filename: isTargettingWeb && env === 'production'
+        ? // For a production build of a web target we want a cache busting
+          // name format.
+          '[name]-[chunkhash].js'
+        : // Else we use a predictable name format.
+          '[name].js',
 
       // The name format for any additional chunks produced for the bundle.
       chunkFilename: env === 'development' ? '[name]-[hash].js' : '[name]-[chunkhash].js',
@@ -75,8 +63,8 @@ module.exports = function generateConfig(project, options = {}) {
       publicPath: isTargettingWeb && env === 'development'
         ? // As we run a seperate webpack-dev-server in development we need an
           // absolute http path for the public path.
-          `http://0.0.0.0:${devServerPort}/`
-        : '/',
+          `http://0.0.0.0:${devServerPort}/constellate/${project.name}/`
+        : `/constellate/${project.name}/`,
 
       // Add /* filename */ comments to generated require()s in the output.
       pathinfo: env === 'development',
@@ -87,32 +75,6 @@ module.exports = function generateConfig(project, options = {}) {
     resolve: {
       extensions: ['.js', '.json', '.jsx'],
     },
-
-    // For web target packages we rely on webpack-dev-server, but will provide
-    // the configuration here to make our configuration more centralised.
-    devServer: onlyIf(isTargettingWeb, {
-      contentBase: project.paths.buildModules,
-      host: '0.0.0.0',
-      disableHostCheck: true,
-      headers: {
-        'Access-Control-Allow-Origin': '*',
-      },
-      compress: true,
-      port: devServerPort,
-      noInfo: true,
-      quiet: true,
-      historyApiFallback: true,
-      hot: true,
-      watchOptions: {
-        // Watching too many files can result in high CPU/memory usage.
-        // We will manually control reloads based on dependency changes.
-        ignored: /node_modules/,
-        // TODO: Allow watching of any dependencies that are Constellate projects.
-      },
-    }),
-
-    // We need to explictly set this for development build of a server role.
-    watch: onlyIf(env === 'development' && isServerRole, true),
 
     // Ensure that webpack polyfills the following node features
     node: onlyIf(isTargettingNode, { console: true }),
@@ -161,10 +123,11 @@ module.exports = function generateConfig(project, options = {}) {
       // our webpack bundle.
       onlyIf(
         isTargettingWeb,
-        new AssetsPlugin({
-          filename: 'webpack-manifest.json',
-          path: project.paths.buildModules,
-        })
+        () =>
+          new AssetsPlugin({
+            filename: 'webpack-manifest.json',
+            path: project.paths.buildModules,
+          })
       ),
 
       // Moment.js is an extremely popular library that bundles large locale files
@@ -219,7 +182,7 @@ module.exports = function generateConfig(project, options = {}) {
       // makes the discovery automatic so you don't have to restart.
       // See https://github.com/facebookincubator/create-react-app/issues/186
       onlyIf(
-        env === 'development',
+        isTargettingWeb && env === 'development',
         () => new WatchMissingNodeModulesPlugin(project.paths.nodeModules)
       ),
 
@@ -370,6 +333,40 @@ module.exports = function generateConfig(project, options = {}) {
         }),
       ]),
     },
+  }
+
+  if (isTargettingWeb && env === 'development') {
+    webpackConfig.entry.index = [
+      `webpack-dev-server/client?http://0.0.0.0:${devServerPort}`,
+      'webpack/hot/dev-server',
+      ...webpackConfig.entry.index,
+    ]
+
+    // For web target packages we rely on webpack-dev-server, but will provide
+    // the configuration here to make our configuration more centralised.
+    webpackConfig.devServer = {
+      host: '0.0.0.0',
+      port: devServerPort,
+      contentBase: false,
+      disableHostCheck: true,
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+      },
+      compress: true,
+      publicPath: webpackConfig.output.publicPath,
+      noInfo: true,
+      quiet: true,
+      historyApiFallback: true,
+      hot: true,
+      // Will show compile errors in browser.
+      overlay: true,
+      watchOptions: {
+        // Watching too many files can result in high CPU/memory usage.
+        // We will manually control reloads based on dependency changes.
+        ignored: /node_modules/,
+        // TODO: Allow watching of any dependencies that are Constellate projects.
+      },
+    }
   }
 
   const webpackPlugin = R.path(['plugins', 'webpack'], project)

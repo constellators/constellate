@@ -8,6 +8,8 @@ const requireFn = typeof __non_webpack_require__ !== 'undefined'
     __non_webpack_require__
   : require
 
+let cache = null
+
 /**
  * Gets the manifest for the constellate web project by the given name.
  *
@@ -15,23 +17,35 @@ const requireFn = typeof __non_webpack_require__ !== 'undefined'
  * @return {Object}             The manifest
  */
 module.exports = function getWebProjectManifest(projectName) {
-  const target = path.resolve(
-    process.cwd(),
-    `./node_modules/${projectName}/modules/webpack-manifest.json`
-  )
-  if (!fs.existsSync(target)) {
-    throw new Error(`No manifest found at ${target}`)
+  if (cache) {
+    return cache
+  }
+
+  const serverRootPath = path.resolve(process.cwd(), `./node_modules/${projectName}/modules`)
+  const manifestFile = path.resolve(serverRootPath, './webpack-manifest.json')
+  if (!fs.existsSync(manifestFile)) {
+    throw new Error(`No manifest found at ${manifestFile}`)
   }
   // eslint-disable-next-line global-require,import/no-dynamic-require
-  const manifest = requireFn(target)
+  const manifest = requireFn(manifestFile)
   if (!manifest.index) {
-    return {}
+    throw new Error(`Invalid constellate web project manifest found at ${manifestFile}`)
   }
-  return {
-    main: {
+
+  const jsParts = manifest.index.js.substr(manifest.index.js.indexOf('/constellate/')).split('/')
+  const rootHttpPath = jsParts.slice(0, jsParts.length - 1).join('/')
+
+  cache = {
+    serverPaths: {
+      root: serverRootPath,
+    },
+    httpPaths: {
+      root: rootHttpPath,
       js: manifest.index.js,
       css: manifest.index.css,
     },
     manifest,
   }
+
+  return cache
 }

@@ -40,7 +40,7 @@ module.exports = function buildProject(projects, project) {
         fs.removeSync(target)
       }
       fs.ensureSymlinkSync(dependency.paths.buildRoot, target)
-      terminal.success(`Linked ${dependencyName} to ${project.name}`)
+      terminal.info(`Linked ${dependencyName} to ${project.name}`)
     })
 
     // Create a package.json file for the build of the project
@@ -66,8 +66,6 @@ module.exports = function buildProject(projects, project) {
     })
     writePkg.sync(project.paths.buildRoot, buildPkgJson)
 
-    console.log(project.paths.nodeModules)
-
     // Sym link the node_modules directory from the project's source directory
     // into the build directory for the project. This way we don't need to
     // reinstall the dependencies.
@@ -84,6 +82,8 @@ module.exports = function buildProject(projects, project) {
     terminal.verbose(`Transpiling ${project.name}`)
     return transpile(project)
   }
+
+  terminal.info(`Building ${project.name}`)
 
   return packageBasedBuild()
     .then(() => {
