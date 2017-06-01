@@ -14,55 +14,56 @@ const terminal = require('constellate-dev-utils/terminal')
 
 const packageJson = require('../package.json')
 const resolveProjects = require('../projects/resolveProjects')
+const getCarlSaganQuote = require('../utils/getCarlSaganQuote')
 
 function list(val) {
   return val.split('..')
 }
 
-console.log(`\nConstellate v${packageJson.version}\n`)
+terminal.header(`constellate v${packageJson.version}`)
+
+console.log(`\n${getCarlSaganQuote()}`)
 
 program.version(packageJson.version)
 
 program
-  .command('bootstrap')
-  .description('bootstraps the projects')
-  .option('-p, --projects <projects>', 'specify the projects to bootstrap', list)
-  .action(({ projects }) => {
-    terminal.info('Running bootstrap')
+  .command('install')
+  .description('Installs the dependencies for application and each project')
+  .action(() => {
+    terminal.title('Starting install...')
     // If no NODE_ENV is set we will default to 'production'.
     if (!process.env.NODE_ENV) {
       process.env.NODE_ENV = 'production'
     }
-    const bootstrap = require('../scripts/bootstrap')
-    return resolveProjects(projects)
+    const bootstrap = require('../scripts/install')
+    return resolveProjects()
       .then(bootstrap)
-      .then(() => terminal.success('Bootstrap succeeded'))
-      .catch(err => terminal.error('Bootstrap failed', err))
+      .then(() => terminal.success('Done'))
+      .catch(err => terminal.error('Eeek, an error!', err))
   })
 
 program
   .command('update')
-  .description('runs an interactive dependency update process for the projects')
-  .option('-p, --projects <projects>', 'specify the projects to update', list)
-  .action(({ projects }) => {
-    terminal.info('Running update')
+  .description('Runs an interactive dependency update process for the application and each project')
+  .action(() => {
+    terminal.title('Running update...')
     // If no NODE_ENV is set we will default to 'production'.
     if (!process.env.NODE_ENV) {
       process.env.NODE_ENV = 'production'
     }
     const update = require('../scripts/update')
-    return resolveProjects(projects)
+    return resolveProjects()
       .then(update)
-      .then(() => terminal.success('Update succeeded'))
-      .catch(err => terminal.error('Update failed', err))
+      .then(() => terminal.success('Done'))
+      .catch(err => terminal.error('Eeek, an error!', err))
   })
 
 program
   .command('build')
-  .description('build the projects')
+  .description('Builds the projects')
   .option('-p, --projects <projects>', 'specify the projects to build', list)
   .action(({ projects }) => {
-    terminal.info('Running build')
+    terminal.title('Running build...')
     // If no NODE_ENV is set we will default to 'production'.
     if (!process.env.NODE_ENV) {
       process.env.NODE_ENV = 'production'
@@ -70,20 +71,20 @@ program
     const build = require('../scripts/build')
     return resolveProjects(projects)
       .then(build)
-      .then(() => terminal.success('Build succeeded'))
-      .catch(err => terminal.error('Build failed', err))
+      .then(() => terminal.success('Done'))
+      .catch(err => terminal.error('Eeek, an error!', err))
   })
 
 program
   .command('clean')
-  .description('Deletes the node_modules and build files for all the projects')
+  .description('Deletes the all build and node_modules directories')
   .action(() => {
-    terminal.info('Running clean')
+    terminal.title('Running clean...')
     const clean = require('../scripts/clean')
     return resolveProjects()
       .then(clean)
-      .then(() => terminal.success('Clean finished'))
-      .catch(err => terminal.error('Clean failed', err))
+      .then(() => terminal.success('Done'))
+      .catch(err => terminal.error('Eeek, an error!', err))
   })
 
 program
@@ -91,7 +92,7 @@ program
   .description('run development servers for the projects')
   .option('-p, --projects <projects>', 'specify the projects to develop', list)
   .action(({ projects }) => {
-    terminal.info('Starting develop mode')
+    terminal.title('Kickstarting development hyperengine...')
     // If no NODE_ENV is set we will default to 'development'.
     if (!process.env.NODE_ENV) {
       process.env.NODE_ENV = 'development'
@@ -100,18 +101,17 @@ program
     resolveProjects(projects).then(develop)
   })
 
-program
-  .command('publish')
-  .description('publishes the projects')
-  // .option('-p, --projects <projects>', 'specify the projects to publish', list)
-  .action(() => {
-    terminal.info('Starting publish process')
-    // If no NODE_ENV is set we will default to 'production'.
-    if (!process.env.NODE_ENV) {
-      process.env.NODE_ENV = 'production'
-    }
-    const publish = require('../scripts/publish')
-    resolveProjects().then(publish)
-  })
+program.command('publish').description('Publish your projects to NPM').action(() => {
+  terminal.title('Running publish...')
+  // If no NODE_ENV is set we will default to 'production'.
+  if (!process.env.NODE_ENV) {
+    process.env.NODE_ENV = 'production'
+  }
+  const publish = require('../scripts/publish')
+  resolveProjects()
+    .then(publish)
+    .then(() => terminal.success('Done'))
+    .catch(err => terminal.error('Eeek, an error!', err))
+})
 
 program.parse(process.argv)

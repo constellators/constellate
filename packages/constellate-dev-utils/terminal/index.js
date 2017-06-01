@@ -8,7 +8,7 @@ function verbose(msg) {
 }
 
 function error(msg, err) {
-  console.log(chalk.bgRed.white.bold(`${figures.warning} ${msg}`))
+  console.log(chalk.red.bold(`\n${figures.warning} ${msg}`))
   if (err) {
     if (typeof err === 'object' && typeof err.message !== 'undefined') {
       if (typeof err.stack !== 'undefined') {
@@ -24,18 +24,28 @@ function error(msg, err) {
 }
 
 function warning(msg) {
-  console.log(`${chalk.yellow(figures.warning)} ${chalk.yellow(msg)}`)
+  console.log(chalk.yellow(`\n${figures.warning} ${msg}`))
+}
+
+function title(msg) {
+  console.log(chalk.blue(`\n${figures.play} ${msg}`))
 }
 
 function info(msg) {
-  console.log(`${chalk.blue(figures.play)} ${chalk.blue(msg)}`)
+  console.log(chalk.blue(`\n${figures.info} ${msg}`))
 }
 
 function success(msg) {
-  console.log(`${chalk.green(figures.tick)} ${chalk.green(msg)}`)
+  console.log(chalk.green(`\n${figures.tick} ${msg}`))
+}
+
+function header(msg) {
+  console.log(chalk.underline(`\n${msg}`))
 }
 
 module.exports = {
+  header,
+  title,
   error,
   warning,
   info,

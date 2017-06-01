@@ -24,7 +24,7 @@ module.exports = function startDevServer(project, { port }) {
       throttle(500, (doneStats) => {
         const doneError = extractError(project, null, doneStats)
         if (doneError) {
-          terminal.error(`Error! Please fix the following issue with ${project.name}`, doneError)
+          terminal.error(`Please fix the following issue on ${project.name}`, doneError)
         } else {
           terminal.verbose(`Built ${project.name}`)
         }

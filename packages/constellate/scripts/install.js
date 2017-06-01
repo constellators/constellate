@@ -2,7 +2,6 @@ const spawn = require('cross-spawn')
 const R = require('ramda')
 const terminal = require('constellate-dev-utils/terminal')
 const getAppConfig = require('../app/getAppConfig')
-const buildProjects = require('../projects/buildProjects')
 
 module.exports = function bootstrap(projects) {
   const constellateAppConfig = getAppConfig()
@@ -17,19 +16,25 @@ module.exports = function bootstrap(projects) {
     )
   }
 
-  projects.forEach((project) => {
-    terminal.info(`Installing dependencies for ${project.name}`)
+  const runInstall = path =>
     spawn.sync(
       // Spawn the package manager
       client,
       // Running the install command
       ['install'],
       {
-        cwd: project.paths.root,
+        cwd: path,
         stdio: 'inherit',
       }
     )
-  })
 
-  buildProjects(projects)
+  // First run the install command at application root
+  terminal.verbose('Installing dependencies for application root')
+  runInstall(process.cwd())
+
+  // Then run install for each project
+  projects.forEach((project) => {
+    terminal.verbose(`Installing dependencies for ${project.name}`)
+    runInstall(project.paths.root)
+  })
 }

@@ -2,7 +2,6 @@ const spawn = require('cross-spawn')
 const R = require('ramda')
 const terminal = require('constellate-dev-utils/terminal')
 const getAppConfig = require('../app/getAppConfig')
-const buildProjects = require('../projects/buildProjects')
 
 module.exports = function update(projects) {
   const constellateAppConfig = getAppConfig()
@@ -19,19 +18,25 @@ module.exports = function update(projects) {
 
   const subCmd = client === 'npm' ? 'npm-check -u' : 'upgrade-interactive'
 
-  projects.forEach((project) => {
-    terminal.info(`Installing dependencies for ${project.name}`)
+  const runUpdate = path =>
     spawn.sync(
       // Spawn the package manager
       client,
       // That runs the respective update command
       [subCmd],
       {
-        cwd: project.paths.root,
+        cwd: path,
         stdio: 'inherit',
       }
     )
-  })
 
-  buildProjects(projects)
+  // First run the update command at application root
+  terminal.verbose('Updating dependencies for application root')
+  runUpdate(process.cwd())
+
+  // Then run it for each the projects
+  projects.forEach((project) => {
+    terminal.verbose(`Updating dependencies for ${project.name}`)
+    runUpdate(project.paths.root)
+  })
 }

@@ -90,7 +90,7 @@ module.exports = function develop(projects) {
       .then(() => ({ success: true }))
       // Build failed 😭
       .catch((err) => {
-        terminal.error(`Error! Please fix the following issue with ${project.name}:`, err)
+        terminal.error(`Please fix the following issue on ${project.name}:`, err)
         return { success: false }
       })
       // Finally...
