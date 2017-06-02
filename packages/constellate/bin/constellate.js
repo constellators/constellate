@@ -10,52 +10,52 @@ process.on('unhandledRejection', (err) => {
 })
 
 const program = require('commander')
-const terminal = require('constellate-dev-utils/terminal')
-
+const TerminalUtils = require('constellate-dev-utils/terminal')
+const ProjectUtils = require('../utils/projects')
 const packageJson = require('../package.json')
-const resolveProjects = require('../projects/resolveProjects')
-const getCarlSaganQuote = require('../utils/getCarlSaganQuote')
 
 function list(val) {
   return val.split('..')
 }
 
-terminal.header(`constellate v${packageJson.version}`)
+TerminalUtils.header(`constellate v${packageJson.version}`)
 
-console.log(`\n${getCarlSaganQuote()}`)
+if (process.env.NODE_ENV === 'development') {
+  console.log(`\n${require('../utils/getCarlSaganQuote')()}`)
+}
 
 program.version(packageJson.version)
 
 program
-  .command('install')
-  .description('Installs the dependencies for application and each project')
+  .command('bootstrap')
+  .description('Installs the dependencies for the application and each project')
   .action(() => {
-    terminal.title('Starting install...')
+    TerminalUtils.title('Starting install...')
     // If no NODE_ENV is set we will default to 'production'.
     if (!process.env.NODE_ENV) {
       process.env.NODE_ENV = 'production'
     }
-    const bootstrap = require('../scripts/install')
-    return resolveProjects()
+    const bootstrap = require('../scripts/bootstrap')
+    return ProjectUtils.resolveProjects()
       .then(bootstrap)
-      .then(() => terminal.success('Done'))
-      .catch(err => terminal.error('Eeek, an error!', err))
+      .then(() => TerminalUtils.success('Done'))
+      .catch(err => TerminalUtils.error('Eeek, an error!', err))
   })
 
 program
   .command('update')
   .description('Runs an interactive dependency update process for the application and each project')
   .action(() => {
-    terminal.title('Running update...')
+    TerminalUtils.title('Running update...')
     // If no NODE_ENV is set we will default to 'production'.
     if (!process.env.NODE_ENV) {
       process.env.NODE_ENV = 'production'
     }
     const update = require('../scripts/update')
-    return resolveProjects()
+    return ProjectUtils.resolveProjects()
       .then(update)
-      .then(() => terminal.success('Done'))
-      .catch(err => terminal.error('Eeek, an error!', err))
+      .then(() => TerminalUtils.success('Done'))
+      .catch(err => TerminalUtils.error('Eeek, an error!', err))
   })
 
 program
@@ -63,28 +63,28 @@ program
   .description('Builds the projects')
   .option('-p, --projects <projects>', 'specify the projects to build', list)
   .action(({ projects }) => {
-    terminal.title('Running build...')
+    TerminalUtils.title('Running build...')
     // If no NODE_ENV is set we will default to 'production'.
     if (!process.env.NODE_ENV) {
       process.env.NODE_ENV = 'production'
     }
     const build = require('../scripts/build')
-    return resolveProjects(projects)
-      .then(build)
-      .then(() => terminal.success('Done'))
-      .catch(err => terminal.error('Eeek, an error!', err))
+    Promise.all([ProjectUtils.resolveProjects(), ProjectUtils.resolveProjects(projects)])
+      .then(([all, toBuild]) => build(all, toBuild))
+      .then(() => TerminalUtils.success('Done'))
+      .catch(err => TerminalUtils.error('Eeek, an error!', err))
   })
 
 program
   .command('clean')
   .description('Deletes the all build and node_modules directories')
   .action(() => {
-    terminal.title('Running clean...')
+    TerminalUtils.title('Running clean...')
     const clean = require('../scripts/clean')
-    return resolveProjects()
+    return ProjectUtils.resolveProjects()
       .then(clean)
-      .then(() => terminal.success('Done'))
-      .catch(err => terminal.error('Eeek, an error!', err))
+      .then(() => TerminalUtils.success('Done'))
+      .catch(err => TerminalUtils.error('Eeek, an error!', err))
   })
 
 program
@@ -92,26 +92,30 @@ program
   .description('run development servers for the projects')
   .option('-p, --projects <projects>', 'specify the projects to develop', list)
   .action(({ projects }) => {
-    terminal.title('Kickstarting development hyperengine...')
+    TerminalUtils.title('Kickstarting development hyperengine...')
     // If no NODE_ENV is set we will default to 'development'.
     if (!process.env.NODE_ENV) {
       process.env.NODE_ENV = 'development'
     }
     const develop = require('../scripts/develop')
-    resolveProjects(projects).then(develop)
+    ProjectUtils.resolveProjects(projects).then(develop)
   })
 
-program.command('publish').description('Publish your projects to NPM').action(() => {
-  terminal.title('Running publish...')
-  // If no NODE_ENV is set we will default to 'production'.
-  if (!process.env.NODE_ENV) {
-    process.env.NODE_ENV = 'production'
-  }
-  const publish = require('../scripts/publish')
-  resolveProjects()
-    .then(publish)
-    .then(() => terminal.success('Done'))
-    .catch(err => terminal.error('Eeek, an error!', err))
-})
+program
+  .command('publish')
+  .description('Publish your projects')
+  .option('-p, --projects <projects>', 'specify the projects to develop', list)
+  .action(({ projects }) => {
+    TerminalUtils.title('Running publish...')
+    // If no NODE_ENV is set we will default to 'production'.
+    if (!process.env.NODE_ENV) {
+      process.env.NODE_ENV = 'production'
+    }
+    const publish = require('../scripts/publish')
+    Promise.all([ProjectUtils.resolveProjects(), ProjectUtils.resolveProjects(projects)])
+      .then(([all, toPublish]) => publish(all, toPublish))
+      .then(() => TerminalUtils.success('Done'))
+      .catch(err => TerminalUtils.error('Eeek, an error!', err))
+  })
 
 program.parse(process.argv)

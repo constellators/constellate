@@ -1,5 +1,6 @@
 const chalk = require('chalk')
 const figures = require('figures')
+const inquirer = require('inquirer')
 
 function verbose(msg) {
   if (process.env.DEBUG) {
@@ -43,6 +44,36 @@ function header(msg) {
   console.log(chalk.underline(`\n${msg}`))
 }
 
+function select(message, { choices, filter, validate } = {}) {
+  return inquirer
+    .prompt([
+      {
+        type: 'list',
+        name: 'prompt',
+        message,
+        choices,
+        pageSize: choices.length,
+        filter,
+        validate,
+      },
+    ])
+    .then(answers => answers.prompt)
+}
+
+function input(message, { filter, validate } = {}) {
+  return inquirer
+    .prompt([
+      {
+        type: 'input',
+        name: 'input',
+        message,
+        filter,
+        validate,
+      },
+    ])
+    .then(answers => answers.input)
+}
+
 module.exports = {
   header,
   title,
@@ -51,4 +82,6 @@ module.exports = {
   info,
   success,
   verbose,
+  select,
+  input,
 }

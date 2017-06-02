@@ -1,10 +1,10 @@
 const spawn = require('cross-spawn')
 const R = require('ramda')
-const terminal = require('constellate-dev-utils/terminal')
-const getAppConfig = require('../app/getAppConfig')
+const TerminalUtils = require('constellate-dev-utils/terminal')
+const AppUtils = require('../utils/app')
 
 module.exports = function bootstrap(projects) {
-  const constellateAppConfig = getAppConfig()
+  const constellateAppConfig = AppUtils.getConfig()
 
   const client = constellateAppConfig.packageClient != null
     ? constellateAppConfig.packageClient
@@ -29,12 +29,12 @@ module.exports = function bootstrap(projects) {
     )
 
   // First run the install command at application root
-  terminal.verbose('Installing dependencies for application root')
+  TerminalUtils.verbose('Installing dependencies for application root')
   runInstall(process.cwd())
 
   // Then run install for each project
   projects.forEach((project) => {
-    terminal.verbose(`Installing dependencies for ${project.name}`)
+    TerminalUtils.verbose(`Installing dependencies for ${project.name}`)
     runInstall(project.paths.root)
   })
 }

@@ -1,7 +1,7 @@
 const path = require('path')
 const fs = require('fs-extra')
 const R = require('ramda')
-const terminal = require('constellate-dev-utils/terminal')
+const TerminalUtils = require('constellate-dev-utils/terminal')
 
 module.exports = function createLinksForProject(projects, project) {
   project.dependencies.forEach((dependencyName) => {
@@ -14,6 +14,6 @@ module.exports = function createLinksForProject(projects, project) {
     }
     fs.ensureSymlinkSync(dependency.paths.buildRoot, target)
 
-    terminal.success(`Linked ${dependencyName} to ${project.name}`)
+    TerminalUtils.success(`Linked ${dependencyName} to ${project.name}`)
   })
 }

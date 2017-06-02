@@ -2,8 +2,8 @@ const fs = require('fs')
 const path = require('path')
 const toposort = require('toposort')
 const R = require('ramda')
-const terminal = require('constellate-dev-utils/terminal')
-const getAppConfig = require('../app/getAppConfig')
+const TerminalUtils = require('constellate-dev-utils/terminal')
+const AppUtils = require('../app')
 
 const defaultConfig = {
   target: 'node',
@@ -18,7 +18,7 @@ const resolveProjectPath = projectName => relativePath =>
 
 // :: string -> Project
 const toProject = (projectName) => {
-  const appConfig = getAppConfig()
+  const appConfig = AppUtils.getConfig()
 
   const thisProjectPath = resolveProjectPath(projectName)
   // const constellateConfigPath = thisProjectPath('./constellate.js')
@@ -101,7 +101,7 @@ function getAllProjects() {
     getConfiguredDependencies(project).reduce((acc, dependencyName) => {
       const dependency = R.find(R.propEq('name', dependencyName), projects)
       if (!dependency) {
-        terminal.warning(
+        TerminalUtils.warning(
           `Could not find ${dependencyName} referenced as dependency for ${project.name}`
         )
         return acc
@@ -131,7 +131,7 @@ function getAllProjects() {
     orderByLinkedDependencies
   )(projects)
 
-  terminal.verbose(
+  TerminalUtils.verbose(
     `Project build order: \n\t- ${fullyResolvedProjects.map(R.prop('name')).join('\n\t- ')}`
   )
 
@@ -148,6 +148,8 @@ function getAllProjects() {
  * @return {Promise} The resolved projects
  */
 module.exports = function resolveProjects(projectFilters = []) {
+  TerminalUtils.verbose(`Resolving projects with filter [${projectFilters.join(', ')}]`)
+
   return new Promise((resolve, reject) => {
     const allProjects = getAllProjects()
     if (allProjects.length === 0) {
@@ -163,5 +165,8 @@ module.exports = function resolveProjects(projectFilters = []) {
       const findProject = name => R.find(p => p.name === name, allProjects)
       resolve(projectFilters.map(findProject))
     }
+  }).then((resolved) => {
+    TerminalUtils.verbose(`Resolved: [${resolved.map(R.prop('name')).join(', ')}]`)
+    return resolved
   })
 }

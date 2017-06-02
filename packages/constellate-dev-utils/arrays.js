@@ -1,3 +1,5 @@
+const R = require('ramda')
+
 /**
  * Filters out all null/undefined items from the given array.
  *
@@ -5,6 +7,15 @@
  *
  * @return {Array} The filtered array.
  */
-module.exports = function removeNil(as) {
+function removeNil(as) {
   return as.filter(a => a != null)
+}
+
+function removeEmpty(as) {
+  return as.filter(a => R.not(R.isEmpty(a)))
+}
+
+module.exports = {
+  removeNil,
+  removeEmpty,
 }

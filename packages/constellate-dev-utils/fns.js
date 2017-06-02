@@ -1,4 +1,4 @@
-module.exports = function throttle(duration, fn) {
+function throttle(duration, fn) {
   let throttler = null
   return (...args) => {
     if (throttler) {
@@ -6,4 +6,8 @@ module.exports = function throttle(duration, fn) {
     }
     throttler = setTimeout(() => fn(...args), duration)
   }
+}
+
+module.exports = {
+  throttle,
 }

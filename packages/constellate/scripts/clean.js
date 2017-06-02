@@ -1,7 +1,6 @@
-const cleanBuild = require('../projects/cleanBuild')
-const cleanProjects = require('../projects/cleanProjects')
+const ProjectUtils = require('../utils/projects')
 
 module.exports = (projects) => {
-  cleanBuild()
-  cleanProjects(projects)
+  ProjectUtils.cleanBuild()
+  ProjectUtils.cleanProjects(projects)
 }

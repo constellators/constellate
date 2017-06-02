@@ -5,3 +5,7 @@
 <h1 align="center">constellate</h1>
 
 The ❤️ of [Constellate](https://github.com/constellators/constellate) applications.
+
+Requirements / Caveats 
+ - Git
+ - NPM

@@ -1,5 +1,18 @@
-const buildProjects = require('../projects/buildProjects')
+const pSeries = require('p-series')
+const ProjectUtils = require('../utils/projects')
 
-module.exports = function build(projects) {
-  return buildProjects(projects)
+module.exports = function build(allProjects, toBuild) {
+  // First clear down any existing build
+  ProjectUtils.cleanBuild()
+
+  // Need to get the current version numbers for each project
+  const versions = allProjects.reduce(
+    (acc, cur) => Object.assign(acc, { [cur.name]: ProjectUtils.getLastVersion(cur) }),
+    {}
+  )
+
+  // :: Project -> void -> Promise
+  const queueBuild = project => () => ProjectUtils.buildProject(allProjects, project, { versions })
+
+  return pSeries(toBuild.map(queueBuild))
 }

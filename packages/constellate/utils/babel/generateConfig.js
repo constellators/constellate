@@ -3,13 +3,14 @@
  * and Facebook/@gaearon's superb Create React App project.
  * https://github.com/jaredpalmer/razzle
  * https://github.com/facebookincubator/create-react-app
+ * ❤️
  */
 
 const path = require('path')
 const R = require('ramda')
 
-const removeNil = require('constellate-dev-utils/arrays/removeNil')
-const onlyIf = require('constellate-dev-utils/logic/onlyIf')
+const { removeNil } = require('constellate-dev-utils/arrays')
+const { onlyIf } = require('constellate-dev-utils/logic')
 
 // :: Options -> BabelConfig
 module.exports = function generateConfig(project) {

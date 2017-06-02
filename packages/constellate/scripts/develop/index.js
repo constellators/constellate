@@ -1,13 +1,13 @@
 /* eslint-disable no-use-before-define */
 
 const R = require('ramda')
-const terminal = require('constellate-dev-utils/terminal')
-const cleanBuild = require('../../projects/cleanBuild')
+const TerminalUtils = require('constellate-dev-utils/terminal')
+const ProjectUtils = require('../../utils/projects')
 const createProjectConductor = require('./createProjectConductor')
 const createProjectWatcher = require('./createProjectWatcher')
 
 module.exports = function develop(projects) {
-  terminal.info('Press CTRL + C to exit')
+  TerminalUtils.info('Press CTRL + C to exit')
 
   // Represents the current project being built
   let currentBuild = null
@@ -21,7 +21,7 @@ module.exports = function develop(projects) {
   )
 
   // Firstly clean up shop.
-  cleanBuild()
+  ProjectUtils.cleanBuild()
 
   // :: Project -> Array<Project>
   const getProjectDependants = project =>
@@ -55,24 +55,24 @@ module.exports = function develop(projects) {
   )
 
   const queueProjectForBuild = (project) => {
-    terminal.verbose(`Attempting to queue ${project.name} for build`)
+    TerminalUtils.verbose(`Attempting to queue ${project.name} for build`)
     if (currentBuild !== null && projectHasDependant(project /* dependant */, currentBuild)) {
       // Do nothing as the project currently being built will result in this
       // project being built via it's dependancy chain.
-      terminal.verbose(`Skipping queue of ${project.name} as represented by currentBuild`)
+      TerminalUtils.verbose(`Skipping queue of ${project.name} as represented by currentBuild`)
     } else if (R.any(projectHasDependant(project), buildQueue)) {
       // Do nothing as one of the queued projects will result in this project
       // getting built via it's dependancy chain.
-      terminal.verbose(`Skipping queue of ${project.name} as represented by buildQueue`)
+      TerminalUtils.verbose(`Skipping queue of ${project.name} as represented by buildQueue`)
     } else {
       // Queue the project for building.
-      terminal.verbose(`Queuing ${project.name}`)
+      TerminalUtils.verbose(`Queuing ${project.name}`)
       const projectDependants = getProjectDependants(project)
       // We'll assign the project to the build queue, removing any of the
       // project's dependants as they will be represented by the project being
       // added.
       buildQueue = R.without(projectDependants, buildQueue).concat([project])
-      terminal.verbose(`Queue: [${buildQueue.map(x => x.name).join(',')}]`)
+      TerminalUtils.verbose(`Queue: [${buildQueue.map(x => x.name).join(',')}]`)
     }
   }
 
@@ -80,7 +80,7 @@ module.exports = function develop(projects) {
     currentBuild = project
     const projectConductor = projectConductors[project.name]
     if (!projectConductor) {
-      terminal.warn(`Did not run build for ${project.name} as no project conductor registered`)
+      TerminalUtils.warn(`Did not run build for ${project.name} as no project conductor registered`)
       return
     }
     projectConductor
@@ -90,7 +90,7 @@ module.exports = function develop(projects) {
       .then(() => ({ success: true }))
       // Build failed 😭
       .catch((err) => {
-        terminal.error(`Please fix the following issue on ${project.name}:`, err)
+        TerminalUtils.error(`Please fix the following issue on ${project.name}:`, err)
         return { success: false }
       })
       // Finally...
@@ -100,7 +100,9 @@ module.exports = function develop(projects) {
 
         // If the build succeeded we will queue dependants
         if (success) {
-          terminal.verbose(`Project build successfully ${project.name}, queueing dependants...`)
+          TerminalUtils.verbose(
+            `Project build successfully ${project.name}, queueing dependants...`
+          )
           const projectDependants = getProjectDependants(project)
           projectDependants.forEach(queueProjectForBuild)
         }
@@ -114,20 +116,20 @@ module.exports = function develop(projects) {
 
   const buildNextInTheQueue = () => {
     if (currentBuild) {
-      terminal.warning(
+      TerminalUtils.warning(
         'Tried to build next item in queue even though there is an active build running'
       )
       return
     }
-    terminal.verbose('Popping the queue')
+    TerminalUtils.verbose('Popping the queue')
     if (buildQueue.length > 0) {
       // Pop the queue.
       const nextToBuild = buildQueue[0]
       buildQueue = buildQueue.slice(1)
-      terminal.verbose(`Popped ${nextToBuild.name}`)
+      TerminalUtils.verbose(`Popped ${nextToBuild.name}`)
       runBuild(nextToBuild)
     } else {
-      terminal.verbose('Nothing to pop')
+      TerminalUtils.verbose('Nothing to pop')
     }
   }
 
@@ -149,7 +151,7 @@ module.exports = function develop(projects) {
     if (shuttingDown) return
     shuttingDown = true
 
-    terminal.info('Shutting down development environment...')
+    TerminalUtils.info('Shutting down development environment...')
 
     // Firstly kill all our watchers.
     Object.keys(watchers).forEach(projectName => watchers[projectName].stop())
@@ -157,13 +159,16 @@ module.exports = function develop(projects) {
     // Then call off the `.kill()` against all our project conductors.
     Promise.all(R.values(projectConductors).map(projectConductor => projectConductor.kill()))
       .catch((err) => {
-        terminal.error('An error occurred whilst shutting down the development environment', err)
+        TerminalUtils.error(
+          'An error occurred whilst shutting down the development environment',
+          err
+        )
         process.exit(1)
       })
       .then(() => process.exit(0))
 
     setTimeout(() => {
-      terminal.verbose('Forcing shutdown after grace period')
+      TerminalUtils.verbose('Forcing shutdown after grace period')
       process.exit(0)
     }, 5 * 1000)
   }
@@ -172,13 +177,13 @@ module.exports = function develop(projects) {
   // signals are sent to our process.
   ['SIGINT', 'SIGTERM'].forEach((signal) => {
     process.on(signal, () => {
-      terminal.verbose(`Received ${signal} termination signal`)
+      TerminalUtils.verbose(`Received ${signal} termination signal`)
       performGracefulShutdown()
     })
   })
 
   process.on('exit', () => {
-    terminal.info('Till next time. *kiss*')
+    TerminalUtils.info('Till next time. *kiss*')
   })
 
   // prevent node process from exiting. (until CTRL + C is pressed at least)

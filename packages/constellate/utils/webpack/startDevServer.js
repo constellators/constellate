@@ -1,7 +1,7 @@
 const webpack = require('webpack')
 const WebpackDevServer = require('webpack-dev-server')
-const terminal = require('constellate-dev-utils/terminal')
-const throttle = require('constellate-dev-utils/fns/throttle')
+const TerminalUtils = require('constellate-dev-utils/terminal')
+const { throttle } = require('constellate-dev-utils/fns')
 const generateConfig = require('./generateConfig')
 const extractError = require('./extractError')
 
@@ -14,19 +14,19 @@ module.exports = function startDevServer(project, { port }) {
     const compiler = webpack(config)
     const server = new WebpackDevServer(compiler, config.devServer)
     server.listen(port, '0.0.0.0', () => {
-      terminal.verbose(`${project.name} listening on http://0.0.0.0:${port}`)
+      TerminalUtils.verbose(`${project.name} listening on http://0.0.0.0:${port}`)
     })
 
-    terminal.info(`Building ${project.name}`)
+    TerminalUtils.info(`Building ${project.name}`)
 
     compiler.plugin(
       'done',
       throttle(500, (doneStats) => {
         const doneError = extractError(project, null, doneStats)
         if (doneError) {
-          terminal.error(`Please fix the following issue on ${project.name}`, doneError)
+          TerminalUtils.error(`Please fix the following issue on ${project.name}`, doneError)
         } else {
-          terminal.verbose(`Built ${project.name}`)
+          TerminalUtils.verbose(`Built ${project.name}`)
         }
         if (!hasResolved) {
           if (doneError) {

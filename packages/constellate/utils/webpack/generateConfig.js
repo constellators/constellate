@@ -3,6 +3,7 @@
  * and Facebook/@gaearon's superb Create React App project.
  * https://github.com/jaredpalmer/razzle
  * https://github.com/facebookincubator/create-react-app
+ * ❤️
  */
 
 const webpack = require('webpack')
@@ -13,11 +14,9 @@ const WatchMissingNodeModulesPlugin = require('react-dev-utils/WatchMissingNodeM
 const nodeExternals = require('webpack-node-externals')
 const autoprefixer = require('autoprefixer')
 const R = require('ramda')
-
-const removeNil = require('constellate-dev-utils/arrays/removeNil')
-const onlyIf = require('constellate-dev-utils/logic/onlyIf')
-
-const generateBabelConfig = require('../babel/generateConfig')
+const { removeNil } = require('constellate-dev-utils/arrays')
+const { onlyIf } = require('constellate-dev-utils/logic')
+const BabelUtils = require('../babel')
 
 module.exports = function generateConfig(project, options = {}) {
   const { devServerPort } = options
@@ -246,7 +245,7 @@ module.exports = function generateConfig(project, options = {}) {
             },
             {
               loader: 'babel-loader',
-              options: generateBabelConfig(project),
+              options: BabelUtils.generateConfig(project),
             },
           ],
           include: [project.paths.modules],

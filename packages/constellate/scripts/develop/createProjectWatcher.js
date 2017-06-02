@@ -1,9 +1,9 @@
 const path = require('path')
 const chokidar = require('chokidar')
-const terminal = require('constellate-dev-utils/terminal')
+const TerminalUtils = require('constellate-dev-utils/terminal')
 
 module.exports = function createProjectWatcher(onChange, project) {
-  terminal.verbose(`Creating watcher for ${project.name}.`)
+  TerminalUtils.verbose(`Creating watcher for ${project.name}.`)
 
   const createWatcher = () => {
     const watcher = chokidar.watch(

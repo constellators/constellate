@@ -1,8 +1,8 @@
 const spawn = require('cross-spawn')
 const getPort = require('get-port')
-const terminal = require('constellate-dev-utils/terminal')
-const startDevServer = require('../../webpack/startDevServer')
-const buildProject = require('../../projects/buildProject')
+const TerminalUtils = require('constellate-dev-utils/terminal')
+const WebpackUtils = require('../../utils/webpack')
+const ProjectUtils = require('../../utils/projects')
 
 module.exports = function createProjectConductor(projects, project, watcher) {
   let runningServer
@@ -23,10 +23,10 @@ module.exports = function createProjectConductor(projects, project, watcher) {
         }
       )
       projectProcess.stderr.on('data', (data) => {
-        terminal.error(`Error running ${project.name}`, data.toString())
+        TerminalUtils.error(`Error running ${project.name}`, data.toString())
       })
       projectProcess.on('close', (code) => {
-        terminal.verbose(`Server process ${project.name} stopped (${code})`)
+        TerminalUtils.verbose(`Server process ${project.name} stopped (${code})`)
         runningServer = null
       })
       runningServer = {
@@ -34,29 +34,29 @@ module.exports = function createProjectConductor(projects, project, watcher) {
         kill: () =>
           new Promise((killResolve) => {
             if (runningServer) {
-              terminal.verbose(`Killing ${project.name}`)
+              TerminalUtils.verbose(`Killing ${project.name}`)
               projectProcess.on('close', () => {
-                terminal.verbose(`Killed ${project.name}`)
+                TerminalUtils.verbose(`Killed ${project.name}`)
                 killResolve()
               })
               projectProcess.kill('SIGTERM')
             } else {
-              terminal.verbose(`No process to kill for ${project.name}`)
+              TerminalUtils.verbose(`No process to kill for ${project.name}`)
               killResolve()
             }
           }),
       }
       resolve()
     }).catch((err) => {
-      terminal.error(`Error starting ${project.name}`, err)
+      TerminalUtils.error(`Error starting ${project.name}`, err)
     })
   }
 
   function ensureWebDevServerRunning() {
     return getPort()
       .then((port) => {
-        terminal.verbose(`Found free port ${port} for webpack dev server`)
-        return startDevServer(project, { port })
+        TerminalUtils.verbose(`Found free port ${port} for webpack dev server`)
+        return WebpackUtils.startDevServer(project, { port })
           .then((webpackDevServer) => {
             // No need for the watcher now as webpack-dev-server has an inbuilt
             // watcher.
@@ -98,13 +98,13 @@ module.exports = function createProjectConductor(projects, project, watcher) {
           // We only need one running instance.
           return Promise.resolve()
         }
-        terminal.verbose(`Starting a webpack-dev-server for ${project.name}`)
+        TerminalUtils.verbose(`Starting a webpack-dev-server for ${project.name}`)
         return ensureWebDevServerRunning()
       }
 
       // else is targetting node
 
-      return buildProject(projects, project).then(() =>
+      return ProjectUtils.buildProject(projects, project).then(() =>
         kill().then(() => {
           if (project.config.role === 'server') {
             return ensureNodeServerRunning()

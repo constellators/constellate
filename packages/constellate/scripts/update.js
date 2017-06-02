@@ -1,10 +1,10 @@
 const spawn = require('cross-spawn')
 const R = require('ramda')
-const terminal = require('constellate-dev-utils/terminal')
-const getAppConfig = require('../app/getAppConfig')
+const TerminalUtils = require('constellate-dev-utils/terminal')
+const AppUtils = require('../utils/app')
 
 module.exports = function update(projects) {
-  const constellateAppConfig = getAppConfig()
+  const constellateAppConfig = AppUtils.getConfig()
 
   const client = constellateAppConfig.packageClient != null
     ? constellateAppConfig.packageClient
@@ -31,12 +31,12 @@ module.exports = function update(projects) {
     )
 
   // First run the update command at application root
-  terminal.verbose('Updating dependencies for application root')
+  TerminalUtils.verbose('Updating dependencies for application root')
   runUpdate(process.cwd())
 
   // Then run it for each the projects
   projects.forEach((project) => {
-    terminal.verbose(`Updating dependencies for ${project.name}`)
+    TerminalUtils.verbose(`Updating dependencies for ${project.name}`)
     runUpdate(project.paths.root)
   })
 }

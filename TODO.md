@@ -1,14 +1,18 @@
 # Constellate Roadmap / Todo
 
-implement fkill
-use why-is-node-running for helpful errors
-auto-add source-map-support to build dependencies
-0.0.0.0 story
+ - [ ] UX - Terminal "centerer" https://stackoverflow.com/questions/30335637/get-width-of-terminal-in-node-js
+ - [ ] UX - implement fkill? may not need to with execa
+ - [ ] UX - use why-is-node-running for helpful errors?
+ - [ ] FEATURE - auto-add source-map-support to build dependencies, and then re-enable for production builds.
+ - [ ] CHORE - replace cross-spawn with execa
+ - [ ] CHORE - move constellate-utils into it's own repo
+ - [ ] CHORE - Change this constellate repo back over to node 8 and update eslint config accordingly.
 
  - [ ] BUILD - Chokidar events should result in the absolute minimal amount of work being done. e.g. transpile a single file. remove a dir, etc
  - [X] CHORE - Move constellate configuration into `constellate.js` files.
+ - [X] CHORE - refactor utils from constellate -> constellate-dev-utils
  - [ ] COMMAND - Create project
- - [X] COMMAND - Bootstrap
+ - [X] COMMAND - Install
  - [X] COMMAND - Update
  - [X] COMMAND - Clean
  - [X] COMMAND - Build

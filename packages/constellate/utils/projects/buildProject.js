@@ -1,18 +1,33 @@
 const R = require('ramda')
 const path = require('path')
 const fs = require('fs-extra')
-const terminal = require('constellate-dev-utils/terminal')
+const TerminalUtils = require('constellate-dev-utils/terminal')
 const readPkg = require('read-pkg')
 const writePkg = require('write-pkg')
-const transpile = require('../babel/transpile')
-const bundle = require('../webpack/bundle')
-const getAppConfig = require('../app/getAppConfig')
+const BabelUtils = require('../babel')
+const WebpackUtils = require('../webpack')
 
 // :: Project -> Promise<BuildResult>
-module.exports = function buildProject(projects, project) {
-  terminal.verbose(`Building ${project.name}`)
+module.exports = function buildProject(projects, project, options = {}) {
+  TerminalUtils.verbose(`Building ${project.name}`)
 
-  const constellateAppConfig = getAppConfig()
+  const versions = process.env.ENV === 'development'
+    ? // Explicity set each version as being a development version
+      projects.reduce((acc, cur) => Object.assign(acc, { [cur.name]: '0.0.0-development' }), {})
+    : options.versions
+
+  if (
+    !versions ||
+    !R.allPass(
+      [projectName => R.find(R.equals(projectName), Object.keys(versions))],
+      projects.map(R.prop('name'))
+    )
+  ) {
+    TerminalUtils.error(
+      'When doing a non-production build all version numbers should be provided for each project'
+    )
+    process.exit(1)
+  }
 
   // :: string -> Project
   const findProject = projectName => R.find(R.propEq('name', projectName), projects)
@@ -40,7 +55,7 @@ module.exports = function buildProject(projects, project) {
         fs.removeSync(target)
       }
       fs.ensureSymlinkSync(dependency.paths.buildRoot, target)
-      terminal.verbose(`Linked ${dependencyName} to ${project.name}`)
+      TerminalUtils.verbose(`Linked ${dependencyName} to ${project.name}`)
     })
 
     // Create a package.json file for the build of the project
@@ -49,13 +64,13 @@ module.exports = function buildProject(projects, project) {
       engines: {
         node: `>=${project.config.nodeVersion}`,
       },
-      version: constellateAppConfig.version,
+      version: versions[project.name],
       dependencies: Object.assign(
         {},
         (project.config.dependencies || []).reduce(
           (acc, dependencyName) =>
             Object.assign(acc, {
-              [getPackageName(dependencyName)]: `^${constellateAppConfig.version}`,
+              [getPackageName(dependencyName)]: `^${versions[dependencyName]}`,
             }),
           {}
         ),
@@ -76,21 +91,21 @@ module.exports = function buildProject(projects, project) {
 
     // Finally bundle/transpile the source
     if (project.config.target === 'web' || R.path(['config', 'compiler'], project) === 'webpack') {
-      terminal.verbose(`Bundling ${project.name}`)
-      return bundle(project)
+      TerminalUtils.verbose(`Bundling ${project.name}`)
+      return WebpackUtils.bundle(project)
     }
-    terminal.verbose(`Transpiling ${project.name}`)
-    return transpile(project)
+    TerminalUtils.verbose(`Transpiling ${project.name}`)
+    return BabelUtils.transpile(project)
   }
 
-  terminal.info(`Building ${project.name}`)
+  TerminalUtils.info(`Building ${project.name}`)
 
   return packageBasedBuild()
     .then(() => {
-      terminal.verbose(`Built ${project.name}`)
+      TerminalUtils.verbose(`Built ${project.name}`)
     })
     .catch((err) => {
-      terminal.error(`Build failed for ${project.name}`)
+      TerminalUtils.error(`Build failed for ${project.name}`)
       throw err
     })
 }

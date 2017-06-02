@@ -5,7 +5,6 @@ const pLimit = require('p-limit')
 const R = require('ramda')
 const fs = require('fs-extra')
 const globby = require('globby')
-
 const generateConfig = require('./generateConfig')
 
 // Having concurrent babel transpilations seems to break the sourcemap output.
