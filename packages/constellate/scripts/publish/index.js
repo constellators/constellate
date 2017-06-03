@@ -2,10 +2,8 @@ const { EOL } = require('os')
 const R = require('ramda')
 const semver = require('semver')
 const pSeries = require('p-series')
-const readPkg = require('read-pkg')
 const TerminalUtils = require('constellate-dev-utils/terminal')
 const GitUtils = require('constellate-dev-utils/git')
-const ChildProcessUtils = require('constellate-dev-utils/childProcess')
 const AppUtils = require('../../utils/app')
 const ProjectUtils = require('../../utils/projects')
 const requestNextVersion = require('./requestNextVersion')
@@ -18,7 +16,7 @@ module.exports = function publish(allProjects, projectsToPublish) {
     process.exit(1)
   }
 
-  const constellateAppConfig = AppUtils.getConfig()
+  const appConfig = AppUtils.getConfig()
   const lastVersionTag = AppUtils.getLastVersionTag()
   const lastVersion = lastVersionTag ? semver.clean(lastVersionTag) : '0.0.0'
   TerminalUtils.verbose(`Last version is ${lastVersion}`)
@@ -35,7 +33,8 @@ module.exports = function publish(allProjects, projectsToPublish) {
   }
 
   // Ensure on correct branch
-  const targetBranch = R.path(['publishing', 'git', 'branch'], constellateAppConfig) || 'master'
+  const targetBranch = R.path(['publishing', 'git', 'branch'], appConfig) || 'master'
+  const targetRemote = R.path(['publishing', 'git', 'remote'], appConfig) || 'origin'
   const actualBranch = GitUtils.getCurrentBranch()
   if (targetBranch !== actualBranch) {
     try {
@@ -48,12 +47,18 @@ module.exports = function publish(allProjects, projectsToPublish) {
   // Ask for the next version
   return requestNextVersion(lastVersion).then((nextVersion) => {
     const isFirstPublish = lastVersion === '0.0.0'
+    const nextVersionTag = `v${nextVersion}`
 
     const toPublish = isFirstPublish
       ? // We will publish all the ProjectUtils as this is our first publish.
         allProjects
       : projectsToPublish.filter(ProjectUtils.changedSince(lastVersionTag))
+    if (toPublish.length === 0) {
+      TerminalUtils.info('There are no changes to be published.')
+      return undefined
+    }
 
+    // Prep the correct version number for each project
     const versions = Object.assign(
       {},
       allProjects.reduce(
@@ -63,34 +68,18 @@ module.exports = function publish(allProjects, projectsToPublish) {
       toPublish.reduce((acc, cur) => Object.assign(acc, { [cur.name]: nextVersion }), {})
     )
 
-    if (toPublish.length === 0) {
-      TerminalUtils.info('There are no changes to be published.')
-      return undefined
-    }
-
-    // :: Project -> void -> Promise
-    const queueBuild = toBuild => () =>
-      ProjectUtils.buildProject(allProjects, toBuild, { versions })
-
-    return pSeries(toPublish.map(queueBuild)).then(() => {
-      toPublish.forEach((project) => {
-        const pkgJson = readPkg.sync(project.paths.packageJson)
-        if (pkgJson.private) {
-          TerminalUtils.verbose(`Skipping publish of ${project.name} as it is marked as private`)
-          return
-        }
-        TerminalUtils.info(`Publishing ${project.name}...`)
-        try {
-          ChildProcessUtils.execSync('npm', ['publish'], {
-            cwd: project.paths.buildRoot,
-          })
-        } catch (err) {
-          // TODO: Unpublish any previously published versions?
-          TerminalUtils.error(`Failed to publish ${project.name}`, err)
-        }
-      })
-
-      // TODO: Assign the git tag and push the repo.
-    })
+    // Build..
+    return (
+      pSeries(
+        toPublish.map(project => () =>
+          ProjectUtils.buildProject(allProjects, project, { versions }))
+      )
+        // Then publish to NPM...
+        .then(() => pSeries(toPublish.map(project => () => ProjectUtils.publishToNPM(project))))
+        // Then tag the git repo...
+        .then(() => GitUtils.addAnnotatedTag(nextVersionTag))
+        // Then push the git repo with the tag...
+        .then(() => GitUtils.pushWithTags(targetRemote, [nextVersionTag]))
+    )
   })
 }

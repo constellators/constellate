@@ -11,7 +11,7 @@ const WebpackUtils = require('../webpack')
 module.exports = function buildProject(projects, project, options = {}) {
   TerminalUtils.verbose(`Building ${project.name}`)
 
-  const versions = process.env.ENV === 'development'
+  const versions = process.env.NODE_ENV === 'development'
     ? // Explicity set each version as being a development version
       projects.reduce((acc, cur) => Object.assign(acc, { [cur.name]: '0.0.0-development' }), {})
     : options.versions
@@ -24,7 +24,7 @@ module.exports = function buildProject(projects, project, options = {}) {
     )
   ) {
     TerminalUtils.error(
-      'When doing a non-production build all version numbers should be provided for each project'
+      'When creating a production build all version numbers should be provided for each project'
     )
     process.exit(1)
   }

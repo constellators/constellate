@@ -4,8 +4,9 @@ const cleanBuild = require('./cleanBuild')
 const cleanProjects = require('./cleanProjects')
 const createLinksForProject = require('./createLinksForProject')
 const getLastVersion = require('./getLastVersion')
-const resolveProjects = require('./resolveProjects')
 const hasUncommittedChanges = require('./hasUncommittedChanges')
+const publishToNPM = require('./publishToNPM')
+const resolveProjects = require('./resolveProjects')
 
 module.exports = {
   buildProject,
@@ -14,6 +15,7 @@ module.exports = {
   cleanProjects,
   createLinksForProject,
   getLastVersion,
-  resolveProjects,
   hasUncommittedChanges,
+  publishToNPM,
+  resolveProjects,
 }

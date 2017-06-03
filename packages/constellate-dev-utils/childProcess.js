@@ -4,34 +4,50 @@
  * ❤️
  */
 
-const { spawn } = require('execa')
+const execa = require('execa')
 
-function _spawn(command, args, opts, callback) {
-  const child = spawn(command, args, opts)
-
-  if (callback) {
-    child.then(result => callback(null, result.stdout), err => callback(err))
-  }
-
-  return child
+function _spawn(command, args, opts) {
+  return execa(command, args, opts).then(result => result.stdout)
 }
 
-module.exports = class ChildProcessUtilities {
-  static exec(command, args, opts, callback) {
-    const options = Object.assign({}, opts)
-    options.stdio = 'pipe' // node default
+// :: (string, ?Array<string>, ?Object) -> Promise<string, Error>
+function exec(command, args, opts) {
+  return _spawn(
+    command,
+    args,
+    Object.assign(
+      {},
+      {
+        stdio: 'pipe', // node default
+      },
+      opts
+    )
+  )
+}
 
-    return _spawn(command, args, options, callback)
-  }
+// :: (string, ?Array<string>, ?Object) -> string
+// throws Error
+function execSync(command, args, opts) {
+  return execa.sync(command, args, opts).stdout
+}
 
-  static execSync(command, args, opts) {
-    return spawn.sync(command, args, opts).stdout
-  }
+// :: (string, ?Array<string>, ?Object) -> Promise<string, Error>
+function spawn(command, args, opts) {
+  return _spawn(
+    command,
+    args,
+    Object.assign(
+      {},
+      {
+        stdio: 'inherit',
+      },
+      opts
+    )
+  )
+}
 
-  static spawn(command, args, opts, callback) {
-    const options = Object.assign({}, opts)
-    options.stdio = 'inherit'
-
-    return _spawn(command, args, options, callback)
-  }
+module.exports = {
+  exec,
+  execSync,
+  spawn,
 }

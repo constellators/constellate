@@ -80,14 +80,14 @@ function changedFilesSinceIn(since, location) {
   )
 }
 
-function addAnnotatedTag(tag, opts) {
-  ChildProcessUtils.execSync('git', ['tag', '-a', tag, '-m', tag], opts)
+function addAnnotatedTag(tag) {
+  ChildProcessUtils.execSync('git', ['tag', '-a', tag, '-m', tag])
 }
 
-function pushWithTags(remote, tags, opts) {
-  const branch = getCurrentBranch(opts)
-  ChildProcessUtils.execSync('git', ['push', remote, branch], opts)
-  ChildProcessUtils.execSync('git', ['push', remote].concat(tags), opts)
+function pushWithTags(remote, tags) {
+  const branch = getCurrentBranch()
+  ChildProcessUtils.execSync('git', ['push', remote, branch])
+  ChildProcessUtils.execSync('git', ['push', remote].concat(tags))
 }
 
 module.exports = {

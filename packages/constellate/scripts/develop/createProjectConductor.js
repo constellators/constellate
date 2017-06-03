@@ -104,6 +104,8 @@ module.exports = function createProjectConductor(projects, project, watcher) {
 
       // else is targetting node
 
+      console.log(projects.map(x => x.name))
+
       return ProjectUtils.buildProject(projects, project).then(() =>
         kill().then(() => {
           if (project.config.role === 'server') {

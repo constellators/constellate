@@ -98,13 +98,16 @@ program
       process.env.NODE_ENV = 'development'
     }
     const develop = require('../scripts/develop')
-    ProjectUtils.resolveProjects(projects).then(develop)
+    Promise.all([
+      ProjectUtils.resolveProjects(),
+      ProjectUtils.resolveProjects(projects),
+    ]).then(([all, toDevelop]) => develop(all, toDevelop))
   })
 
 program
   .command('publish')
   .description('Publish your projects')
-  .option('-p, --projects <projects>', 'specify the projects to develop', list)
+  .option('-p, --projects <projects>', 'specify the projects to publish', list)
   .action(({ projects }) => {
     TerminalUtils.title('Running publish...')
     // If no NODE_ENV is set we will default to 'production'.

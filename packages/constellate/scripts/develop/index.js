@@ -6,7 +6,7 @@ const ProjectUtils = require('../../utils/projects')
 const createProjectConductor = require('./createProjectConductor')
 const createProjectWatcher = require('./createProjectWatcher')
 
-module.exports = function develop(projects) {
+module.exports = function develop(allProjects, projectsToDevelop) {
   TerminalUtils.info('Press CTRL + C to exit')
 
   // Represents the current project being built
@@ -25,7 +25,7 @@ module.exports = function develop(projects) {
 
   // :: Project -> Array<Project>
   const getProjectDependants = project =>
-    project.dependants.map(dependant => projects.find(R.propEq('name', dependant)))
+    project.dependants.map(dependant => projectsToDevelop.find(R.propEq('name', dependant)))
 
   // eslint-disable-next-line no-unused-vars
   const onChange = project => (changes) => {
@@ -39,17 +39,17 @@ module.exports = function develop(projects) {
   }
 
   // :: Object<string, ProjectWatcher>
-  const watchers = projects.reduce(
+  const watchers = projectsToDevelop.reduce(
     (acc, project) =>
       Object.assign(acc, { [project.name]: createProjectWatcher(onChange(project), project) }),
     {}
   )
 
   // :: Object<string, ProjectConductor>
-  const projectConductors = projects.reduce(
+  const projectConductors = projectsToDevelop.reduce(
     (acc, project) =>
       Object.assign(acc, {
-        [project.name]: createProjectConductor(projects, project, watchers[project.name]),
+        [project.name]: createProjectConductor(projectsToDevelop, project, watchers[project.name]),
       }),
     {}
   )
@@ -61,7 +61,7 @@ module.exports = function develop(projects) {
       // project being built via it's dependancy chain.
       TerminalUtils.verbose(`Skipping queue of ${project.name} as represented by currentBuild`)
     } else if (R.any(projectHasDependant(project), buildQueue)) {
-      // Do nothing as one of the queued projects will result in this project
+      // Do nothing as one of the queued projectsToDevelop will result in this project
       // getting built via it's dependancy chain.
       TerminalUtils.verbose(`Skipping queue of ${project.name} as represented by buildQueue`)
     } else {
@@ -134,7 +134,7 @@ module.exports = function develop(projects) {
   }
 
   // READY...
-  projects.forEach(queueProjectForBuild)
+  projectsToDevelop.forEach(queueProjectForBuild)
 
   // SET...
   Object.keys(watchers).forEach(projectName => watchers[projectName].start())

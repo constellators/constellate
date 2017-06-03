@@ -1,3 +1,10 @@
+/**
+ * This is an adapted version of the related function within the amazing
+ * Lerna project.
+ * https://github.com/lerna/lerna
+ * ❤️
+ */
+
 const semver = require('semver')
 const TerminalUtils = require('constellate-dev-utils/terminal')
 

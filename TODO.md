@@ -1,14 +1,8 @@
 # Constellate Roadmap / Todo
 
- - [ ] UX - Terminal "centerer" https://stackoverflow.com/questions/30335637/get-width-of-terminal-in-node-js
- - [ ] UX - implement fkill? may not need to with execa
- - [ ] UX - use why-is-node-running for helpful errors?
- - [ ] FEATURE - auto-add source-map-support to build dependencies, and then re-enable for production builds.
  - [ ] CHORE - replace cross-spawn with execa
  - [ ] CHORE - move constellate-utils into it's own repo
  - [ ] CHORE - Change this constellate repo back over to node 8 and update eslint config accordingly.
-
- - [ ] BUILD - Chokidar events should result in the absolute minimal amount of work being done. e.g. transpile a single file. remove a dir, etc
  - [X] CHORE - Move constellate configuration into `constellate.js` files.
  - [X] CHORE - refactor utils from constellate -> constellate-dev-utils
  - [ ] COMMAND - Create project
@@ -17,9 +11,12 @@
  - [X] COMMAND - Clean
  - [X] COMMAND - Build
  - [X] COMMAND - Develop
- - [ ] COMMAND - Publish
+ - [X] COMMAND - Publish
  - [ ] COMMAND - Deploy
- - [ ] CONFIG - Make the target node version configurable.
+ - [ ] COMMAND - Prettify
+ - [ ] COMMAND - Test
+ - [ ] CONFIG - Make the target browserlist configurable.
+ - [X] CONFIG - Make the target node version configurable.
  - [ ] CONFIG - Make the Babel-ification process optional. In which case a symlink could be created from build/index.js to modules/index.js.  Just don't use any syntax that requires Babel in your code.
  - [X] DEVELOP - Dependency based reloads.
  - [ ] DEVELOP - Manual reload override.
@@ -28,10 +25,10 @@
    - [ ] Intro
    - [ ] Video overview
    - [ ] Blog post
-   - [ ] SIGTERM
-   - [ ] constellate.app.js
-   - [ ] constellate.proj.js
- - [X] FEATURE - webpack-dev-server integration for `webapp` types.
+   - [ ] SIGTERM effective usage
+   - [ ] constellate.js
+ - [ ] FEATURE - Chokidar events should result in the absolute minimal amount of work being done. e.g. transpile a single file. remove a dir, etc
+ - [ ] FEATURE - auto-add source-map-support to build dependencies, and then re-enable for production builds.
  - [ ] FEATURE - Command hooks
    - [ ] prebuild
    - [ ] postbuild
@@ -40,6 +37,7 @@
    - [ ] prestart
    - [ ] poststart
  - [X] FEATURE - Plugin architecture
+ - [X] FEATURE - webpack-dev-server integration for `webapp` types.
  - [ ] TEMPLATE - Application template
  - [ ] TEMPLATE - Empty project
  - [ ] TEST - Polyfill compilation to the following targets
@@ -48,6 +46,9 @@
        - [ ] Chrome
        - [ ] IE 9
        - [ ] Safari
+ - [ ] UX - Publish command Error resilience.
+ - [ ] UX - Terminal "centerer" https://stackoverflow.com/questions/30335637/get-width-of-terminal-in-node-js
+ - [ ] UX - use why-is-node-running for helpful errors?
  - [X] UX - Develop command Error resilience.
    - [X] Startup Errors
    - [X] Compile Time Errors
