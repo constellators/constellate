@@ -84,10 +84,12 @@ module.exports = function buildProject(projects, project, options = {}) {
     // Sym link the node_modules directory from the project's source directory
     // into the build directory for the project. This way we don't need to
     // reinstall the dependencies.
-    fs.ensureSymlinkSync(
-      project.paths.nodeModules,
-      path.resolve(project.paths.buildRoot, './node_modules'),
-    )
+    if (fs.existsSync(project.paths.nodeModules)) {
+      fs.ensureSymlinkSync(
+        project.paths.nodeModules,
+        path.resolve(project.paths.buildRoot, './node_modules'),
+      )
+    }
 
     // Finally bundle/transpile the source
     if (project.config.target === 'web' || R.path(['config', 'compiler'], project) === 'webpack') {
