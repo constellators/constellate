@@ -1,7 +1,7 @@
 {
   "name": "create-constellate-app",
   "description": "CLI to bootstrap Constellate applications.",
-  "version": "0.0.25",
+  "version": "0.0.30",
   "repository": "constellators/create-constellate-app",
   "license": "MIT",
   "engines": {

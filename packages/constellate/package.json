@@ -1,7 +1,7 @@
 {
   "name": "constellate",
   "description": "The ❤️ of Constellate applications.",
-  "version": "0.0.29",
+  "version": "0.0.30",
   "repository": "constellators/constellate",
   "license": "MIT",
   "engines": {
@@ -44,7 +44,7 @@
     "case-sensitive-paths-webpack-plugin": "^2.1.1",
     "chokidar": "^1.7.0",
     "commander": "^2.9.0",
-    "constellate-dev-utils": "^0.0.29",
+    "constellate-dev-utils": "^0.0.30",
     "cross-spawn": "^5.1.0",
     "css-loader": "^0.28.4",
     "escape-string-regexp": "^1.0.5",
