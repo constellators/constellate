@@ -5,7 +5,7 @@
   "repository": "constellators/constellate",
   "license": "MIT",
   "engines": {
-    "node": ">=6"
+    "node": ">=8"
   },
   "bugs": {
     "url": "https://github.com/constellators/constellate/issues"
