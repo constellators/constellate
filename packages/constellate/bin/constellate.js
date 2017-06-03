@@ -61,7 +61,7 @@ program
 program
   .command('build')
   .description('Builds the projects')
-  .option('-p, --projects <projects>', 'specify the projects to build', list)
+  .option('-p, --projects <projects>', 'Specify the projects to build', list)
   .action(({ projects }) => {
     TerminalUtils.title('Running build...')
     // If no NODE_ENV is set we will default to 'production'.
@@ -89,8 +89,8 @@ program
 
 program
   .command('develop')
-  .description('run development servers for the projects')
-  .option('-p, --projects <projects>', 'specify the projects to develop', list)
+  .description('Run development servers for the projects')
+  .option('-p, --projects <projects>', 'Specify the projects to develop', list)
   .action(({ projects }) => {
     TerminalUtils.title('Kickstarting development hyperengine...')
     // If no NODE_ENV is set we will default to 'development'.
@@ -107,8 +107,9 @@ program
 program
   .command('publish')
   .description('Publish your projects')
-  .option('-p, --projects <projects>', 'specify the projects to publish', list)
-  .action(({ projects }) => {
+  .option('-p, --projects <projects>', 'Specify the projects to publish', list)
+  .option('-f, --force', 'Forces publishing of projects even if there are no changes to them')
+  .action(({ projects, force }) => {
     TerminalUtils.title('Running publish...')
     // If no NODE_ENV is set we will default to 'production'.
     if (!process.env.NODE_ENV) {
@@ -116,7 +117,7 @@ program
     }
     const publish = require('../scripts/publish')
     Promise.all([ProjectUtils.resolveProjects(), ProjectUtils.resolveProjects(projects)])
-      .then(([all, toPublish]) => publish(all, toPublish))
+      .then(([all, toPublish]) => publish(all, toPublish, { force }))
       .then(() => TerminalUtils.success('Done'))
       .catch(err => TerminalUtils.error('Eeek, an error!', err))
   })

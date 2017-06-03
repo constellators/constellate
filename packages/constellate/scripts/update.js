@@ -30,10 +30,6 @@ module.exports = function update(projects) {
       },
     )
 
-  // First run the update command at application root
-  TerminalUtils.verbose('Updating dependencies for application root')
-  runUpdate(process.cwd())
-
   // Then run it for each the projects
   projects.forEach((project) => {
     TerminalUtils.verbose(`Updating dependencies for ${project.name}`)

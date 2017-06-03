@@ -8,7 +8,9 @@ const AppUtils = require('../../utils/app')
 const ProjectUtils = require('../../utils/projects')
 const requestNextVersion = require('./requestNextVersion')
 
-module.exports = function publish(allProjects, projectsToPublish) {
+module.exports = function publish(allProjects, projectsToPublish, options = {}) {
+  const force = !!options.force
+
   if (!GitUtils.isInitialized()) {
     TerminalUtils.error(
       'Constellate publishing requires that your project is initialised as a Git repository.',
@@ -52,7 +54,9 @@ module.exports = function publish(allProjects, projectsToPublish) {
     const toPublish = isFirstPublish
       ? // We will publish all the ProjectUtils as this is our first publish.
         allProjects
-      : projectsToPublish.filter(ProjectUtils.changedSince(lastVersionTag))
+      : force
+          ? projectsToPublish
+          : projectsToPublish.filter(ProjectUtils.changedSince(lastVersionTag))
     if (toPublish.length === 0) {
       TerminalUtils.info('There are no changes to be published.')
       return undefined
@@ -71,7 +75,8 @@ module.exports = function publish(allProjects, projectsToPublish) {
     // Build..
     return (
       pSeries(
-        toPublish.map(project => () => ProjectUtils.buildProject(allProjects, project, { versions })),
+        toPublish.map(project => () =>
+          ProjectUtils.buildProject(allProjects, project, { versions })),
       )
         // Then publish to NPM...
         .then(() => pSeries(toPublish.map(project => () => ProjectUtils.publishToNPM(project))))

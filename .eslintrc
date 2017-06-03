@@ -18,6 +18,8 @@
     // Do not care.
     "no-underscore-dangle": 0,
     // We want the console
-    "no-console": 0
+    "no-console": 0,
+    // With prettier this is not too bad anymore
+    "no-nested-ternary": 0
   }
 }

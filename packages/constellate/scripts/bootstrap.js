@@ -28,10 +28,6 @@ module.exports = function bootstrap(projects) {
       },
     )
 
-  // First run the install command at application root
-  TerminalUtils.verbose('Installing dependencies for application root')
-  runInstall(process.cwd())
-
   // Then run install for each project
   projects.forEach((project) => {
     TerminalUtils.verbose(`Installing dependencies for ${project.name}`)

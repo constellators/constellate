@@ -19,6 +19,8 @@ module.exports = {
     semi: [2, 'never'],
     // It really is not confusing.
     'no-confusing-arrow': 0,
+    // With prettier this is not too bad anymore
+    'no-nested-ternary': 0,
     // This rule is annoying
     'react/forbid-prop-types': 0,
     // A jsx extension is not required for files containing jsx
