@@ -4,4 +4,4 @@
 
 <h1 align="center">constellate</h1>
 
-Rapid Javascript monorepos.
+[WIP] Rapid Javascript monorepos.
