@@ -70,13 +70,13 @@ function getLastAnnotatedTagInfo() {
 
 function uncommittedChangesIn(location) {
   return multiLineStringToArray(
-    ChildProcessUtils.execSync('git', ['diff', '--name-only', '--', location])
+    ChildProcessUtils.execSync('git', ['diff', '--name-only', '--', location]),
   )
 }
 
 function changedFilesSinceIn(since, location) {
   return multiLineStringToArray(
-    ChildProcessUtils.execSync('git', ['diff', '--name-only', since, '--', location])
+    ChildProcessUtils.execSync('git', ['diff', '--name-only', since, '--', location]),
   )
 }
 

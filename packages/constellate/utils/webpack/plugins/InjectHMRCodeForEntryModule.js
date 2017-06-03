@@ -12,13 +12,13 @@ InjectHMRCodeForEntryModulePlugin.prototype.apply = function apply(compiler) {
   const options = this.options
 
   /* eslint-disable */
-  compiler.plugin('after-plugins', function() {
-    compiler.plugin('this-compilation', function(compilation) {
-      compilation.moduleTemplate.plugin('render', function(
+  compiler.plugin("after-plugins", function() {
+    compiler.plugin("this-compilation", function(compilation) {
+      compilation.moduleTemplate.plugin("render", function(
         moduleSourcePostModule,
         module,
         chunk,
-        dependencyTemplates
+        dependencyTemplates,
       ) {
         if (module.resource === options.entryFile) {
           return this.asString([

@@ -26,7 +26,7 @@ const toProject = (projectName) => {
     {},
     defaultConfig,
     appConfig.projectDefaults || {},
-    R.path(['projects', projectName], appConfig) || {}
+    R.path(['projects', projectName], appConfig) || {},
   )
   const buildRoot = path.resolve(process.cwd(), `./build/${projectName}`)
   return {
@@ -59,7 +59,7 @@ function orderByLinkedDependencies(projects) {
 
   // :: Array<Project>
   const projectsWithNoDependencies = R.pipe(R.filter(hasNoDependencies), R.map(R.prop('name')))(
-    projects
+    projects,
   )
 
   // :: string -> Project
@@ -70,7 +70,7 @@ function orderByLinkedDependencies(projects) {
     toposort,
     R.without(projectsWithNoDependencies),
     R.concat(projectsWithNoDependencies),
-    findProjectByName
+    findProjectByName,
   )(projects)
 }
 
@@ -102,7 +102,7 @@ function getAllProjects() {
       const dependency = R.find(R.propEq('name', dependencyName), projects)
       if (!dependency) {
         TerminalUtils.warning(
-          `Could not find ${dependencyName} referenced as dependency for ${project.name}`
+          `Could not find ${dependencyName} referenced as dependency for ${project.name}`,
         )
         return acc
       }
@@ -118,21 +118,21 @@ function getAllProjects() {
     R.map(project =>
       Object.assign(project, {
         dependencies: getDependencies(project),
-      })
+      }),
     ),
     // Projects that directly depend on this project.
     R.map(project =>
       Object.assign(project, {
         dependants: getDependants(project),
-      })
+      }),
     ),
     // Projects ordered based on their dependencies based order,
     // which mean building them in order should be safe.
-    orderByLinkedDependencies
+    orderByLinkedDependencies,
   )(projects)
 
   TerminalUtils.verbose(
-    `Project build order: \n\t- ${fullyResolvedProjects.map(R.prop('name')).join('\n\t- ')}`
+    `Project build order: \n\t- ${fullyResolvedProjects.map(R.prop('name')).join('\n\t- ')}`,
   )
 
   return fullyResolvedProjects

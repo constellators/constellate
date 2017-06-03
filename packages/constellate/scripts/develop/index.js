@@ -17,7 +17,7 @@ module.exports = function develop(allProjects, projectsToDevelop) {
 
   // :: Project -> Project -> bool
   const projectHasDependant = R.curry((dependant, project) =>
-    R.contains(dependant.name, project.dependants)
+    R.contains(dependant.name, project.dependants),
   )
 
   // Firstly clean up shop.
@@ -42,7 +42,7 @@ module.exports = function develop(allProjects, projectsToDevelop) {
   const watchers = projectsToDevelop.reduce(
     (acc, project) =>
       Object.assign(acc, { [project.name]: createProjectWatcher(onChange(project), project) }),
-    {}
+    {},
   )
 
   // :: Object<string, ProjectConductor>
@@ -51,7 +51,7 @@ module.exports = function develop(allProjects, projectsToDevelop) {
       Object.assign(acc, {
         [project.name]: createProjectConductor(projectsToDevelop, project, watchers[project.name]),
       }),
-    {}
+    {},
   )
 
   const queueProjectForBuild = (project) => {
@@ -101,7 +101,7 @@ module.exports = function develop(allProjects, projectsToDevelop) {
         // If the build succeeded we will queue dependants
         if (success) {
           TerminalUtils.verbose(
-            `Project build successfully ${project.name}, queueing dependants...`
+            `Project build successfully ${project.name}, queueing dependants...`,
           )
           const projectDependants = getProjectDependants(project)
           projectDependants.forEach(queueProjectForBuild)
@@ -117,7 +117,7 @@ module.exports = function develop(allProjects, projectsToDevelop) {
   const buildNextInTheQueue = () => {
     if (currentBuild) {
       TerminalUtils.warning(
-        'Tried to build next item in queue even though there is an active build running'
+        'Tried to build next item in queue even though there is an active build running',
       )
       return
     }
@@ -161,7 +161,7 @@ module.exports = function develop(allProjects, projectsToDevelop) {
       .catch((err) => {
         TerminalUtils.error(
           'An error occurred whilst shutting down the development environment',
-          err
+          err,
         )
         process.exit(1)
       })

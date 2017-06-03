@@ -20,8 +20,8 @@ function exec(command, args, opts) {
       {
         stdio: 'pipe', // node default
       },
-      opts
-    )
+      opts,
+    ),
   )
 }
 
@@ -41,8 +41,8 @@ function spawn(command, args, opts) {
       {
         stdio: 'inherit',
       },
-      opts
-    )
+      opts,
+    ),
   )
 }
 

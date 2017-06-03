@@ -8,7 +8,7 @@ module.exports = function build(allProjects, toBuild) {
   // Need to get the current version numbers for each project
   const versions = allProjects.reduce(
     (acc, cur) => Object.assign(acc, { [cur.name]: ProjectUtils.getLastVersion(cur) }),
-    {}
+    {},
   )
 
   // :: Project -> void -> Promise

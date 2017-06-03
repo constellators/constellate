@@ -10,7 +10,7 @@ const changedSince = R.curry((versionTag, project) => {
     Terminal.verbose(
       `Since ${versionTag} the following files have changed within ${project.name}:${EOL}${files
         .map(change => `\t${change.replace(`Projects/${project.name}`, '')}`)
-        .join(`${EOL}`)}`
+        .join(`${EOL}`)}`,
     )
   } else {
     Terminal.verbose(`No changes on ${project.name}`)

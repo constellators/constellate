@@ -35,7 +35,7 @@ module.exports = function startDevServer(project, { port }) {
             resolve(server)
           }
         }
-      })
+      }),
     )
   })
 }

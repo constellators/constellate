@@ -14,6 +14,6 @@ module.exports = function bundle(project, options) {
             resolve(compiler)
           }
         })
-      })
+      }),
   )
 }

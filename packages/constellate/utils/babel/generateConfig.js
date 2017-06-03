@@ -132,7 +132,7 @@ module.exports = function generateConfig(project) {
       // support.
       onlyIf(
         isTargettingNode && !usingWebpackAsCompiler && env === 'development',
-        path.resolve(__dirname, './plugins/sourceMapSupport.js')
+        path.resolve(__dirname, './plugins/sourceMapSupport.js'),
       ),
     ]),
   }

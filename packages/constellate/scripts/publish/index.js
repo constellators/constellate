@@ -11,7 +11,7 @@ const requestNextVersion = require('./requestNextVersion')
 module.exports = function publish(allProjects, projectsToPublish) {
   if (!GitUtils.isInitialized()) {
     TerminalUtils.error(
-      'Constellate publishing requires that your project is initialised as a Git repository.'
+      'Constellate publishing requires that your project is initialised as a Git repository.',
     )
     process.exit(1)
   }
@@ -27,7 +27,7 @@ module.exports = function publish(allProjects, projectsToPublish) {
     TerminalUtils.error(
       `The following projects have uncommitted changes within them. Please commit your changes and then try again.${EOL}${projectsWithUncommitedChanges
         .map(R.prop('name'))
-        .join(', ')}`
+        .join(', ')}`,
     )
     process.exit(1)
   }
@@ -63,16 +63,15 @@ module.exports = function publish(allProjects, projectsToPublish) {
       {},
       allProjects.reduce(
         (acc, cur) => Object.assign(acc, { [cur.name]: ProjectUtils.getLastVersion(cur) }),
-        {}
+        {},
       ),
-      toPublish.reduce((acc, cur) => Object.assign(acc, { [cur.name]: nextVersion }), {})
+      toPublish.reduce((acc, cur) => Object.assign(acc, { [cur.name]: nextVersion }), {}),
     )
 
     // Build..
     return (
       pSeries(
-        toPublish.map(project => () =>
-          ProjectUtils.buildProject(allProjects, project, { versions }))
+        toPublish.map(project => () => ProjectUtils.buildProject(allProjects, project, { versions })),
       )
         // Then publish to NPM...
         .then(() => pSeries(toPublish.map(project => () => ProjectUtils.publishToNPM(project))))

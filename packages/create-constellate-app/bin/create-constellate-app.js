@@ -8,8 +8,8 @@ if (currentNodeVersion.split('.')[0] < 7) {
     chalk.red(
       `You are running Node ${currentNodeVersion}.\n` +
         'Constellate requires Node 7 or higher. \n' +
-        'Please update your version of Node.'
-    )
+        'Please update your version of Node.',
+    ),
   )
   process.exit(1)
 }

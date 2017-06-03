@@ -20,11 +20,11 @@ module.exports = function buildProject(projects, project, options = {}) {
     !versions ||
     !R.allPass(
       [projectName => R.find(R.equals(projectName), Object.keys(versions))],
-      projects.map(R.prop('name'))
+      projects.map(R.prop('name')),
     )
   ) {
     TerminalUtils.error(
-      'When creating a production build all version numbers should be provided for each project'
+      'When creating a production build all version numbers should be provided for each project',
     )
     process.exit(1)
   }
@@ -38,7 +38,7 @@ module.exports = function buildProject(projects, project, options = {}) {
       findProject,
       R.path(['paths', 'packageJson']),
       x => readPkg.sync(x, { normalize: false }),
-      R.prop('name')
+      R.prop('name'),
     )(projectName)
 
   function packageBasedBuild() {
@@ -72,9 +72,9 @@ module.exports = function buildProject(projects, project, options = {}) {
             Object.assign(acc, {
               [getPackageName(dependencyName)]: `^${versions[dependencyName]}`,
             }),
-          {}
+          {},
         ),
-        sourcePkgJson.dependencies || {}
+        sourcePkgJson.dependencies || {},
       ),
       main: 'modules/index.js',
       files: ['modules'],
@@ -86,7 +86,7 @@ module.exports = function buildProject(projects, project, options = {}) {
     // reinstall the dependencies.
     fs.ensureSymlinkSync(
       project.paths.nodeModules,
-      path.resolve(project.paths.buildRoot, './node_modules')
+      path.resolve(project.paths.buildRoot, './node_modules'),
     )
 
     // Finally bundle/transpile the source
