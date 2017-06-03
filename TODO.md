@@ -1,7 +1,6 @@
 # Constellate Roadmap / Todo
 
- - [ ] BUG! - Develop fails when having not previously built the projects and your are building a web client that depends on another constellate project. Mouthful.
-
+ - [X] BUG! - Develop fails when having not previously built the projects and your are building a web client that depends on another constellate project. Mouthful.
  - [ ] CHORE - replace cross-spawn with execa
  - [ ] CHORE - move constellate-utils into it's own repo
  - [ ] CHORE - Change this constellate repo back over to node 8 and update eslint config accordingly.
@@ -38,6 +37,8 @@
    - [ ] postdevelop
    - [ ] prestart
    - [ ] poststart
+ - [ ] FEATURE - Check if remote has changes to pull
+ - [ ] FEATURE - Check if remote exists
  - [X] FEATURE - Plugin architecture
  - [X] FEATURE - webpack-dev-server integration for `webapp` types.
  - [ ] TEMPLATE - Application template

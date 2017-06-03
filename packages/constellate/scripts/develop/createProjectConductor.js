@@ -4,7 +4,7 @@ const TerminalUtils = require('constellate-dev-utils/terminal')
 const WebpackUtils = require('../../utils/webpack')
 const ProjectUtils = require('../../utils/projects')
 
-module.exports = function createProjectConductor(projects, project, watcher) {
+module.exports = function createProjectConductor(project, watcher) {
   let runningServer
 
   // :: Project -> Promise
@@ -104,7 +104,7 @@ module.exports = function createProjectConductor(projects, project, watcher) {
 
       // else is targetting node
 
-      return ProjectUtils.buildProject(projects, project).then(() =>
+      return ProjectUtils.buildProject(project).then(() =>
         kill().then(() => {
           if (project.config.role === 'server') {
             return ensureNodeServerRunning()

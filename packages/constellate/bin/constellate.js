@@ -20,10 +20,6 @@ function list(val) {
 
 TerminalUtils.header(`constellate v${packageJson.version}`)
 
-if (process.env.NODE_ENV === 'development') {
-  console.log(`\n${require('../utils/getCarlSaganQuote')()}`)
-}
-
 program.version(packageJson.version)
 
 program
@@ -69,8 +65,8 @@ program
       process.env.NODE_ENV = 'production'
     }
     const build = require('../scripts/build')
-    Promise.all([ProjectUtils.resolveProjects(), ProjectUtils.resolveProjects(projects)])
-      .then(([all, toBuild]) => build(all, toBuild))
+    ProjectUtils.resolveProjects(projects)
+      .then(build)
       .then(() => TerminalUtils.success('Done'))
       .catch(err => TerminalUtils.error('Eeek, an error!', err))
   })
@@ -92,16 +88,16 @@ program
   .description('Run development servers for the projects')
   .option('-p, --projects <projects>', 'Specify the projects to develop', list)
   .action(({ projects }) => {
+    console.log(`\n${require('../utils/getCarlSaganQuote')()}`)
+
     TerminalUtils.title('Kickstarting development hyperengine...')
     // If no NODE_ENV is set we will default to 'development'.
     if (!process.env.NODE_ENV) {
       process.env.NODE_ENV = 'development'
     }
+
     const develop = require('../scripts/develop')
-    Promise.all([
-      ProjectUtils.resolveProjects(),
-      ProjectUtils.resolveProjects(projects),
-    ]).then(([all, toDevelop]) => develop(all, toDevelop))
+    ProjectUtils.resolveProjects(projects).then(develop)
   })
 
 program
@@ -116,8 +112,8 @@ program
       process.env.NODE_ENV = 'production'
     }
     const publish = require('../scripts/publish')
-    Promise.all([ProjectUtils.resolveProjects(), ProjectUtils.resolveProjects(projects)])
-      .then(([all, toPublish]) => publish(all, toPublish, { force }))
+    ProjectUtils.resolveProjects(projects)
+      .then(toPublish => publish(toPublish, { force }))
       .then(() => TerminalUtils.success('Done'))
       .catch(err => TerminalUtils.error('Eeek, an error!', err))
   })

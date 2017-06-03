@@ -1,7 +1,9 @@
 const pSeries = require('p-series')
 const ProjectUtils = require('../utils/projects')
 
-module.exports = function build(allProjects, toBuild) {
+module.exports = function build(toBuild) {
+  const allProjects = ProjectUtils.getAllProjects()
+
   // First clear down any existing build
   ProjectUtils.cleanBuild()
 
@@ -12,7 +14,7 @@ module.exports = function build(allProjects, toBuild) {
   )
 
   // :: Project -> void -> Promise
-  const queueBuild = project => () => ProjectUtils.buildProject(allProjects, project, { versions })
+  const queueBuild = project => () => ProjectUtils.buildProject(project, { versions })
 
   return pSeries(toBuild.map(queueBuild))
 }

@@ -8,8 +8,10 @@ const AppUtils = require('../../utils/app')
 const ProjectUtils = require('../../utils/projects')
 const requestNextVersion = require('./requestNextVersion')
 
-module.exports = function publish(allProjects, projectsToPublish, options = {}) {
+module.exports = function publish(projectsToPublish, options = {}) {
   const force = !!options.force
+
+  const allProjects = ProjectUtils.getAllProjects()
 
   if (!GitUtils.isInitialized()) {
     TerminalUtils.error(
@@ -74,10 +76,7 @@ module.exports = function publish(allProjects, projectsToPublish, options = {}) 
 
     // Build..
     return (
-      pSeries(
-        toPublish.map(project => () =>
-          ProjectUtils.buildProject(allProjects, project, { versions })),
-      )
+      pSeries(toPublish.map(project => () => ProjectUtils.buildProject(project, { versions })))
         // Then publish to NPM...
         .then(() => pSeries(toPublish.map(project => () => ProjectUtils.publishToNPM(project))))
         // Then tag the git repo...

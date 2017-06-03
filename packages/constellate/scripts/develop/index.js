@@ -6,7 +6,7 @@ const ProjectUtils = require('../../utils/projects')
 const createProjectConductor = require('./createProjectConductor')
 const createProjectWatcher = require('./createProjectWatcher')
 
-module.exports = function develop(allProjects, projectsToDevelop) {
+module.exports = function develop(projectsToDevelop) {
   TerminalUtils.info('Press CTRL + C to exit')
 
   // Represents the current project being built
@@ -49,7 +49,7 @@ module.exports = function develop(allProjects, projectsToDevelop) {
   const projectConductors = projectsToDevelop.reduce(
     (acc, project) =>
       Object.assign(acc, {
-        [project.name]: createProjectConductor(projectsToDevelop, project, watchers[project.name]),
+        [project.name]: createProjectConductor(project, watchers[project.name]),
       }),
     {},
   )
