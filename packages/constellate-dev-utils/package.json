@@ -1,7 +1,7 @@
 {
   "name": "constellate-dev-utils",
   "description": "Utils for the core Constellate packages.",
-  "version": "0.0.30",
+  "version": "0.0.34",
   "repository": "constellators/constellate",
   "license": "MIT",
   "engines": {
