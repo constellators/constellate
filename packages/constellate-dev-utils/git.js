@@ -27,6 +27,15 @@ function isInitialized() {
   return initialized
 }
 
+function doesRemoteExist(remote) {
+  try {
+    ChildProcessUtils.execSync('git', ['remote', 'get-url', remote])
+    return true
+  } catch (err) {
+    return false
+  }
+}
+
 function checkout(target) {
   try {
     ChildProcessUtils.execSync('git', ['checkout', target])
@@ -90,15 +99,32 @@ function pushWithTags(remote, tags) {
   ChildProcessUtils.execSync('git', ['push', remote].concat(tags))
 }
 
+function isUpToDateWithRemote(remote) {
+  const currentBranch = getCurrentBranch()
+  const details = ChildProcessUtils.execSync('git', ['ls-remote', '-h', remote, currentBranch])
+  TerminalUtils.verbose(`Remote head info for ${remote}: ${details}`)
+  const commitSHA = details.match(/(\w+)\s/i)[1]
+  TerminalUtils.verbose(`Remote head SHA: ${commitSHA}`)
+  try {
+    ChildProcessUtils.execSync('git', ['branch', '--contains', commitSHA])
+    return true
+  } catch (err) {
+    TerminalUtils.verbose(err)
+    return false
+  }
+}
+
 module.exports = {
   addAnnotatedTag,
   changedFilesSinceIn,
   checkout,
+  doesRemoteExist,
   getCurrentBranch,
   getLastAnnotatedTagInfo,
   getLastAnnotatedTagInfoSince,
   getLastCommitIn,
   isInitialized,
-  uncommittedChangesIn,
+  isUpToDateWithRemote,
   pushWithTags,
+  uncommittedChangesIn,
 }

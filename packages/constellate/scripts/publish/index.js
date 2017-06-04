@@ -37,6 +37,7 @@ module.exports = function publish(projectsToPublish, options = {}) {
   }
 
   // Ensure on correct branch
+  const enableGitPublishing = !R.path(['publishing', 'git', 'disable'], appConfig)
   const targetBranch = R.path(['publishing', 'git', 'branch'], appConfig) || 'master'
   const targetRemote = R.path(['publishing', 'git', 'remote'], appConfig) || 'origin'
   const actualBranch = GitUtils.getCurrentBranch()
@@ -46,6 +47,21 @@ module.exports = function publish(projectsToPublish, options = {}) {
     } catch (err) {
       TerminalUtils.error(`Could not switch to the publish branch (${targetBranch})`)
     }
+  }
+
+  // Does the target remote exist?
+  const remoteExists = GitUtils.doesRemoteExist(targetRemote)
+
+  if (enableGitPublishing && !remoteExists) {
+    TerminalUtils.error(`Target git remote '${targetRemote}' does not exist.`)
+    process.exit(1)
+  }
+
+  if (enableGitPublishing && !GitUtils.isUpToDateWithRemote(targetRemote)) {
+    TerminalUtils.error(
+      `There are changes on remote '${targetRemote}' that need to be merged into your local repository.`,
+    )
+    process.exit(1)
   }
 
   // Ask for the next version
@@ -81,8 +97,12 @@ module.exports = function publish(projectsToPublish, options = {}) {
         .then(() => pSeries(toPublish.map(project => () => ProjectUtils.publishToNPM(project))))
         // Then tag the git repo...
         .then(() => GitUtils.addAnnotatedTag(nextVersionTag))
-        // Then push the git repo with the tag...
-        .then(() => GitUtils.pushWithTags(targetRemote, [nextVersionTag]))
+        // Then push the git repo with the tag if there is a remote
+        .then(() => {
+          if (enableGitPublishing) {
+            GitUtils.pushWithTags(targetRemote, [nextVersionTag])
+          }
+        })
     )
   })
 }

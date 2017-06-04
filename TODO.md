@@ -37,8 +37,8 @@
    - [ ] postdevelop
    - [ ] prestart
    - [ ] poststart
- - [ ] FEATURE - Check if remote has changes to pull
- - [ ] FEATURE - Check if remote exists
+ - [X] FEATURE - Check if remote has changes to pull
+ - [X] FEATURE - Check if remote exists
  - [X] FEATURE - Plugin architecture
  - [X] FEATURE - webpack-dev-server integration for `webapp` types.
  - [ ] TEMPLATE - Application template
