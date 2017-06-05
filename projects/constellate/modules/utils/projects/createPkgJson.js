@@ -41,7 +41,7 @@ module.exports = function createPkgJson(project, options = {}) {
     sourcePkgJson,
     {
       engines: {
-        node: `>=${nodeVersion || semver.clean(process.versions.node).major}`,
+        node: `>=${nodeVersion || semver.major(process.versions.node)}`,
       },
       version: versions[project.name],
       dependencies: Object.assign(
