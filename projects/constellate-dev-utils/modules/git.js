@@ -27,6 +27,14 @@ function isInitialized() {
   return initialized
 }
 
+function stageAllChanges() {
+  ChildProcessUtils.execSync('git', ['add', '.'])
+}
+
+function commit(message) {
+  ChildProcessUtils.execSync('git', ['commit', '-m', message])
+}
+
 function doesRemoteExist(remote) {
   try {
     ChildProcessUtils.execSync('git', ['remote', 'get-url', remote])
@@ -118,6 +126,7 @@ module.exports = {
   addAnnotatedTag,
   changedFilesSinceIn,
   checkout,
+  commit,
   doesRemoteExist,
   getCurrentBranch,
   getLastAnnotatedTagInfo,
@@ -126,5 +135,6 @@ module.exports = {
   isInitialized,
   isUpToDateWithRemote,
   pushWithTags,
+  stageAllChanges,
   uncommittedChangesIn,
 }

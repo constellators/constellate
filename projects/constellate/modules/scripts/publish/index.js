@@ -155,7 +155,11 @@ module.exports = function publish(projectsToPublish, options = {}) {
         })
         // Then tag the repo...
         .then(
-          () => GitUtils.addAnnotatedTag(nextVersionTag),
+          () => {
+            GitUtils.stageAllChanges()
+            GitUtils.commit(nextVersionTag)
+            GitUtils.addAnnotatedTag(nextVersionTag)
+          },
           () => {
             // TODO: Unpublish any published versions
             // TODO: Roll back version number changes
