@@ -100,6 +100,8 @@ module.exports = function createProjectConductor(project, watcher) {
   return {
     // :: void -> Promise
     build: () => {
+      ProjectUtils.prepareProject(project)
+
       if (project.config.role === 'client') {
         if (runningServer) {
           // We only need one running instance.

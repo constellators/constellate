@@ -4,18 +4,11 @@ const TerminalUtils = require('constellate-dev-utils/modules/terminal')
 const { throttle } = require('constellate-dev-utils/modules/fns')
 const generateConfig = require('./generateConfig')
 const extractError = require('./extractError')
-const createSymLinks = require('../projects/createSymLinks')
-const createPkgJson = require('../projects/createPkgJson')
 
 // :: (Project, Options) -> Promise<WebpackDevServer, Error>
 module.exports = function startDevServer(project, { port }) {
   return new Promise((resolve, reject) => {
     const hasResolved = false
-
-    // We need to make sure we sym links and pkg json for the project that will
-    // be build
-    createSymLinks(project)
-    createPkgJson(project)
 
     const config = generateConfig(project, { development: true, devServerPort: port })
     const compiler = webpack(config)

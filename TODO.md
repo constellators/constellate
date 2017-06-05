@@ -1,11 +1,11 @@
 # Constellate Roadmap / Todo
 
- - [ ] BUG! - When a project is published, all their dependants need to be republished.
+ - [X] BUG! - Need to rework the versioning/publishing process. We will have to update the source package.json files directly in order to ensure correct publishing chain reactions.
+ - [X] BUG! - When a project is published, all their dependants need to be published too.
  - [X] BUG! - Develop fails when having not previously built the projects and your are building a web client that depends on another constellate project. Mouthful.
- - [ ] BUG! - When using 'none' compiler, the NPM publishing process falls over as symlink'ed folder isn't published
- - [ ] CHORE - replace cross-spawn with execa
- - [ ] CHORE - move constellate-utils into it's own repo
- - [ ] CHORE - Change this constellate repo back over to node 8 and update eslint config accordingly.
+ - [X] CHORE - replace cross-spawn with execa
+ - [X] CHORE - move constellate-utils into it's own repo
+ - [X] CHORE - Change this constellate repo back over to node 8 and update eslint config accordingly.
  - [X] CHORE - Move constellate configuration into `constellate.js` files.
  - [X] CHORE - refactor utils from constellate -> constellate-dev-utils
  - [ ] COMMAND - Create project
@@ -18,18 +18,17 @@
  - [ ] COMMAND - Deploy
  - [ ] COMMAND - Prettify
  - [ ] COMMAND - Test
- - [ ] CONFIG - Make the target browserlist configurable.
- - [X] CONFIG - Make the target node version configurable.
- - [ ] CONFIG - Make the Babel-ification process optional. In which case a symlink could be created from build/index.js to modules/index.js.  Just don't use any syntax that requires Babel in your code.
- - [X] DEVELOP - Dependency based reloads.
  - [ ] DEVELOP - Manual reload override.
  - [ ] DEVELOP - CONFIG - Allow for explicit dependency rebuild ignore.
+ - [X] DEVELOP - Dependency based reloads.
  - [ ] DOCS
    - [ ] Intro
    - [ ] Video overview
    - [ ] Blog post
    - [ ] SIGTERM effective usage
    - [ ] constellate.js
+ - [ ] FEATURE - Make the target browserlist configurable.
+ - [ ] FEATURE - Support a 'none' compiler. This is complicated as the NPM publishing process falls over if you symlink a folder. Therefore file copy/paste is the only easy way thusfar.
  - [ ] FEATURE - When publish show the projects to publish and ask to confirm?
  - [ ] FEATURE - BrowserList configuration (touch point in babel and webpack config)
  - [ ] FEATURE - Chokidar events should result in the absolute minimal amount of work being done. e.g. transpile a single file. remove a dir, etc
@@ -42,6 +41,7 @@
    - [ ] prestart
    - [ ] poststart
  - [X] FEATURE - Check if remote has changes to pull
+ - [X] FEATURE - Make the target node version configurable.
  - [X] FEATURE - Check if remote exists
  - [X] FEATURE - Plugin architecture
  - [X] FEATURE - webpack-dev-server integration for `webapp` types.

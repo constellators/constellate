@@ -20,7 +20,10 @@ module.exports = function build(toBuild) {
   )
 
   // :: Project -> void -> Promise
-  const queueBuild = project => () => ProjectUtils.buildProject(project, { versions })
+  const queueBuild = project => () => {
+    ProjectUtils.prepareProject(project, { versions })
+    return ProjectUtils.buildProject(project)
+  }
 
   return pSeries(toBuild.map(queueBuild))
 }

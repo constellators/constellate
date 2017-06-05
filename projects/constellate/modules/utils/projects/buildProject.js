@@ -1,34 +1,31 @@
-const fs = require('fs-extra')
 const TerminalUtils = require('constellate-dev-utils/modules/terminal')
 const BabelUtils = require('../babel')
 const WebpackUtils = require('../webpack')
-const createSymLinks = require('./createSymLinks')
-const createPkgJson = require('./createPkgJson')
 
-// :: Project -> Promise<BuildResult>
-module.exports = function buildProject(project, options = {}) {
-  createSymLinks(project)
-  createPkgJson(project, { versions: options.versions })
+const executeBuild = (project) => {
+  const compiler = project.config.compiler
 
-  function executeBuild() {
-    const compiler = project.config.compiler
-
-    if (compiler === 'none') {
-      TerminalUtils.verbose(`Not compiling ${project.name}`)
-      fs.ensureSymlinkSync(project.paths.modules, project.paths.buildModules)
-      return Promise.resolve()
-    }
-    if (compiler === 'webpack' || compiler === 'webpack-node') {
-      TerminalUtils.verbose(`Bundling ${project.name}`)
-      return WebpackUtils.bundle(project)
-    }
-    TerminalUtils.verbose(`Transpiling ${project.name}`)
-    return BabelUtils.transpile(project)
+  // Raw
+  if (compiler === 'none') {
+    TerminalUtils.verbose(`Not compiling ${project.name}`)
+    return Promise.resolve()
   }
 
-  TerminalUtils.info(`Building ${project.name}...`)
+  // Webpack
+  if (compiler === 'webpack' || compiler === 'webpack-node') {
+    TerminalUtils.verbose(`Bundling ${project.name}`)
+    return WebpackUtils.bundle(project)
+  }
 
-  return executeBuild()
+  // Babel
+  TerminalUtils.verbose(`Transpiling ${project.name}`)
+  return BabelUtils.transpile(project)
+}
+
+// :: Project -> Promise<BuildResult>
+module.exports = function buildProject(project) {
+  TerminalUtils.info(`Building ${project.name}...`)
+  return executeBuild(project)
     .then(() => {
       TerminalUtils.verbose(`Built ${project.name}`)
     })

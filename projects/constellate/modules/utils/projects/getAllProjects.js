@@ -43,6 +43,7 @@ const toProject = (projectName) => {
       modules: thisProjectPath('./modules'),
       modulesEntry: thisProjectPath('./modules/index.js'),
       buildRoot,
+      buildPackageJson: path.resolve(buildRoot, './package.json'),
       buildModules: path.resolve(buildRoot, './modules'),
       buildModulesEntry: path.resolve(buildRoot, './modules/index.js'),
       buildNodeModules: path.resolve(buildRoot, './node_modules'),

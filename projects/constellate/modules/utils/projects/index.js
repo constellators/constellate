@@ -3,13 +3,14 @@ const changedSince = require('./changedSince')
 const cleanBuild = require('./cleanBuild')
 const cleanProjects = require('./cleanProjects')
 const createLinksForProject = require('./createLinksForProject')
-const createSymLinks = require('./createSymLinks')
 const getAllProjects = require('./getAllProjects')
 const getLastVersion = require('./getLastVersion')
 const getPackageName = require('./getPackageName')
 const hasUncommittedChanges = require('./hasUncommittedChanges')
+const prepareProject = require('./prepareProject')
 const publishToNPM = require('./publishToNPM')
 const resolveProjects = require('./resolveProjects')
+const updateVersion = require('./updateVersion')
 
 module.exports = {
   buildProject,
@@ -17,11 +18,12 @@ module.exports = {
   cleanBuild,
   cleanProjects,
   createLinksForProject,
-  createSymLinks,
   getAllProjects,
   getLastVersion,
   getPackageName,
   hasUncommittedChanges,
+  prepareProject,
   publishToNPM,
   resolveProjects,
+  updateVersion,
 }

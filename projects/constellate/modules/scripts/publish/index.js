@@ -76,41 +76,115 @@ module.exports = function publish(projectsToPublish, options = {}) {
       : force
         ? projectsToPublish
         : projectsToPublish.filter(ProjectUtils.changedSince(lastVersionTag))
-    if (toPublish.length === 0) {
-      TerminalUtils.info('There are no changes to be published.')
-      return undefined
+
+    let finalToPublish
+
+    if (!R.equals(toPublish.map(R.prop('name')), allProjects.map(R.prop('name')))) {
+      // We need to make sure that the projects we are publishing have all
+      // their dependants included in the publish process.
+
+      // :: Project -> Array<Project>
+      const resolveDependants = (project) => {
+        const deps = R.pipe(
+          // Project -> Array<string>
+          R.prop('dependants'),
+          // Array<string> -> Array<Project>
+          R.map(depName => R.find(R.propEq('name', depName), allProjects)),
+        )(project)
+        return [project, ...deps, ...R.map(resolveDependants, deps)]
+      }
+
+      const allDependants = R.chain(resolveDependants, toPublish)
+
+      finalToPublish = allDependants.reduce((acc, cur) => {
+        if (R.find(R.equals(cur), acc)) {
+          return acc
+        }
+        return [...acc, cur]
+      }, toPublish)
+    } else {
+      finalToPublish = toPublish
     }
 
-    TerminalUtils.verbose(`Publishing [${toPublish.map(R.prop('name')).join(', ')}]`)
+    if (finalToPublish.length === 0) {
+      TerminalUtils.info('There are no changes to be published.')
+      process.exit(0)
+    }
 
-    // Prep the correct version number for each project
+    // Let's get a sorted version of finalToPublish by filtering allProjects
+    // which will already be in a safe build order.
+    finalToPublish = allProjects.filter(cur => !!R.find(R.equals(cur), finalToPublish))
+
+    TerminalUtils.verbose(`Publishing [${finalToPublish.map(R.prop('name')).join(', ')}]`)
+
+    // Get the current versions for each project
+    const previousVersions = allProjects.reduce(
+      (acc, cur) => Object.assign(acc, { [cur.name]: ProjectUtils.getLastVersion(cur) }),
+      {},
+    )
+    // Prep the next version numbers for each project
     const versions = Object.assign(
       {},
-      allProjects.reduce(
-        (acc, cur) => Object.assign(acc, { [cur.name]: ProjectUtils.getLastVersion(cur) }),
-        {},
-      ),
-      toPublish.reduce((acc, cur) => Object.assign(acc, { [cur.name]: nextVersion }), {}),
+      previousVersions,
+      finalToPublish.reduce((acc, cur) => Object.assign(acc, { [cur.name]: nextVersion }), {}),
+    )
+
+    TerminalUtils.verbose(
+      `Publishing projects with versions:${EOL}${JSON.stringify(versions, null, 2)}`,
     )
 
     // Build..
     return (
-      pSeries(allProjects.map(project => () => ProjectUtils.buildProject(project, { versions })))
+      pSeries(
+        allProjects.map(project => () => {
+          ProjectUtils.prepareProject(project, { versions })
+          return ProjectUtils.buildProject(project)
+        }),
+      )
+        // Then update the source pkg json files for each project to have the
+        // correct version
+        .then(() => {
+          finalToPublish.map(project => ProjectUtils.updateVersion(project, versions[project.name]))
+        })
         // Then publish to NPM...
         .then(() => {
           if (enableNPMPublishing) {
-            return pSeries(toPublish.map(project => () => ProjectUtils.publishToNPM(project)))
+            return pSeries(finalToPublish.map(project => () => ProjectUtils.publishToNPM(project)))
           }
           return undefined
         })
         // Then tag the repo...
-        .then(() => GitUtils.addAnnotatedTag(nextVersionTag))
+        .then(
+          () => GitUtils.addAnnotatedTag(nextVersionTag),
+          () => {
+            // TODO: Unpublish any published versions
+            // TODO: Roll back version number changes
+            process.exit(1)
+          },
+        )
         // Then publish the git repo to the remote git repo (if enabled)
-        .then(() => {
-          if (enableGitPublishing) {
-            GitUtils.pushWithTags(targetRemote, [nextVersionTag])
-          }
-        })
+        .then(
+          () => {
+            if (enableGitPublishing) {
+              GitUtils.pushWithTags(targetRemote, [nextVersionTag])
+            }
+          },
+          () => {
+            // TODO: Unpublish any published versions
+            // TODO: Roll back version number changes
+            // TODO: Remove tag from git?
+            process.exit(1)
+          },
+        )
+        .then(
+          () => 'done',
+          () => {
+            // TODO: Unpublish any published versions
+            // TODO: Roll back version number changes
+            // TODO: Remove tag from git?
+            process.exit(1)
+          },
+        )
     )
   })
 }
