@@ -15,7 +15,7 @@ const TerminalUtils = require('constellate-dev-utils/modules/terminal')
 const ProjectUtils = require('./utils/projects')
 const packageJson = require('../package.json')
 
-TerminalUtils.header(`constellate v${packageJson.version}`)
+TerminalUtils.header(`constellate v${packageJson.version || '0.0.0-develop'}`)
 
 const OptionValueHandlers = {
   list(val) {
@@ -23,7 +23,7 @@ const OptionValueHandlers = {
   },
 }
 
-program.version(packageJson.version)
+program.version(packageJson.version || '0.0.0-develop')
 
 program
   .command('bootstrap')

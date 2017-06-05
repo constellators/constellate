@@ -1,6 +1,6 @@
-const spawn = require('cross-spawn')
 const getPort = require('get-port')
 const TerminalUtils = require('constellate-dev-utils/modules/terminal')
+const ChildProcessUtils = require('constellate-dev-utils/modules/childProcess')
 const WebpackUtils = require('../../utils/webpack')
 const ProjectUtils = require('../../utils/projects')
 
@@ -10,7 +10,7 @@ module.exports = function createProjectConductor(project, watcher) {
   // :: Project -> Promise
   function ensureNodeServerRunning() {
     return new Promise((resolve) => {
-      const projectProcess = spawn(
+      const projectProcess = ChildProcessUtils.spawn(
         // Spawn a node process
         'node',
         // That runs the build entry file
@@ -23,10 +23,10 @@ module.exports = function createProjectConductor(project, watcher) {
         },
       )
       projectProcess.stderr.on('data', (data) => {
-        TerminalUtils.error(`Error running ${project.name}`, data.toString())
+        TerminalUtils.error(`Runtime error in ${project.name}`, data.toString())
       })
-      projectProcess.on('close', (code) => {
-        TerminalUtils.verbose(`Server process ${project.name} stopped (${code})`)
+      projectProcess.on('close', () => {
+        TerminalUtils.verbose(`Server process ${project.name} stopped`)
         runningServer = null
       })
       runningServer = {
@@ -35,10 +35,17 @@ module.exports = function createProjectConductor(project, watcher) {
           new Promise((killResolve) => {
             if (runningServer) {
               TerminalUtils.verbose(`Killing ${project.name}`)
-              projectProcess.on('close', () => {
-                TerminalUtils.verbose(`Killed ${project.name}`)
-                killResolve()
-              })
+
+              projectProcess
+                .then(() => {
+                  TerminalUtils.verbose(`Killed ${project.name}`)
+                  killResolve()
+                })
+                .catch(() => {
+                  TerminalUtils.verbose(`Killed ${project.name}`)
+                  killResolve()
+                })
+
               projectProcess.kill('SIGTERM')
             } else {
               TerminalUtils.verbose(`No process to kill for ${project.name}`)

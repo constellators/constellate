@@ -11,7 +11,8 @@ module.exports = function update(projects) {
   return pSeries(
     projects.map(project => () =>
       client === 'npm'
-        ? ChildProcessUtils.spawn('npm-check', ['-u'], { cwd: project.paths.root })
-        : ChildProcessUtils.spawn('yarn', ['upgrade-interactive'], { cwd: project.paths.root })),
+        ? ChildProcessUtils.exec('npm-check', ['-u'], { cwd: project.paths.root })
+        : ChildProcessUtils.exec('yarn', ['upgrade-interactive'], { cwd: project.paths.root }),
+    ),
   )
 }

@@ -6,13 +6,9 @@
 
 const execa = require('execa')
 
-function _spawn(command, args, opts) {
-  return execa(command, args, opts).then(result => result.stdout)
-}
-
 // :: (string, ?Array<string>, ?Object) -> Promise<string, Error>
 function exec(command, args, opts) {
-  return _spawn(
+  return execa(
     command,
     args,
     Object.assign(
@@ -22,7 +18,7 @@ function exec(command, args, opts) {
       },
       opts,
     ),
-  )
+  ).then(result => result.stdout)
 }
 
 // :: (string, ?Array<string>, ?Object) -> string
@@ -31,9 +27,9 @@ function execSync(command, args, opts) {
   return execa.sync(command, args, opts).stdout
 }
 
-// :: (string, ?Array<string>, ?Object) -> Promise<string, Error>
+// :: (string, ?Array<string>, ?Object) -> Promise
 function spawn(command, args, opts) {
-  return _spawn(
+  return execa(
     command,
     args,
     Object.assign(

@@ -31,7 +31,6 @@
     "case-sensitive-paths-webpack-plugin": "^2.1.1",
     "chokidar": "^1.7.0",
     "commander": "^2.9.0",
-    "cross-spawn": "^5.1.0",
     "css-loader": "^0.28.4",
     "dedent": "^0.7.0",
     "escape-string-regexp": "^1.0.5",
