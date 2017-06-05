@@ -94,8 +94,8 @@ module.exports = function publish(projectsToPublish, options = {}) {
     )
 
     // Build..
-    return pSeries(toPublish.map(project => () => ProjectUtils.buildProject(project, { versions })))
-    /*
+    return (
+      pSeries(toPublish.map(project => () => ProjectUtils.buildProject(project, { versions })))
         // Then publish to NPM...
         .then(() => {
           if (enableNPMPublishing) {
@@ -111,6 +111,6 @@ module.exports = function publish(projectsToPublish, options = {}) {
             GitUtils.pushWithTags(targetRemote, [nextVersionTag])
           }
         })
-        */
+    )
   })
 }
