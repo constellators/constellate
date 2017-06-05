@@ -23,6 +23,7 @@ module.exports = function resolveProjects(projectFilters = []) {
     } else {
       const allProjectNames = allProjects.map(R.prop('name'))
       const invalidFilters = R.without(allProjectNames, projectFilters)
+      console.log(allProjectNames, projectFilters, invalidFilters)
       if (invalidFilters.length > 0) {
         reject(new Error(`The following projects could not be resolved:\n[${invalidFilters}]`))
       }

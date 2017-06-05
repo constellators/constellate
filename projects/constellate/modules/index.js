@@ -19,7 +19,7 @@ TerminalUtils.header(`constellate v${packageJson.version || '0.0.0-develop'}`)
 
 const OptionValueHandlers = {
   list(val) {
-    return val.split('..')
+    return val.split(',')
   },
 }
 

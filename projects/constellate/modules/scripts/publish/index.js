@@ -74,12 +74,14 @@ module.exports = function publish(projectsToPublish, options = {}) {
       ? // We will publish all the ProjectUtils as this is our first publish.
         allProjects
       : force
-          ? projectsToPublish
-          : projectsToPublish.filter(ProjectUtils.changedSince(lastVersionTag))
+        ? projectsToPublish
+        : projectsToPublish.filter(ProjectUtils.changedSince(lastVersionTag))
     if (toPublish.length === 0) {
       TerminalUtils.info('There are no changes to be published.')
       return undefined
     }
+
+    console.log('Publishing', projectsToPublish.map(R.prop('name')))
 
     // Prep the correct version number for each project
     const versions = Object.assign(
@@ -92,8 +94,8 @@ module.exports = function publish(projectsToPublish, options = {}) {
     )
 
     // Build..
-    return (
-      pSeries(toPublish.map(project => () => ProjectUtils.buildProject(project, { versions })))
+    return pSeries(toPublish.map(project => () => ProjectUtils.buildProject(project, { versions })))
+    /*
         // Then publish to NPM...
         .then(() => {
           if (enableNPMPublishing) {
@@ -109,6 +111,6 @@ module.exports = function publish(projectsToPublish, options = {}) {
             GitUtils.pushWithTags(targetRemote, [nextVersionTag])
           }
         })
-    )
+        */
   })
 }
