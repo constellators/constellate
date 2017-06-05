@@ -1,4 +1,6 @@
+const { EOL } = require('os')
 const pSeries = require('p-series')
+const TerminalUtils = require('constellate-dev-utils/modules/terminal')
 const ProjectUtils = require('../utils/projects')
 
 module.exports = function build(toBuild) {
@@ -11,6 +13,10 @@ module.exports = function build(toBuild) {
   const versions = allProjects.reduce(
     (acc, cur) => Object.assign(acc, { [cur.name]: ProjectUtils.getLastVersion(cur) }),
     {},
+  )
+
+  TerminalUtils.verbose(
+    `Building projects with versions:${EOL}${JSON.stringify(versions, null, 2)}`,
   )
 
   // :: Project -> void -> Promise

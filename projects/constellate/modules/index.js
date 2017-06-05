@@ -91,6 +91,7 @@ program
   .description('Run development servers for the projects')
   .option('-p, --projects <projects>', 'Specify the projects to develop', OptionValueHandlers.list)
   .action(({ projects }) => {
+    // eslint-disable-next-line no-console
     console.log(`\n${require('./utils/getCarlSaganQuote')()}`)
 
     TerminalUtils.title('Kickstarting development hyperengine...')
@@ -107,11 +108,11 @@ program
   .command('publish')
   .description('Publish your projects')
   .option('-p, --projects <projects>', 'Specify the projects to publish', OptionValueHandlers.list)
-  .option(
-    '-f, --force',
-    'Forces publishing of projects even if there are no changes to them',
-    R.always(true),
-  )
+  // .option(
+  //   '-f, --force',
+  //   'Forces publishing of projects even if there are no changes to them',
+  //   R.always(true),
+  // )
   .action(({ projects, force }) => {
     TerminalUtils.title('Running publish...')
     // If no NODE_ENV is set we will default to 'production'.
