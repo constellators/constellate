@@ -81,7 +81,7 @@ module.exports = function publish(projectsToPublish, options = {}) {
       return undefined
     }
 
-    console.log('Publishing', projectsToPublish.map(R.prop('name')))
+    TerminalUtils.verbose(`Publishing [${projectsToPublish.map(R.prop('name')).join(', ')}`)
 
     // Prep the correct version number for each project
     const versions = Object.assign(
