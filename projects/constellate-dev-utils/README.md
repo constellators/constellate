@@ -4,4 +4,4 @@
 
 <h1 align="center">constellate-utils</h1>
 
-Shared utilities used by the [Constellate](https://github.com/constellators/constellate) projects.
+Shared utilities used by the [Constellate](https://github.com/constellators/constellate) core projects.
