@@ -1,4 +1,5 @@
 {
+  "version": "0.2.6",
   "name": "eslint-config-constellate",
   "description": "The ESLint configuration for Constellate applications.",
   "repository": "constellators/constellate",

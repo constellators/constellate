@@ -1,4 +1,5 @@
 {
+  "version": "0.2.6",
   "name": "constellate-dev-utils",
   "description": "Utils for the core Constellate packages.",
   "repository": "constellators/constellate",
