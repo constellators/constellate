@@ -1,7 +1,8 @@
 # Constellate Roadmap / Todo
 
+ - [ ] BUG! - When a project is published, all their dependants need to be republished.
  - [X] BUG! - Develop fails when having not previously built the projects and your are building a web client that depends on another constellate project. Mouthful.
- - [ ] BUG! - When not compiling, the NPM publishing process falls over as symlink'ed folder isn't published
+ - [ ] BUG! - When using 'none' compiler, the NPM publishing process falls over as symlink'ed folder isn't published
  - [ ] CHORE - replace cross-spawn with execa
  - [ ] CHORE - move constellate-utils into it's own repo
  - [ ] CHORE - Change this constellate repo back over to node 8 and update eslint config accordingly.

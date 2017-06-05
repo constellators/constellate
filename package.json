@@ -14,6 +14,6 @@
     "extends": "constellate"
   },
   "devDependencies": {
-    "constellate": "^0.2.2"
+    "constellate": "^0.2.4"
   }
 }
