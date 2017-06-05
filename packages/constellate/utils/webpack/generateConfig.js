@@ -6,6 +6,7 @@
  * ❤️
  */
 
+const path = require('path')
 const webpack = require('webpack')
 const AssetsPlugin = require('assets-webpack-plugin')
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
@@ -17,14 +18,33 @@ const R = require('ramda')
 const { removeNil } = require('constellate-dev-utils/arrays')
 const { onlyIf } = require('constellate-dev-utils/logic')
 const BabelUtils = require('../babel')
+const getAllProjects = require('../projects/getAllProjects')
+const getPackageName = require('../projects/getPackageName')
 
 module.exports = function generateConfig(project, options = {}) {
   const { devServerPort } = options
 
+  const compiler = R.path(['config', 'compiler'], project)
+  const isTargettingWeb = compiler === 'webpack'
+  const isTargettingNode = !isTargettingWeb
+
+  const allProjects = getAllProjects()
+
+  const bundledDependencies = allProjects.filter(
+    x => !!R.find(R.equals(x.name), project.bundledDependencies),
+  )
+
   const env = process.env.NODE_ENV
 
-  const isTargettingWeb = project.config.target === 'web'
-  const isTargettingNode = !isTargettingWeb
+  const bundledDepsNodeModulePaths = bundledDependencies.map(dep =>
+    path.resolve(project.paths.nodeModules, `./${getPackageName(dep.name)}`),
+  )
+
+  const bundledDepsBuildNodeModulePaths = bundledDependencies.map(dep =>
+    path.resolve(project.paths.buildNodeModules, `./${getPackageName(dep.name)}`),
+  )
+  const bundledDepsModulePaths = bundledDependencies.map(dep => dep.paths.modules)
+  const bundledDepsBuildModulePaths = bundledDependencies.map(dep => dep.paths.buildModules)
 
   const webpackConfig = {
     // Keep quiet in dev mode.
@@ -91,6 +111,7 @@ module.exports = function generateConfig(project, options = {}) {
           /\.(svg|png|jpg|jpeg|gif|ico)$/,
           /\.(mp4|mp3|ogg|swf|webp)$/,
           /\.(css|scss|sass|sss|less)$/,
+          ...bundledDependencies.map(dep => getPackageName(dep.name)),
         ]),
         modulesDir: project.paths.nodeModules,
       }),
@@ -101,8 +122,10 @@ module.exports = function generateConfig(project, options = {}) {
       ? // Produces an external source map (lives next to bundle output files).
         // We always want source maps for node bundles to help with stack traces.
         'source-map'
-      : // Only maps line numbers
-        'cheap-eval-source-map',
+      : // Produces no source map.
+        'hidden-source-map',
+    // Only maps line numbers
+    // 'cheap-eval-source-map',
 
     // https://webpack.js.org/configuration/performance/
     performance: {
@@ -248,7 +271,7 @@ module.exports = function generateConfig(project, options = {}) {
               options: BabelUtils.generateConfig(project),
             },
           ],
-          include: [project.paths.modules],
+          include: [project.paths.modules, ...bundledDepsModulePaths],
         },
 
         {
@@ -289,7 +312,7 @@ module.exports = function generateConfig(project, options = {}) {
               },
             },
           ],
-          include: [project.paths.modules, project.paths.nodeModules],
+          include: [project.paths.modules, project.paths.nodeModules, ...bundledDepsModulePaths],
         })),
 
         // For a production web target we use the ExtractTextPlugin which
@@ -320,7 +343,7 @@ module.exports = function generateConfig(project, options = {}) {
               },
             ],
           }),
-          include: [project.paths.modules, project.paths.nodeModules],
+          include: [project.paths.modules, project.paths.nodeModules, ...bundledDepsModulePaths],
         })),
 
         // When targetting node we use the "/locals" version of the
@@ -328,7 +351,7 @@ module.exports = function generateConfig(project, options = {}) {
         onlyIf(isTargettingNode, {
           test: /\.css$/,
           loaders: ['css-loader/locals'],
-          include: [project.paths.modules, project.paths.nodeModules],
+          include: [project.paths.modules, project.paths.nodeModules, ...bundledDepsModulePaths],
         }),
       ]),
     },

@@ -21,6 +21,8 @@ module.exports = function publish(projectsToPublish, options = {}) {
   }
 
   const appConfig = AppUtils.getConfig()
+  const enableGitPublishing = !R.path(['publishing', 'git', 'disable'], appConfig)
+  const enableNPMPublishing = !R.path(['publishing', 'npm', 'disable'], appConfig)
   const lastVersionTag = AppUtils.getLastVersionTag()
   const lastVersion = lastVersionTag ? semver.clean(lastVersionTag) : '0.0.0'
   TerminalUtils.verbose(`Last version is ${lastVersion}`)
@@ -37,7 +39,6 @@ module.exports = function publish(projectsToPublish, options = {}) {
   }
 
   // Ensure on correct branch
-  const enableGitPublishing = !R.path(['publishing', 'git', 'disable'], appConfig)
   const targetBranch = R.path(['publishing', 'git', 'branch'], appConfig) || 'master'
   const targetRemote = R.path(['publishing', 'git', 'remote'], appConfig) || 'origin'
   const actualBranch = GitUtils.getCurrentBranch()
@@ -94,10 +95,14 @@ module.exports = function publish(projectsToPublish, options = {}) {
     return (
       pSeries(toPublish.map(project => () => ProjectUtils.buildProject(project, { versions })))
         // Then publish to NPM...
-        .then(() => pSeries(toPublish.map(project => () => ProjectUtils.publishToNPM(project))))
-        // Then tag the git repo...
+        .then(() => {
+          if (enableNPMPublishing) {
+            return pSeries(toPublish.map(project => () => ProjectUtils.publishToNPM(project)))
+          }
+        })
+        // Then tag the repo...
         .then(() => GitUtils.addAnnotatedTag(nextVersionTag))
-        // Then push the git repo with the tag if there is a remote
+        // Then publish the git repo to the remote git repo (if enabled)
         .then(() => {
           if (enableGitPublishing) {
             GitUtils.pushWithTags(targetRemote, [nextVersionTag])

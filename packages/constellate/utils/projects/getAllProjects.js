@@ -8,10 +8,12 @@ const AppUtils = require('../app')
 let cache = null
 
 const defaultConfig = {
-  target: 'node',
-  role: 'library',
-  compiler: 'babel',
+  role: 'library', // server, client, bin
+  compiler: 'none', // 'babel', 'webpack', 'webpack-node'
   nodeVersion: process.versions.node,
+  allDependencies: [],
+  dependencies: [],
+  bundledDependencies: [],
 }
 
 // :: string -> string -> string
@@ -43,21 +45,24 @@ const toProject = (projectName) => {
       buildRoot,
       buildModules: path.resolve(buildRoot, './modules'),
       buildModulesEntry: path.resolve(buildRoot, './modules/index.js'),
+      buildNodeModules: path.resolve(buildRoot, './node_modules'),
       webpackCache: path.resolve(buildRoot, './.webpackcache'),
     },
   }
 }
 
 // :: Array<Project> -> Array<Project>
-function orderByLinkedDependencies(projects) {
+function orderByAllDependencies(projects) {
   const packageDependencyGraph = project =>
-    R.pipe(R.prop('dependencies'), R.map(dependencyName => [dependencyName, project.name]))(project)
+    R.pipe(R.prop('allDependencies'), R.map(dependencyName => [dependencyName, project.name]))(
+      project,
+    )
 
   // :: Array<Project> -> Array<Array<string, string>>
   const dependencyGraph = R.chain(packageDependencyGraph)
 
   // :: Project -> bool
-  const hasNoDependencies = ({ dependencies }) => dependencies.length === 0
+  const hasNoDependencies = ({ allDependencies }) => allDependencies.length === 0
 
   // :: Array<Project>
   const projectsWithNoDependencies = R.pipe(R.filter(hasNoDependencies), R.map(R.prop('name')))(
@@ -100,11 +105,8 @@ module.exports = function getAllProjects() {
     .map(toProject)
 
   // :: Project -> Array<string>
-  const getConfiguredDependencies = project => R.path(['config', 'dependencies'], project) || []
-
-  // :: Project -> Array<string>
-  const getDependencies = project =>
-    getConfiguredDependencies(project).reduce((acc, dependencyName) => {
+  const getDependencies = (project, dependencyType) =>
+    project.config[dependencyType].reduce((acc, dependencyName) => {
       const dependency = R.find(R.propEq('name', dependencyName), projects)
       if (!dependency) {
         TerminalUtils.warning(
@@ -117,24 +119,33 @@ module.exports = function getAllProjects() {
 
   // :: Project -> Array<string>
   const getDependants = project =>
-    projects.filter(x => R.contains(project.name, getConfiguredDependencies(x))).map(R.prop('name'))
+    projects.filter(x => R.contains(project.name, x.allDependencies)).map(R.prop('name'))
 
   cache = R.pipe(
     // The projects this project directly depends on.
-    R.map(project =>
-      Object.assign(project, {
-        dependencies: getDependencies(project),
-      }),
-    ),
+    R.map((project) => {
+      const dependencies = getDependencies(project, 'dependencies')
+      const bundledDependencies = getDependencies(project, 'bundledDependencies')
+      return Object.assign(project, {
+        dependencies,
+        bundledDependencies,
+        allDependencies: [...dependencies, ...bundledDependencies],
+      })
+    }),
     // Projects that directly depend on this project.
     R.map(project =>
       Object.assign(project, {
         dependants: getDependants(project),
       }),
     ),
+    R.map(project =>
+      Object.assign(project, {
+        allDependencies: [...project.dependencies, ...project.bundledDependencies],
+      }),
+    ),
     // Projects ordered based on their dependencies based order,
     // which mean building them in order should be safe.
-    orderByLinkedDependencies,
+    orderByAllDependencies,
   )(projects)
 
   TerminalUtils.verbose(`Project build order: \n\t- ${cache.map(R.prop('name')).join('\n\t- ')}`)

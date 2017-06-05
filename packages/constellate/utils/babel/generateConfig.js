@@ -14,10 +14,10 @@ const { onlyIf } = require('constellate-dev-utils/logic')
 
 // :: Options -> BabelConfig
 module.exports = function generateConfig(project) {
-  const isTargettingWeb = project.config.target === 'web'
+  const compiler = R.path(['config', 'compiler'], project)
+  const usingWebpackAsCompiler = compiler === 'webpack' || compiler === 'webpack-node'
+  const isTargettingWeb = compiler === 'webpack'
   const isTargettingNode = !isTargettingWeb
-
-  const usingWebpackAsCompiler = R.path(['config', 'compiler'], project) === 'webpack'
 
   const env = process.env.BABEL_ENV || process.env.NODE_ENV
 
@@ -52,7 +52,7 @@ module.exports = function generateConfig(project) {
         'env',
         {
           targets: {
-            node: project.config.nodeVersion,
+            node: R.path(['config', 'compilerOptions', 'nodeVersion'], project) || 'current',
           },
           // If we are using webpack as a compiler then we will need to ignore
           // transpilation of es-modules as they are handled by webpack.
@@ -89,8 +89,8 @@ module.exports = function generateConfig(project) {
       // class { handleThing = () => { } }
       'transform-class-properties',
 
-      isTargettingWeb || usingWebpackAsCompiler
-        ? // Adds syntax support for import()
+      usingWebpackAsCompiler
+        ? // Adds syntax support for import(), which webpack can handle
           'babel-plugin-syntax-dynamic-import'
         : // Compiles import() to a deferred require()
           'babel-plugin-dynamic-import-node',
