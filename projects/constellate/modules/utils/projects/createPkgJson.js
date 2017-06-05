@@ -33,35 +33,40 @@ module.exports = function createPkgJson(project, options = {}) {
 
   // Create a package.json file for the build of the project
   const sourcePkgJson = readPkg.sync(project.paths.packageJson, { normalize: false })
-  const buildPkgJson = Object.assign({}, sourcePkgJson, {
-    engines: {
-      node: `>=${nodeVersion || semver.clean(process.versions.node).major}`,
+  const buildPkgJson = Object.assign(
+    {},
+    {
+      files: ['modules'],
     },
-    version: versions[project.name],
-    dependencies: Object.assign(
-      {},
-      isWebpackCompiler
-        ? // When doing a webpack bundled project we need to include all the npm
-          // dependencies from our constellate dependencies as we will inline
-          // bundle all our constellate dependencies.
-          project.bundledDependencies.reduce((acc, dependencyName) => {
-            const dependency = R.find(R.propEq('name', dependencyName), allProjects)
-            const pkgJson = readPkg.sync(dependency.paths.packageJson, { normalize: false })
-            return Object.assign(acc, pkgJson.dependencies || {})
-          }, {})
-        : {},
-      // Add dependency references to our constellate dependencies
-      project.dependencies.reduce(
-        (acc, dependencyName) =>
-          Object.assign(acc, {
-            [getPackageName(dependencyName)]: `^${versions[dependencyName]}`,
-          }),
+    sourcePkgJson,
+    {
+      engines: {
+        node: `>=${nodeVersion || semver.clean(process.versions.node).major}`,
+      },
+      version: versions[project.name],
+      dependencies: Object.assign(
         {},
+        isWebpackCompiler
+          ? // When doing a webpack bundled project we need to include all the npm
+            // dependencies from our constellate dependencies as we will inline
+            // bundle all our constellate dependencies.
+            project.bundledDependencies.reduce((acc, dependencyName) => {
+              const dependency = R.find(R.propEq('name', dependencyName), allProjects)
+              const pkgJson = readPkg.sync(dependency.paths.packageJson, { normalize: false })
+              return Object.assign(acc, pkgJson.dependencies || {})
+            }, {})
+          : {},
+        // Add dependency references to our constellate dependencies
+        project.dependencies.reduce(
+          (acc, dependencyName) =>
+            Object.assign(acc, {
+              [getPackageName(dependencyName)]: `^${versions[dependencyName]}`,
+            }),
+          {},
+        ),
+        sourcePkgJson.dependencies || {},
       ),
-      sourcePkgJson.dependencies || {},
-    ),
-    main: 'modules/index.js',
-    files: ['modules'],
-  })
+    },
+  )
   writePkg.sync(project.paths.buildRoot, buildPkgJson)
 }
