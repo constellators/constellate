@@ -8,8 +8,8 @@ const AppUtils = require('../app')
 let cache = null
 
 const defaultConfig = {
-  role: 'library', // server, client, bin
-  compiler: 'none', // 'babel', 'webpack', 'webpack-node'
+  role: 'library', // server, client
+  compiler: 'babel', // 'webpack', 'webpack-node', 'none'
   nodeVersion: process.versions.node,
   allDependencies: [],
   dependencies: [],

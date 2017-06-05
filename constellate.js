@@ -2,7 +2,7 @@ module.exports = {
   projects: {
     constellate: {
       compiler: 'babel',
-      dependencies: ['constellate-dev-utils'],
+      dependencies: ['constellate-dev-utils', 'eslint-config-constellate'],
     },
     'constellate-dev-utils': {
       compiler: 'babel',

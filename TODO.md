@@ -1,7 +1,7 @@
 # Constellate Roadmap / Todo
 
- - [ ] FEATURE - When publish show the projects to publish and ask to confirm?
  - [X] BUG! - Develop fails when having not previously built the projects and your are building a web client that depends on another constellate project. Mouthful.
+ - [ ] BUG! - When not compiling, the NPM publishing process falls over as symlink'ed folder isn't published
  - [ ] CHORE - replace cross-spawn with execa
  - [ ] CHORE - move constellate-utils into it's own repo
  - [ ] CHORE - Change this constellate repo back over to node 8 and update eslint config accordingly.
@@ -29,6 +29,7 @@
    - [ ] Blog post
    - [ ] SIGTERM effective usage
    - [ ] constellate.js
+ - [ ] FEATURE - When publish show the projects to publish and ask to confirm?
  - [ ] FEATURE - BrowserList configuration (touch point in babel and webpack config)
  - [ ] FEATURE - Chokidar events should result in the absolute minimal amount of work being done. e.g. transpile a single file. remove a dir, etc
  - [ ] FEATURE - auto-add source-map-support to build dependencies, and then re-enable for production builds.
