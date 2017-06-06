@@ -5,7 +5,7 @@ const TerminalUtils = require('constellate-dev-utils/modules/terminal')
 module.exports = function publishToNPM(project) {
   const pkgJson = readPkg.sync(project.paths.packageJson)
   if (pkgJson.private) {
-    TerminalUtils.warning(`Not publishing ${project.name} as it is marked as private`)
+    TerminalUtils.warning(`Not publishing ${project.name} to NPM as it is marked as private`)
     return Promise.resolve()
   }
   TerminalUtils.info(`Publishing ${project.name}...`)

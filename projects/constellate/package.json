@@ -2,6 +2,9 @@
   "version": "0.2.7",
   "name": "constellate",
   "description": "The ❤️ of Constellate applications.",
+  "bin": {
+    "constellate": "modules/bin/constellate.js"
+  },
   "repository": "constellators/constellate",
   "license": "MIT",
   "bugs": {
@@ -58,6 +61,5 @@
     "webpack-dev-server": "^2.4.5",
     "webpack-node-externals": "^1.6.0",
     "write-pkg": "^3.0.1"
-  },
-  "bin": "modules/index.js"
+  }
 }
