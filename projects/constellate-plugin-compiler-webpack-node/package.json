@@ -1,0 +1,5 @@
+{
+	"name": "constellate-plugin-compiler-webpack-node",
+	"description": "A Webpack compiler (targetting Node) plugin for Constellate projects.",
+	"main": "modules/index.js"
+}

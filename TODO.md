@@ -35,10 +35,10 @@
  - [ ] FEATURE - Support NPM tags.
  - [ ] FEATURE - Make the target browserlist configurable.
  - [ ] FEATURE - Support a 'none' compiler. This is complicated as the NPM publishing process falls over if you symlink a folder. Therefore file copy/paste is the only easy way thusfar.
- - [X] FEATURE - When publish show the projects to publish and ask to confirm?
  - [ ] FEATURE - BrowserList configuration (touch point in babel and webpack config)
  - [ ] FEATURE - Chokidar events should result in the absolute minimal amount of work being done. e.g. transpile a single file. remove a dir, etc
  - [ ] FEATURE - auto-add source-map-support to build dependencies, and then re-enable for production builds.
+ - [ ] FEATURE - Plugin architecture for compilers
  - [ ] FEATURE - Command hooks
    - [ ] prebuild
    - [ ] postbuild
@@ -46,10 +46,10 @@
    - [ ] postdevelop
    - [ ] prestart
    - [ ] poststart
+ - [X] FEATURE - When publish show the projects to publish and ask to confirm?
  - [X] FEATURE - Check if remote has changes to pull
  - [X] FEATURE - Make the target node version configurable.
  - [X] FEATURE - Check if remote exists
- - [ ] FEATURE - Plugin architecture for compilers
  - [X] FEATURE - webpack-dev-server integration for `webapp` types.
  - [ ] TEMPLATE - Application template
  - [ ] TEMPLATE - Empty project
