@@ -119,43 +119,35 @@ function createBuildPkgJson(project, options = {}) {
 
   // Create a package.json file for the build of the project
   const sourcePkgJson = readPkg.sync(project.paths.packageJson, { normalize: false })
-  const newPkgJson = Object.assign(
-    {},
-    sourcePkgJson,
-    {
-      engines: {
-        node: `>=${nodeVersion || semver.major(process.versions.node)}`,
-      },
-      version: versions[project.name],
-      dependencies: Object.assign(
-        {},
-        // Add dependency references to our constellate dependencies
-        project.dependencies.reduce(
-          (acc, dependencyName) =>
-            Object.assign(acc, {
-              [getPackageName(dependencyName)]: `^${versions[dependencyName]}`,
-            }),
-          {},
-        ),
-        isWebpackCompiler
-          ? // When doing a webpack bundled project we need to include all the npm
-            // dependencies from our constellate dependencies as we will inline
-            // bundle all our constellate dependencies.
-            project.bundledDependencies.reduce((acc, dependencyName) => {
-              const dependency = R.find(R.propEq('name', dependencyName), allProjects)
-              const pkgJson = readPkg.sync(dependency.paths.packageJson, { normalize: false })
-              return Object.assign(acc, pkgJson.dependencies || {})
-            }, {})
-          : {},
-        sourcePkgJson.dependencies || {},
-      ),
+  const newPkgJson = Object.assign({}, sourcePkgJson, {
+    engines: {
+      node: `>=${nodeVersion || semver.major(process.versions.node)}`,
     },
-    sourcePkgJson.files
-      ? {}
-      : {
-        files: ['modules'],
-      },
-  )
+    version: versions[project.name],
+    files: ['modules'],
+    dependencies: Object.assign(
+      {},
+      // Add dependency references to our constellate dependencies
+      project.dependencies.reduce(
+        (acc, dependencyName) =>
+          Object.assign(acc, {
+            [getPackageName(dependencyName)]: `^${versions[dependencyName]}`,
+          }),
+        {},
+      ),
+      isWebpackCompiler
+        ? // When doing a webpack bundled project we need to include all the npm
+          // dependencies from our constellate dependencies as we will inline
+          // bundle all our constellate dependencies.
+          project.bundledDependencies.reduce((acc, dependencyName) => {
+            const dependency = R.find(R.propEq('name', dependencyName), allProjects)
+            const pkgJson = readPkg.sync(dependency.paths.packageJson, { normalize: false })
+            return Object.assign(acc, pkgJson.dependencies || {})
+          }, {})
+        : {},
+      sourcePkgJson.dependencies || {},
+    ),
+  })
   writePkg.sync(project.paths.buildPackageJson, newPkgJson)
 }
 
