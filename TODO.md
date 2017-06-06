@@ -1,5 +1,7 @@
 # Constellate Roadmap / Todo
 
+ - [ ] FEATURE - Look at using NODE_PATH to do module resolution for projects during development mode.
+       https://github.com/facebookincubator/create-react-app/issues/253
  - [X] BUG! - Need to rework the versioning/publishing process. We will have to update the source package.json files directly in order to ensure correct publishing chain reactions.
  - [X] BUG! - When a project is published, all their dependants need to be published too.
  - [X] BUG! - Develop fails when having not previously built the projects and your are building a web client that depends on another constellate project. Mouthful.
