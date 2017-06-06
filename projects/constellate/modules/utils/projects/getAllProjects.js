@@ -39,6 +39,7 @@ const toProject = (projectName) => {
     paths: {
       root: thisProjectPath('./'),
       packageJson: thisProjectPath('./package.json'),
+      packageLockJson: thisProjectPath('./package-lock.json'),
       nodeModules: thisProjectPath('./node_modules'),
       modules: thisProjectPath('./modules'),
       modulesEntry: thisProjectPath('./modules/index.js'),

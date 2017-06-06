@@ -8,7 +8,6 @@ const getLastVersion = require('./getLastVersion')
 const getPackageName = require('./getPackageName')
 const hasUncommittedChanges = require('./hasUncommittedChanges')
 const prepareProject = require('./prepareProject')
-const publishToNPM = require('./publishToNPM')
 const resolveProjects = require('./resolveProjects')
 const updateVersion = require('./updateVersion')
 
@@ -23,7 +22,6 @@ module.exports = {
   getPackageName,
   hasUncommittedChanges,
   prepareProject,
-  publishToNPM,
   resolveProjects,
   updateVersion,
 }

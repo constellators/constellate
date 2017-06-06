@@ -2,8 +2,10 @@ const { EOL } = require('os')
 const R = require('ramda')
 const semver = require('semver')
 const pSeries = require('p-series')
+const readPkg = require('read-pkg')
 const TerminalUtils = require('constellate-dev-utils/modules/terminal')
 const GitUtils = require('constellate-dev-utils/modules/git')
+const ChildProcessUtils = require('constellate-dev-utils/modules/childProcess')
 const AppUtils = require('../../utils/app')
 const ProjectUtils = require('../../utils/projects')
 const requestNextVersion = require('./requestNextVersion')
@@ -15,7 +17,7 @@ module.exports = function publish(projectsToPublish, options = {}) {
 
   if (!GitUtils.isInitialized()) {
     TerminalUtils.error(
-      'Constellate publishing requires that your project is initialised as a Git repository.',
+      'Constellate powered publishing requires that your project is initialised as a Git repository.',
     )
     process.exit(1)
   }
@@ -129,66 +131,95 @@ module.exports = function publish(projectsToPublish, options = {}) {
       finalToPublish.reduce((acc, cur) => Object.assign(acc, { [cur.name]: nextVersion }), {}),
     )
 
-    TerminalUtils.verbose(
-      `Publishing projects with versions:${EOL}${JSON.stringify(versions, null, 2)}`,
-    )
+    return TerminalUtils.confirm(
+      `Would you like to publish the following projects with versions:${EOL}\t${finalToPublish
+        .map(({ name }) => `${name} ${previousVersions[name]} -> ${versions[name]}`)
+        .join(`${EOL}\t`)}`,
+    ).then((answer) => {
+      if (!answer) {
+        return undefined
+      }
 
-    // Build..
-    return (
-      pSeries(
-        allProjects.map(project => () => {
-          ProjectUtils.prepareProject(project, { versions })
-          return ProjectUtils.buildProject(project)
-        }),
-      )
-        // Then update the source pkg json files for each project to have the
-        // correct version
-        .then(() => {
-          finalToPublish.map(project => ProjectUtils.updateVersion(project, versions[project.name]))
-        })
-        // Then publish to NPM...
-        .then(() => {
-          if (enableNPMPublishing) {
-            return pSeries(finalToPublish.map(project => () => ProjectUtils.publishToNPM(project)))
-          }
-          return undefined
-        })
-        // Then tag the repo...
-        .then(
-          () => {
+      // Build..
+      return (
+        pSeries(
+          allProjects.map(project => () => {
+            ProjectUtils.prepareProject(project, { versions })
+            return ProjectUtils.buildProject(project)
+          }),
+        )
+          // Then update the source pkg json files for each project to have the
+          // correct version
+          .then(() => {
+            finalToPublish.forEach(project =>
+              ProjectUtils.updateVersion(project, versions[project.name]),
+            )
             GitUtils.stageAllChanges()
-            GitUtils.commit(nextVersionTag)
-            GitUtils.addAnnotatedTag(nextVersionTag)
-          },
-          () => {
-            // TODO: Unpublish any published versions
-            // TODO: Roll back version number changes
-            process.exit(1)
-          },
-        )
-        // Then publish the git repo to the remote git repo (if enabled)
-        .then(
-          () => {
-            if (enableGitPublishing) {
-              GitUtils.pushWithTags(targetRemote, [nextVersionTag])
+          })
+          // Then tag the repo...
+          .then(
+            () => {
+              GitUtils.commit(nextVersionTag)
+              GitUtils.addAnnotatedTag(nextVersionTag)
+            },
+            (err) => {
+              TerminalUtils.error(
+                'An error occurred whilst attempting to update the version data for your projects',
+                err,
+              )
+              TerminalUtils.info('Rolling back changes and stopping publish...')
+              finalToPublish.forEach(project =>
+                ProjectUtils.updateVersion(project, previousVersions[project.name]),
+              )
+              process.exit(1)
+            },
+          )
+          // Then publish the git repo to the remote git repo (if enabled)
+          .then(
+            () => {
+              if (enableGitPublishing) {
+                GitUtils.pushWithTags(targetRemote, [nextVersionTag])
+              }
+            },
+            (err) => {
+              TerminalUtils.error(
+                'An error occurred trying to tag the git repository with the latest version',
+                err,
+              )
+              TerminalUtils.info('Rolling back changes and stopping publish...')
+              finalToPublish.forEach(project =>
+                ProjectUtils.updateVersion(project, previousVersions[project.name]),
+              )
+              process.exit(1)
+            },
+          ) // Then publish to NPM (if enabled)
+          .then(() => {
+            if (enableNPMPublishing) {
+              finalToPublish.forEach((project) => {
+                const pkgJson = readPkg.sync(project.paths.packageJson)
+                if (pkgJson.private) {
+                  TerminalUtils.info(
+                    `Not publishing ${project.name} to NPM as it is marked as private`,
+                  )
+                } else {
+                  TerminalUtils.info(`Publishing ${project.name} to NPM...`)
+                  ChildProcessUtils.execSync('npm', ['publish'], {
+                    cwd: project.paths.buildRoot,
+                  })
+                }
+              })
             }
-          },
-          () => {
-            // TODO: Unpublish any published versions
-            // TODO: Roll back version number changes
-            // TODO: Remove tag from git?
-            process.exit(1)
-          },
-        )
-        .then(
-          () => 'done',
-          () => {
-            // TODO: Unpublish any published versions
-            // TODO: Roll back version number changes
-            // TODO: Remove tag from git?
-            process.exit(1)
-          },
-        )
-    )
+          })
+          .catch((error) => {
+            // We don't do an error catch and rollback as NPM won't allow to
+            // republish a version, so let's just crack on.  A new version
+            // may be required to be published in order to resolve the issue.
+            TerminalUtils.warning(
+              'Some of your projects may not have successfully been published to NPM',
+            )
+            TerminalUtils.error(null, error)
+          })
+      )
+    })
   })
 }

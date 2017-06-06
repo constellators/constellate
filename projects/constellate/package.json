@@ -45,6 +45,7 @@
     "get-port": "^3.1.0",
     "globby": "^6.1.0",
     "inquirer": "^3.0.6",
+    "load-json-file": "^2.0.0",
     "p-limit": "^1.1.0",
     "p-series": "^1.0.0",
     "pify": "^3.0.0",
@@ -60,6 +61,7 @@
     "webpack": "^2.6.1",
     "webpack-dev-server": "^2.4.5",
     "webpack-node-externals": "^1.6.0",
+    "write-json-file": "^2.2.0",
     "write-pkg": "^3.0.1"
   }
 }
