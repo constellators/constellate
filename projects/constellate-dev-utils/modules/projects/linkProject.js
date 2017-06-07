@@ -12,13 +12,11 @@ module.exports = function linkProject(project) {
     // We have to copy the package.json file as if we try to publish the
     // built package any symlinked files get ignored by the publish process.
     fs.copySync(project.paths.packageJson, project.paths.buildPackageJson)
-
+  } else if (fs.existsSync(project.paths.nodeModules)) {
     // As we are compiling the project to a seperate build directory we will
     // sym link the node_modules directories avoiding expensive re-installs /
     // copying.
-    if (fs.existsSync(project.paths.nodeModules)) {
-      fs.ensureSymlinkSync(project.paths.nodeModules, project.paths.buildNodeModules)
-    }
+    fs.ensureSymlinkSync(project.paths.nodeModules, project.paths.buildNodeModules)
   }
 
   const depMap = project.allDependencies.reduce((acc, dependencyName) => {

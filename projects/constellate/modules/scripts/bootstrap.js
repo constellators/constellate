@@ -1,8 +1,7 @@
 const pSeries = require('p-series')
 const ChildProcessUtils = require('constellate-dev-utils/modules/childProcess')
 const TerminalUtils = require('constellate-dev-utils/modules/terminal')
-const AppUtils = require('../utils/app')
-const ProjectUtils = require('../utils/projects')
+const ProjectUtils = require('constellate-dev-utils/modules/projects')
 
 module.exports = function bootstrap(projects) {
   // First clean the projects down

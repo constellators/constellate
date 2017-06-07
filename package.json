@@ -9,11 +9,12 @@
     "publish": "constellate publish",
     "deploy": "constellate deploy"
   },
+  "devDependencies": {
+    "constellate": "0.3.3",
+    "eslint-config-constellate": "0.3.2"
+  },
   "eslintConfig": {
     "root": true,
     "extends": "constellate"
-  },
-  "devDependencies": {
-    "constellate": "^0.2.9"
   }
 }
