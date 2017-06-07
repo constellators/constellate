@@ -3,6 +3,7 @@ const R = require('ramda')
 const semver = require('semver')
 const pSeries = require('p-series')
 const readPkg = require('read-pkg')
+const writePkg = require('write-pkg')
 const TerminalUtils = require('constellate-dev-utils/modules/terminal')
 const GitUtils = require('constellate-dev-utils/modules/git')
 const ChildProcessUtils = require('constellate-dev-utils/modules/childProcess')
@@ -41,30 +42,31 @@ module.exports = function publish(projectsToPublish, options = {}) {
   }
 
   // Ensure on correct branch
-  const targetBranch = R.path(['publishing', 'git', 'branch'], appConfig) || 'master'
+  const targetBranch = R.path(['releaseBranch'], appConfig) || 'master'
   const targetRemote = R.path(['publishing', 'git', 'remote'], appConfig) || 'origin'
   const actualBranch = GitUtils.getCurrentBranch()
   if (targetBranch !== actualBranch) {
     try {
       GitUtils.checkout(targetBranch)
     } catch (err) {
-      TerminalUtils.error(`Could not switch to the publish branch (${targetBranch})`)
+      TerminalUtils.error(`Could not switch to the "release" branch (${targetBranch})`, err)
+      process.exit(1)
     }
   }
 
-  // Does the target remote exist?
-  const remoteExists = GitUtils.doesRemoteExist(targetRemote)
-
-  if (enableGitPublishing && !remoteExists) {
-    TerminalUtils.error(`Target git remote '${targetRemote}' does not exist.`)
-    process.exit(1)
-  }
-
-  if (enableGitPublishing && !GitUtils.isUpToDateWithRemote(targetRemote)) {
-    TerminalUtils.error(
-      `There are changes on remote '${targetRemote}' that need to be merged into your local repository.`,
-    )
-    process.exit(1)
+  if (enableGitPublishing) {
+    // Does the target remote exist?
+    const remoteExists = GitUtils.doesRemoteExist(targetRemote)
+    if (!remoteExists) {
+      TerminalUtils.error(`Target git remote '${targetRemote}' does not exist.`)
+      process.exit(1)
+    }
+    if (!GitUtils.isUpToDateWithRemote(targetRemote)) {
+      TerminalUtils.error(
+        `There are changes on remote '${targetRemote}' that need to be merged into your local repository.`,
+      )
+      process.exit(1)
+    }
   }
 
   // Ask for the next version
@@ -140,59 +142,33 @@ module.exports = function publish(projectsToPublish, options = {}) {
         return undefined
       }
 
+      // Get the original package.json file contents for each project.
+      const originalPackageJsons = allProjects.reduce(
+        (acc, cur) =>
+          Object.assign(acc, {
+            [cur.name]: readPkg.sync(cur.paths.packageJson, { normalize: false }),
+          }),
+        {},
+      )
+
+      // Upate the package.jsons for each project to be the "publish" ready
+      // versions.
+      allProjects.forEach(cur => ProjectUtils.createPublishPackageJson(cur, versions))
+
+      const restoreOriginalPackageJsons = () =>
+        allProjects.forEach(cur =>
+          writePkg.sync(cur.paths.packageJson, originalPackageJsons[cur.name]),
+        )
+
       // Build..
       return (
-        pSeries(
-          allProjects.map(project => () => {
-            ProjectUtils.prepareProject(project, { versions })
-            return ProjectUtils.compileProject(project)
-          }),
-        )
-          // Then update the source pkg json files for each project to have the
-          // correct version
-          .then(() => {
-            finalToPublish.forEach(project =>
-              ProjectUtils.updateVersion(project, versions[project.name]),
-            )
-            GitUtils.stageAllChanges()
+        pSeries(allProjects.map(project => () => ProjectUtils.compileProject(project)))
+          .catch((err) => {
+            TerminalUtils.error('Failed to build projects in prep for publish', err)
+            restoreOriginalPackageJsons()
+            process.exit(1)
           })
-          // Then tag the repo...
-          .then(
-            () => {
-              GitUtils.commit(nextVersionTag)
-              GitUtils.addAnnotatedTag(nextVersionTag)
-            },
-            (err) => {
-              TerminalUtils.error(
-                'An error occurred whilst attempting to update the version data for your projects',
-                err,
-              )
-              TerminalUtils.info('Rolling back changes and stopping publish...')
-              finalToPublish.forEach(project =>
-                ProjectUtils.updateVersion(project, previousVersions[project.name]),
-              )
-              process.exit(1)
-            },
-          )
-          // Then publish the git repo to the remote git repo (if enabled)
-          .then(
-            () => {
-              if (enableGitPublishing) {
-                GitUtils.pushWithTags(targetRemote, [nextVersionTag])
-              }
-            },
-            (err) => {
-              TerminalUtils.error(
-                'An error occurred trying to tag the git repository with the latest version',
-                err,
-              )
-              TerminalUtils.info('Rolling back changes and stopping publish...')
-              finalToPublish.forEach(project =>
-                ProjectUtils.updateVersion(project, previousVersions[project.name]),
-              )
-              process.exit(1)
-            },
-          ) // Then publish to NPM (if enabled)
+          // Then publish to NPM (if enabled)
           .then(() => {
             if (enableNPMPublishing) {
               finalToPublish.forEach((project) => {
@@ -211,13 +187,57 @@ module.exports = function publish(projectsToPublish, options = {}) {
             }
           })
           .catch((error) => {
-            // We don't do an error catch and rollback as NPM won't allow to
-            // republish a version, so let's just crack on.  A new version
-            // may be required to be published in order to resolve the issue.
+            // We don't rollback NPM publishing as NPM won't allow us to
+            // republish a previously published version (even if it got
+            // unpublished).
             TerminalUtils.warning(
               'Some of your projects may not have successfully been published to NPM',
             )
             TerminalUtils.error(null, error)
+          })
+          // Then update the source pkg json files for each project to have the
+          // correct version
+          .then(() => {
+            // Restore the original package json content
+            restoreOriginalPackageJsons()
+            // Then just increment the version against the original package.json
+            finalToPublish.forEach(project =>
+              ProjectUtils.updateVersion(project, versions[project.name]),
+            )
+            GitUtils.stageAllChanges()
+          })
+          // Then tag the repo...
+          .then(() => {
+            GitUtils.commit(nextVersionTag)
+            GitUtils.addAnnotatedTag(nextVersionTag)
+          })
+          .catch((err) => {
+            TerminalUtils.error(
+              'An error occurred whilst attempting to update the version data for your projects',
+              err,
+            )
+            TerminalUtils.info('Rolling back changes and stopping publish...')
+            finalToPublish.forEach(project =>
+              ProjectUtils.updateVersion(project, previousVersions[project.name]),
+            )
+            process.exit(1)
+          })
+          // Then publish the git repo to the remote git repo (if enabled)
+          .then(() => {
+            if (enableGitPublishing) {
+              GitUtils.pushWithTags(targetRemote, [nextVersionTag])
+            }
+          })
+          .catch((err) => {
+            TerminalUtils.error(
+              'An error occurred trying to tag the git repository with the latest version',
+              err,
+            )
+            TerminalUtils.info('Rolling back changes and stopping publish...')
+            finalToPublish.forEach(project =>
+              ProjectUtils.updateVersion(project, previousVersions[project.name]),
+            )
+            process.exit(1)
           })
       )
     })

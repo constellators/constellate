@@ -9,7 +9,7 @@ let cache = null
 
 const defaultConfig = {
   role: 'library', // server, client
-  compiler: 'babel', // 'webpack', 'webpack-node', 'none'
+  compiler: 'none',
   nodeVersion: process.versions.node,
   allDependencies: [],
   dependencies: [],
@@ -32,25 +32,50 @@ const toProject = (projectName) => {
     appConfig.projectDefaults || {},
     R.path(['projects', projectName], appConfig) || {},
   )
+
+  const compiler = config.compiler
+  const noCompiler = compiler === 'none' || R.isEmpty(compiler) || R.isNil(compiler)
+
   const buildRoot = path.resolve(process.cwd(), `./build/${projectName}`)
-  return {
-    name: projectName,
-    config,
-    paths: {
-      root: thisProjectPath('./'),
-      packageJson: thisProjectPath('./package.json'),
-      packageLockJson: thisProjectPath('./package-lock.json'),
-      nodeModules: thisProjectPath('./node_modules'),
-      modules: thisProjectPath('./modules'),
-      modulesEntry: thisProjectPath('./modules/index.js'),
-      buildRoot,
-      buildPackageJson: path.resolve(buildRoot, './package.json'),
-      buildModules: path.resolve(buildRoot, './modules'),
-      buildModulesEntry: path.resolve(buildRoot, './modules/index.js'),
-      buildNodeModules: path.resolve(buildRoot, './node_modules'),
-      webpackCache: path.resolve(buildRoot, './.webpackcache'),
-    },
-  }
+  return R.pipe(
+    x =>
+      Object.assign({}, x, {
+        name: projectName,
+        noCompiler,
+        config,
+        paths: {
+          root: thisProjectPath('./'),
+          packageJson: thisProjectPath('./package.json'),
+          packageLockJson: thisProjectPath('./package-lock.json'),
+          nodeModules: thisProjectPath('./node_modules'),
+          modules: thisProjectPath('./modules'),
+          modulesEntry: thisProjectPath('./modules/index.js'),
+          webpackCache: path.resolve(buildRoot, './.webpackcache'),
+        },
+      }),
+    x =>
+      Object.assign({}, x, {
+        paths: Object.assign(
+          {},
+          x.paths,
+          noCompiler
+            ? {
+              buildRoot: x.paths.root,
+              buildPackageJson: x.paths.packageJson,
+              buildModules: x.paths.modules,
+              buildModulesEntry: x.paths.modulesEntry,
+              buildNodeModules: x.paths.nodeModules,
+            }
+            : {
+              buildRoot,
+              buildPackageJson: path.resolve(buildRoot, './package.json'),
+              buildModules: path.resolve(buildRoot, './modules'),
+              buildModulesEntry: path.resolve(buildRoot, './modules/index.js'),
+              buildNodeModules: path.resolve(buildRoot, './node_modules'),
+            },
+        ),
+      }),
+  )({})
 }
 
 // :: Array<Project> -> Array<Project>

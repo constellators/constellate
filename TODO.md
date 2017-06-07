@@ -2,6 +2,9 @@
 
 refactor everything into plugins!!
 develop servers resolved from plugins should resolve into an known API, e.g. { kill: () => Promise }
+getLastVersion on a project with no version should return 0.0.0?
+nodeVersion needs to allow partials i.e. 4 instead of 4.x.x
+plugin interface for compilers - pre/post publish, pre/post compile
 
  - [ ] FEATURE - Look at using NODE_PATH to do module resolution for projects during development mode.
        https://github.com/facebookincubator/create-react-app/issues/253
@@ -32,7 +35,7 @@ develop servers resolved from plugins should resolve into an known API, e.g. { k
    - [ ] Blog post
    - [ ] SIGTERM effective usage
    - [ ] constellate.js
- - [ ] FEATURE - Use config.releaseBranch to control the branch that is used for release generation (defaults to master)
+ - [X] FEATURE - Use config.releaseBranch to control the branch that is used for release generation (defaults to master)
  - [ ] FEATURE - Validate the constellate configuration (tcomb?)
  - [ ] FEATURE - Copy some base files across always - .npmignore, /README(.md)?/i
  - [ ] FEATURE - Copy across non-JS files when compiling

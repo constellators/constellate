@@ -1,8 +1,7 @@
-const getPort = require('get-port')
 const TerminalUtils = require('constellate-dev-utils/modules/terminal')
 const ChildProcessUtils = require('constellate-dev-utils/modules/childProcess')
 const ProjectUtils = require('constellate-dev-utils/modules/projects')
-const WebpackUtils = require('../../utils/webpack')
+// const WebpackUtils = require('../../utils/webpack')
 
 module.exports = function createProjectConductor(project, watcher) {
   let runningServer
@@ -59,6 +58,7 @@ module.exports = function createProjectConductor(project, watcher) {
     })
   }
 
+  /*
   function ensureWebDevServerRunning() {
     return getPort()
       .then((port) => {
@@ -92,6 +92,7 @@ module.exports = function createProjectConductor(project, watcher) {
         }
       })
   }
+  */
 
   function kill() {
     return runningServer ? runningServer.kill() : Promise.resolve()
@@ -100,8 +101,10 @@ module.exports = function createProjectConductor(project, watcher) {
   return {
     // :: void -> Promise
     build: () => {
-      ProjectUtils.prepareProject(project)
+      // Just in case a custom process is run we will link our project here.
+      ProjectUtils.linkProject(project)
 
+      /*
       if (project.config.role === 'client') {
         if (runningServer) {
           // We only need one running instance.
@@ -110,6 +113,7 @@ module.exports = function createProjectConductor(project, watcher) {
         TerminalUtils.verbose(`Starting a webpack-dev-server for ${project.name}`)
         return ensureWebDevServerRunning()
       }
+      */
 
       // else is targetting node
 
