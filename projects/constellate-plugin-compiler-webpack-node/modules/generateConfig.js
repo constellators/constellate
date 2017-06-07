@@ -8,20 +8,15 @@
 
 const webpack = require('webpack')
 const nodeExternals = require('webpack-node-externals')
-const R = require('ramda')
 const { removeNil } = require('constellate-dev-utils/modules/arrays')
 const { onlyIf } = require('constellate-dev-utils/modules/logic')
 const ProjectUtils = require('constellate-dev-utils/modules/projects')
 const generateBabelConfig = require('./generateBabelConfig')
 
 module.exports = function generateConfig(project) {
-  const allProjects = ProjectUtils.getAllProjects()
-
-  const bundledDependencies = allProjects.filter(
-    x => !!R.find(R.equals(x.name), project.bundledDependencies),
-  )
-
   const env = process.env.NODE_ENV
+  const allProjects = ProjectUtils.getAllProjects()
+  const bundledDependencies = project.bundledDependencies.map(x => allProjects[x])
   const bundledDepsModulePaths = bundledDependencies.map(dep => dep.paths.modules)
 
   return {
@@ -80,7 +75,7 @@ module.exports = function generateConfig(project) {
           /\.(svg|png|jpg|jpeg|gif|ico)$/,
           /\.(mp4|mp3|ogg|swf|webp)$/,
           /\.(css|scss|sass|sss|less)$/,
-          ...bundledDependencies.map(dep => ProjectUtils.getPackageName(dep.name)),
+          ...bundledDependencies.map(dep => allProjects[dep.name].packageName),
         ]),
         modulesDir: project.paths.nodeModules,
       }),

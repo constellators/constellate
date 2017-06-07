@@ -21,13 +21,9 @@ const generateBabelConfig = require('./generateBabelConfig')
 module.exports = function generateConfig(project, options) {
   const { devServerPort } = options
 
-  const allProjects = ProjectUtils.getAllProjects()
-
-  const bundledDependencies = allProjects.filter(
-    x => !!R.find(R.equals(x.name), project.bundledDependencies),
-  )
-
   const env = process.env.NODE_ENV
+  const allProjects = ProjectUtils.getAllProjects()
+  const bundledDependencies = project.bundledDependencies.map(x => allProjects[x])
   const bundledDepsModulePaths = bundledDependencies.map(dep => dep.paths.modules)
 
   const webpackConfig = {
@@ -220,7 +216,7 @@ module.exports = function generateConfig(project, options) {
           options: {
             // We only emit files when building a web bundle, node bundles only
             // need the file paths.
-            emitFile: isTargettingWeb,
+            emitFile: true,
             // Any files under this size will be "inlined" as a base64 encoding.
             limit: 10000,
           },

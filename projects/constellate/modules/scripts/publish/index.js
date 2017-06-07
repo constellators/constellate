@@ -15,6 +15,7 @@ module.exports = function publish(projectsToPublish, options = {}) {
   const force = !!options.force
 
   const allProjects = ProjectUtils.getAllProjects()
+  const allProjectsArray = R.values(allProjects)
 
   if (!GitUtils.isInitialized()) {
     TerminalUtils.error(
@@ -31,7 +32,7 @@ module.exports = function publish(projectsToPublish, options = {}) {
   TerminalUtils.verbose(`Last version is ${lastVersion}`)
 
   // Ensure there are no uncommitted changes
-  const projectsWithUncommitedChanges = allProjects.filter(ProjectUtils.hasUncommittedChanges)
+  const projectsWithUncommitedChanges = allProjectsArray.filter(ProjectUtils.hasUncommittedChanges)
   if (projectsWithUncommitedChanges.length > 0) {
     TerminalUtils.error(
       `The following projects have uncommitted changes within them. Please commit your changes and then try again.${EOL}${projectsWithUncommitedChanges
@@ -76,14 +77,14 @@ module.exports = function publish(projectsToPublish, options = {}) {
 
     const toPublish = isFirstPublish
       ? // We will publish all the ProjectUtils as this is our first publish.
-        allProjects
+        allProjectsArray
       : force
         ? projectsToPublish
         : projectsToPublish.filter(ProjectUtils.changedSince(lastVersionTag))
 
     let finalToPublish
 
-    if (!R.equals(toPublish.map(R.prop('name')), allProjects.map(R.prop('name')))) {
+    if (!R.equals(toPublish.map(R.prop('name')), allProjectsArray.map(R.prop('name')))) {
       // We need to make sure that the projects we are publishing have all
       // their dependants included in the publish process.
 
@@ -93,7 +94,7 @@ module.exports = function publish(projectsToPublish, options = {}) {
           // Project -> Array<string>
           R.prop('dependants'),
           // Array<string> -> Array<Project>
-          R.map(depName => R.find(R.propEq('name', depName), allProjects)),
+          R.map(depName => allProjects[depName]),
         )(project)
         return [project, ...deps, ...R.map(resolveDependants, deps)]
       }
@@ -117,12 +118,12 @@ module.exports = function publish(projectsToPublish, options = {}) {
 
     // Let's get a sorted version of finalToPublish by filtering allProjects
     // which will already be in a safe build order.
-    finalToPublish = allProjects.filter(cur => !!R.find(R.equals(cur), finalToPublish))
+    finalToPublish = allProjectsArray.filter(cur => !!R.find(R.equals(cur), finalToPublish))
 
     TerminalUtils.verbose(`Publishing [${finalToPublish.map(R.prop('name')).join(', ')}]`)
 
     // Get the current versions for each project
-    const previousVersions = allProjects.reduce(
+    const previousVersions = allProjectsArray.reduce(
       (acc, cur) => Object.assign(acc, { [cur.name]: ProjectUtils.getLastVersion(cur) }),
       {},
     )
@@ -143,7 +144,7 @@ module.exports = function publish(projectsToPublish, options = {}) {
       }
 
       // Get the original package.json file contents for each project.
-      const originalPackageJsons = allProjects.reduce(
+      const originalPackageJsons = allProjectsArray.reduce(
         (acc, cur) =>
           Object.assign(acc, {
             [cur.name]: readPkg.sync(cur.paths.packageJson, { normalize: false }),
@@ -153,16 +154,16 @@ module.exports = function publish(projectsToPublish, options = {}) {
 
       // Upate the package.jsons for each project to be the "publish" ready
       // versions.
-      allProjects.forEach(cur => ProjectUtils.createPublishPackageJson(cur, versions))
+      allProjectsArray.forEach(cur => ProjectUtils.createPublishPackageJson(cur, versions))
 
       const restoreOriginalPackageJsons = () =>
-        allProjects.forEach(cur =>
+        allProjectsArray.forEach(cur =>
           writePkg.sync(cur.paths.packageJson, originalPackageJsons[cur.name]),
         )
 
       // Build..
       return (
-        pSeries(allProjects.map(project => () => ProjectUtils.compileProject(project)))
+        pSeries(allProjectsArray.map(project => () => ProjectUtils.compileProject(project)))
           .catch((err) => {
             TerminalUtils.error('Failed to build projects in prep for publish', err)
             restoreOriginalPackageJsons()

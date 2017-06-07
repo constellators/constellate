@@ -1,6 +1,8 @@
+const { EOL } = require('os')
 const fs = require('fs-extra')
 const path = require('path')
 const toposort = require('toposort')
+const readPkg = require('read-pkg')
 const R = require('ramda')
 const TerminalUtils = require('../terminal')
 const AppUtils = require('../app')
@@ -25,7 +27,7 @@ const toProject = (projectName) => {
   const appConfig = AppUtils.getConfig()
 
   const thisProjectPath = resolveProjectPath(projectName)
-  // const constellateConfigPath = thisProjectPath('./constellate.js')
+
   const config = Object.assign(
     {},
     defaultConfig,
@@ -35,17 +37,19 @@ const toProject = (projectName) => {
 
   const compiler = config.compiler
   const noCompiler = compiler === 'none' || R.isEmpty(compiler) || R.isNil(compiler)
-
   const buildRoot = path.resolve(process.cwd(), `./build/${projectName}`)
+  const packageJsonPath = thisProjectPath('./package.json')
+
   return R.pipe(
     x =>
       Object.assign({}, x, {
         name: projectName,
         noCompiler,
         config,
+        packageName: readPkg.sync(packageJsonPath, { normalize: false }).name,
         paths: {
           root: thisProjectPath('./'),
-          packageJson: thisProjectPath('./package.json'),
+          packageJson: packageJsonPath,
           packageLockJson: thisProjectPath('./package-lock.json'),
           nodeModules: thisProjectPath('./node_modules'),
           modules: thisProjectPath('./modules'),
@@ -173,9 +177,13 @@ module.exports = function getAllProjects() {
     // Projects ordered based on their dependencies based order,
     // which mean building them in order should be safe.
     orderByAllDependencies,
+    // Convert into an object map
+    R.reduce((acc, cur) => Object.assign(acc, { [cur.name]: cur }), {}),
   )(projects)
 
-  TerminalUtils.verbose(`Project build order: \n\t- ${cache.map(R.prop('name')).join('\n\t- ')}`)
+  TerminalUtils.verbose(
+    `Project build order: \n\t- ${R.values(cache).map(R.prop('name')).join(`${EOL}\t- `)}`,
+  )
 
   return cache
 }

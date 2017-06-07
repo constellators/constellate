@@ -16,19 +16,17 @@ module.exports = function resolveProjects(projectFilters = []) {
 
   return new Promise((resolve, reject) => {
     const allProjects = getAllProjects()
-    if (allProjects.length === 0) {
+    if (Object.keys(allProjects).length === 0) {
       reject(new Error('Could not find any projects.'))
     } else if (projectFilters.length === 0) {
-      resolve(allProjects)
+      resolve(R.values(allProjects))
     } else {
-      const allProjectNames = allProjects.map(R.prop('name'))
+      const allProjectNames = R.values(allProjects).map(R.prop('name'))
       const invalidFilters = R.without(allProjectNames, projectFilters)
-      console.log(allProjectNames, projectFilters, invalidFilters)
       if (invalidFilters.length > 0) {
         reject(new Error(`The following projects could not be resolved:\n[${invalidFilters}]`))
       }
-      const findProject = name => R.find(p => p.name === name, allProjects)
-      resolve(projectFilters.map(findProject))
+      resolve(projectFilters.map(x => allProjects[x]))
     }
   }).then((resolved) => {
     TerminalUtils.verbose(`Resolved: [${resolved.map(R.prop('name')).join(', ')}]`)

@@ -1,5 +1,9 @@
 {
 	"version": "0.3.4",
 	"name": "constellate-dev-utils-webpack",
-	"description": "Shared utils for Webpack related Constellate core packages"
+	"description": "Shared utils for Webpack related Constellate core packages",
+	"dependencies": {
+		"fs-extra": "^3.0.1",
+		"read-pkg": "^2.0.0"
+	}
 }

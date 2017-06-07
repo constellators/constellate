@@ -4,14 +4,13 @@ const readPkg = require('read-pkg')
 const writePkg = require('write-pkg')
 const TerminalUtils = require('../terminal')
 const getAllProjects = require('./getAllProjects')
-const getPackageName = require('./getPackageName')
 
 module.exports = function createPublishPackageJson(project, versions) {
   const allProjects = getAllProjects()
 
   const projectHasVersion = p => R.find(R.equals(p.name), Object.keys(versions))
 
-  if (!versions || !R.allPass([projectHasVersion], allProjects)) {
+  if (!versions || !R.allPass([projectHasVersion], R.values(allProjects))) {
     TerminalUtils.error(
       'When creating a build for publishing all version numbers should be provided for each project',
     )
@@ -39,7 +38,7 @@ module.exports = function createPublishPackageJson(project, versions) {
         project.dependencies.reduce(
           (acc, dependencyName) =>
             Object.assign(acc, {
-              [getPackageName(dependencyName)]: `^${versions[dependencyName]}`,
+              [allProjects[dependencyName].packageName]: `^${versions[dependencyName]}`,
             }),
           {},
         ),
