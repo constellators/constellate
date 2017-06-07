@@ -42,19 +42,6 @@ module.exports = function createPublishPackageJson(project, versions) {
             }),
           {},
         ),
-        // TODO: Move to respective webpack plugin
-        /*
-          isWebpackCompiler
-            ? // When doing a webpack bundled project we need to include all the npm
-              // dependencies from our constellate dependencies as we will inline
-              // bundle all our constellate dependencies.
-              project.bundledDependencies.reduce((acc, dependencyName) => {
-                const dependency = R.find(R.propEq('name', dependencyName), allProjects)
-                const pkgJson = readPkg.sync(dependency.paths.packageJson, { normalize: false })
-                return Object.assign(acc, pkgJson.dependencies || {})
-              }, {})
-            : {},
-          */
         sourcePkgJson.dependencies || {},
       ),
     },

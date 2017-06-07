@@ -88,20 +88,13 @@ module.exports = function publish(projectsToPublish, options = {}) {
       // We need to make sure that the projects we are publishing have all
       // their dependants included in the publish process.
 
-      // :: Project -> Array<Project>
-      const resolveDependants = (project) => {
-        const deps = R.pipe(
-          // Project -> Array<string>
-          R.prop('dependants'),
-          // Array<string> -> Array<Project>
-          R.map(depName => allProjects[depName]),
-        )(project)
-        return [project, ...deps, ...R.map(resolveDependants, deps)]
-      }
+      const allProjectsToPublish = R.pipe(
+        R.chain(R.prop('allDependants')),
+        R.map(x => allProjects[x]),
+        R.concat(toPublish),
+      )(toPublish)
 
-      const allDependants = R.chain(resolveDependants, toPublish)
-
-      finalToPublish = allDependants.reduce((acc, cur) => {
+      finalToPublish = allProjectsToPublish.reduce((acc, cur) => {
         if (R.find(R.equals(cur), acc)) {
           return acc
         }
@@ -169,6 +162,20 @@ module.exports = function publish(projectsToPublish, options = {}) {
             restoreOriginalPackageJsons()
             process.exit(1)
           })
+          .then(() => {
+            if (enableNPMPublishing) {
+              finalToPublish.forEach((project) => {
+                if (project.compiler && project.compiler.prePublishToNPM) {
+                  project.compiler.prePublishToNPM(project)
+                }
+              })
+            }
+          })
+          .catch((err) => {
+            TerminalUtils.error('Failed to execute prePublishToNPM', err)
+            restoreOriginalPackageJsons()
+            process.exit(1)
+          })
           // Then publish to NPM (if enabled)
           .then(() => {
             if (enableNPMPublishing) {
@@ -195,6 +202,21 @@ module.exports = function publish(projectsToPublish, options = {}) {
               'Some of your projects may not have successfully been published to NPM',
             )
             TerminalUtils.error(null, error)
+          })
+          .then(() => {
+            if (enableNPMPublishing) {
+              finalToPublish.forEach((project) => {
+                if (project.compiler && project.compiler.postPublishToNPM) {
+                  project.compiler.postPublishToNPM(project)
+                }
+              })
+            }
+          })
+          .catch((err) => {
+            TerminalUtils.error('Failed to execute postPublishToNPM', err)
+            // Restore the original package json content
+            restoreOriginalPackageJsons()
+            process.exit(1)
           })
           // Then update the source pkg json files for each project to have the
           // correct version

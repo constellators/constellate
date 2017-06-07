@@ -4,6 +4,7 @@ const WebpackDevServer = require('webpack-dev-server')
 const TerminalUtils = require('constellate-dev-utils/modules/terminal')
 const { throttle } = require('constellate-dev-utils/modules/fns')
 const extractError = require('constellate-dev-utils-webpack/modules/extractError')
+const linkBundledDependencies = require('constellate-dev-utils-webpack/modules/linkBundledDependencies')
 const generateConfig = require('./generateConfig')
 
 // :: (Project, Options) -> Promise<WebpackDevServer, Error>
@@ -12,6 +13,10 @@ module.exports = function startDevServer(project) {
     TerminalUtils.verbose(`Found free port ${port} for webpack dev server`)
     return new Promise((resolve, reject) => {
       const hasResolved = false
+
+      // We need to make sure symlinking of the bundled dependencies exist so
+      // that bundling will happen correctly.
+      linkBundledDependencies(project)
 
       const config = generateConfig(project, { development: true, devServerPort: port })
       const compiler = webpack(config)

@@ -1,5 +1,6 @@
 const { EOL } = require('os')
 const fs = require('fs-extra')
+const dedent = require('dedent')
 const path = require('path')
 const toposort = require('toposort')
 const readPkg = require('read-pkg')
@@ -8,6 +9,7 @@ const TerminalUtils = require('../terminal')
 const AppUtils = require('../app')
 
 let cache = null
+const compilerCache = {}
 
 const defaultConfig = {
   role: 'library', // server, client
@@ -16,6 +18,31 @@ const defaultConfig = {
   allDependencies: [],
   dependencies: [],
   bundledDependencies: [],
+}
+
+function resolveCompiler(projectName, compilerName) {
+  if (compilerName === 'none' || R.isEmpty(compilerName) || R.isNil(compilerName)) {
+    return null
+  }
+  if (compilerCache[compilerName]) {
+    return compilerCache[compilerName]
+  }
+  const pluginName = `constellate-plugin-compiler-${compilerName}`
+  const pluginPath = path.resolve(process.cwd(), `./node_modules/${pluginName}`)
+  let plugin
+  try {
+    // eslint-disable-next-line global-require,import/no-dynamic-require
+    plugin = require(pluginPath)
+  } catch (err) {
+    throw new Error(
+      dedent(
+        `Could not resolve "${compilerName}" compiler for ${projectName}. Make sure you have the plugin installed:
+          npm install ${pluginName}`,
+      ),
+    )
+  }
+  compilerCache[compilerName] = plugin
+  return plugin
 }
 
 // :: string -> string -> string
@@ -35,8 +62,7 @@ const toProject = (projectName) => {
     R.path(['projects', projectName], appConfig) || {},
   )
 
-  const compiler = config.compiler
-  const noCompiler = compiler === 'none' || R.isEmpty(compiler) || R.isNil(compiler)
+  const compiler = resolveCompiler(projectName, config.compiler)
   const buildRoot = path.resolve(process.cwd(), `./build/${projectName}`)
   const packageJsonPath = thisProjectPath('./package.json')
 
@@ -44,7 +70,7 @@ const toProject = (projectName) => {
     x =>
       Object.assign({}, x, {
         name: projectName,
-        noCompiler,
+        compiler,
         config,
         packageName: readPkg.sync(packageJsonPath, { normalize: false }).name,
         paths: {
@@ -62,7 +88,7 @@ const toProject = (projectName) => {
         paths: Object.assign(
           {},
           x.paths,
-          noCompiler
+          compiler == null
             ? {
               buildRoot: x.paths.root,
               buildPackageJson: x.paths.packageJson,
@@ -152,6 +178,26 @@ module.exports = function getAllProjects() {
   const getDependants = project =>
     projects.filter(x => R.contains(project.name, x.allDependencies)).map(R.prop('name'))
 
+  const getAllDependants = (project, allProjects) => {
+    const findProject = name => R.find(R.propEq('name', name), allProjects)
+
+    // :: String -> Array<String>
+    const resolveDependants = (dependantName) => {
+      const dependant = findProject(dependantName)
+      return [
+        dependant.name,
+        ...dependant.dependants,
+        ...R.map(resolveDependants, dependant.dependants),
+      ]
+    }
+
+    const allDependants = R.chain(resolveDependants, project.dependants)
+
+    // Let's get a sorted version of allDependants by filtering allProjects
+    // which will already be in a safe build order.
+    return allProjects.filter(cur => !!R.find(R.equals(cur), allDependants))
+  }
+
   cache = R.pipe(
     // The projects this project directly depends on.
     R.map((project) => {
@@ -177,6 +223,13 @@ module.exports = function getAllProjects() {
     // Projects ordered based on their dependencies based order,
     // which mean building them in order should be safe.
     orderByAllDependencies,
+    // Add the FULL dependant tree
+    x =>
+      R.map(project =>
+        Object.assign(project, {
+          allDependants: getAllDependants(project, x),
+        }),
+      )(x),
     // Convert into an object map
     R.reduce((acc, cur) => Object.assign(acc, { [cur.name]: cur }), {}),
   )(projects)

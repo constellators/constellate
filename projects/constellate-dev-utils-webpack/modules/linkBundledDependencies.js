@@ -1,13 +1,18 @@
+const path = require('path')
 const fs = require('fs-extra')
 const readPkg = require('read-pkg')
 const TerminalUtils = require('constellate-dev-utils/modules/terminal')
+const ProjectUtils = require('constellate-dev-utils/modules/projects')
+const getAllBundledDependencies = require('./getAllBundledDependencies')
 
 module.exports = function linkBundledDependencies(project) {
-  project.bundledDependencies.forEach((dependencyName) => {
-    const dependency = depMap[dependencyName].project
+  const allProjects = ProjectUtils.getAllProjects()
 
-    // We will symlink each npm dependency of our constellate dependencies
-    // into our source node_modules
+  // We need to symlink each NPM dependency of each of our bundled dependencies
+  // into the node_modules dir of our project.
+  getAllBundledDependencies(project).forEach((dependencyName) => {
+    const dependency = allProjects[dependencyName]
+
     const pkgJson = readPkg.sync(dependency.paths.packageJson, { normalize: false })
     if (!pkgJson.dependencies) {
       TerminalUtils.verbose(
@@ -15,6 +20,9 @@ module.exports = function linkBundledDependencies(project) {
       )
       return
     }
+
+    // TODO: What about a bundle dependencie tree?
+
     Object.keys(pkgJson.dependencies).forEach((npmDepName) => {
       TerminalUtils.verbose(`Linking npm dependency ${npmDepName} to ${project.name}`)
       fs.ensureSymlinkSync(
