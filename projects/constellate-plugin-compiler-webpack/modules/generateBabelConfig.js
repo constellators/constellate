@@ -1,36 +1,23 @@
 /**
  * Tons of inspiration taken from Facebook's superb Create React App project
- * and @jaredpalmer's amazing Razzle project
  * https://github.com/facebookincubator/create-react-app
- * https://github.com/jaredpalmer/razzle
  * ❤️
  */
 
-const path = require('path')
-const R = require('ramda')
 const { removeNil } = require('constellate-dev-utils/modules/arrays')
 const { onlyIf } = require('constellate-dev-utils/modules/logic')
 
 // :: Options -> BabelConfig
 module.exports = function generateConfig(project) {
-  const compiler = R.path(['config', 'compiler'], project)
-  const usingWebpackAsCompiler = compiler === 'webpack' || compiler === 'webpack-node'
-  const isTargettingWeb = compiler === 'webpack'
-  const isTargettingNode = !isTargettingWeb
-
   const env = process.env.BABEL_ENV || process.env.NODE_ENV
-
-  const babelConfig = {
+  return {
     babelrc: false,
 
     // Handy for sourcemaps generation.
     sourceRoot: project.paths.modules,
 
-    // Source maps will be useful for debugging errors in our node executions.
-    sourceMaps: isTargettingNode ? 'both' : false,
-
     presets: removeNil([
-      onlyIf(isTargettingWeb, [
+      [
         'env',
         {
           targets: {
@@ -45,23 +32,8 @@ module.exports = function generateConfig(project) {
           // Do not transform modules to CJS
           modules: false,
         },
-      ]),
+      ],
 
-      onlyIf(isTargettingNode, [
-        'env',
-        {
-          targets: {
-            node: R.path(['config', 'compilerOptions', 'nodeVersion'], project) || 'current',
-          },
-          // If we are using webpack as a compiler then we will need to ignore
-          // transpilation of es-modules as they are handled by webpack.
-          modules: usingWebpackAsCompiler
-            ? // don't transpile es-modules
-              false
-            : // else transpile them to cjs
-              'commonjs',
-        },
-      ]),
       // jsx && flow support
       'react',
     ]),
@@ -70,14 +42,7 @@ module.exports = function generateConfig(project) {
       // const { foo, ...others } = object
       // object = { foo, ...others }
       // This plugin uses Object.assign directly.
-      [
-        'transform-object-rest-spread',
-        {
-          // For a node project we can rely on native Object.assign, else it will
-          // need to be polyfilled.
-          useBuiltIns: isTargettingNode,
-        },
-      ],
+      ['transform-object-rest-spread'],
 
       // function (
       //   arg1,
@@ -88,14 +53,11 @@ module.exports = function generateConfig(project) {
       // class { handleThing = () => { } }
       'transform-class-properties',
 
-      usingWebpackAsCompiler
-        ? // Adds syntax support for import(), which webpack can handle
-          'babel-plugin-syntax-dynamic-import'
-        : // Compiles import() to a deferred require()
-          'babel-plugin-dynamic-import-node',
+      // Adds syntax support for import(), which webpack can handle
+      'babel-plugin-syntax-dynamic-import',
 
       // Polyfills the runtime needed for async/await and generators.
-      onlyIf(isTargettingWeb, 'babel-plugin-transform-runtime'),
+      'babel-plugin-transform-runtime',
 
       // Replaces the React.createElement function with one that is
       // more optimized for production.
@@ -124,19 +86,6 @@ module.exports = function generateConfig(project) {
 
       // Adds component stack to warning messages
       onlyIf(env === 'development' || env === 'test', 'transform-react-jsx-source'),
-
-      // If we are transpiling a node project then we inject some code to
-      // include source maps support on the transpiled code.  Don't do this
-      // if webpack is being used as a transpiler as it will inline sourcemap
-      // support.
-      onlyIf(
-        isTargettingNode && !usingWebpackAsCompiler && env === 'development',
-        path.resolve(__dirname, './plugins/sourceMapSupport.js'),
-      ),
     ]),
   }
-
-  const babelPlugin = R.path(['plugins', 'babel'], project)
-
-  return babelPlugin ? babelPlugin(babelConfig, { project }) : babelConfig
 }

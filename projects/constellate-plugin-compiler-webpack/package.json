@@ -1,9 +1,10 @@
 {
-	"name": "constellate-plugin-compiler-webpack-node",
-	"description": "A Webpack compiler (targetting Node) plugin for Constellate projects.",
+	"name": "constellate-plugin-compiler-webpack",
+	"description": "A Webpack compiler plugin for Constellate projects.",
 	"main": "modules/index.js",
 	"dependencies": {
-		"babel-core": "^6.24.1",
+		"assets-webpack-plugin": "^3.5.1",
+		"autoprefixer": "^7.1.1",
 		"babel-loader": "^7.0.0",
 		"babel-plugin-dynamic-import-node": "^1.0.2",
 		"babel-plugin-syntax-trailing-function-commas": "^6.22.0",
@@ -18,11 +19,17 @@
 		"babel-preset-env": "^1.5.1",
 		"babel-preset-react": "^6.24.1",
 		"cache-loader": "^1.0.3",
+		"case-sensitive-paths-webpack-plugin": "^2.1.1",
 		"css-loader": "^0.28.4",
+		"extract-text-webpack-plugin": "^2.1.0",
+		"file-loader": "^0.11.2",
+		"get-port": "^3.1.0",
+		"postcss-loader": "^2.0.5",
 		"ramda": "^0.24.1",
-		"semver": "^5.3.0",
+		"react-dev-utils": "^3.0.0",
+		"style-loader": "^0.18.2",
 		"url-loader": "^0.5.8",
-		"webpack": "^3.0.0-rc.1",
-		"webpack-node-externals": "^1.6.0"
+		"webpack": "^2.6.1",
+		"webpack-dev-server": "^2.4.5"
 	}
 }

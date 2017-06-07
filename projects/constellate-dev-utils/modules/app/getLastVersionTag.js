@@ -1,5 +1,5 @@
-const git = require('constellate-dev-utils/modules/git')
-const TerminalUtils = require('constellate-dev-utils/modules/terminal')
+const git = require('../git')
+const TerminalUtils = require('../terminal')
 
 module.exports = function getLastVersionTag() {
   const lastTagInfo = git.getLastAnnotatedTagInfo()

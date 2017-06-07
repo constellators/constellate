@@ -1,7 +1,7 @@
 const { EOL } = require('os')
 const R = require('ramda')
-const Git = require('constellate-dev-utils/modules/git')
-const Terminal = require('constellate-dev-utils/modules/terminal')
+const Git = require('../git')
+const Terminal = require('../terminal')
 
 const changedSince = R.curry((versionTag, project) => {
   const files = Git.changedFilesSinceIn(versionTag, project.paths.root)

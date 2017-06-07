@@ -1,0 +1,45 @@
+const webpack = require('webpack')
+const getPort = require('get-port')
+const WebpackDevServer = require('webpack-dev-server')
+const TerminalUtils = require('constellate-dev-utils/modules/terminal')
+const { throttle } = require('constellate-dev-utils/modules/fns')
+const extractError = require('constellate-dev-utils-webpack/modules/extractError')
+const generateConfig = require('./generateConfig')
+
+// :: (Project, Options) -> Promise<WebpackDevServer, Error>
+module.exports = function startDevServer(project) {
+  return getPort().then((port) => {
+    TerminalUtils.verbose(`Found free port ${port} for webpack dev server`)
+    return new Promise((resolve, reject) => {
+      const hasResolved = false
+
+      const config = generateConfig(project, { development: true, devServerPort: port })
+      const compiler = webpack(config)
+      const server = new WebpackDevServer(compiler, config.devServer)
+      server.listen(port, '0.0.0.0', () => {
+        TerminalUtils.verbose(`${project.name} listening on http://0.0.0.0:${port}`)
+      })
+
+      TerminalUtils.info(`Building ${project.name}`)
+
+      compiler.plugin(
+        'done',
+        throttle(500, (doneStats) => {
+          const doneError = extractError(project, null, doneStats)
+          if (doneError) {
+            TerminalUtils.error(`Please fix the following issue on ${project.name}`, doneError)
+          } else {
+            TerminalUtils.verbose(`Built ${project.name}`)
+          }
+          if (!hasResolved) {
+            if (doneError) {
+              reject(doneError)
+            } else {
+              resolve(server)
+            }
+          }
+        }),
+      )
+    })
+  })
+}

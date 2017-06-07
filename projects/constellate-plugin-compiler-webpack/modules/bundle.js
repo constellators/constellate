@@ -1,5 +1,5 @@
+const extractError = require('constellate-dev-utils-webpack/modules/extractError')
 const createCompiler = require('./createCompiler')
-const extractError = require('./extractError')
 
 // :: Options -> Promise<Compiler, Error>
 module.exports = function bundle(project, options) {

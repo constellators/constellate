@@ -1,7 +1,7 @@
 const { EOL } = require('os')
 const pSeries = require('p-series')
 const TerminalUtils = require('constellate-dev-utils/modules/terminal')
-const ProjectUtils = require('../utils/projects')
+const ProjectUtils = require('constellate-dev-utils/modules/projects')
 
 module.exports = function build(toBuild) {
   const allProjects = ProjectUtils.getAllProjects()
@@ -22,7 +22,7 @@ module.exports = function build(toBuild) {
   // :: Project -> void -> Promise
   const queueBuild = project => () => {
     ProjectUtils.prepareProject(project, { versions })
-    return ProjectUtils.buildProject(project)
+    return ProjectUtils.compileProject(project)
   }
 
   return pSeries(toBuild.map(queueBuild))

@@ -1,5 +1,5 @@
 const R = require('ramda')
-const TerminalUtils = require('constellate-dev-utils/modules/terminal')
+const TerminalUtils = require('../terminal')
 const getAllProjects = require('./getAllProjects')
 
 /**

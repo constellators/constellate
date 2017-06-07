@@ -1,6 +1,6 @@
 const fs = require('fs-extra')
 const path = require('path')
-const TerminalUtils = require('constellate-dev-utils/modules/terminal')
+const TerminalUtils = require('../terminal')
 
 module.exports = function cleanBuild() {
   const buildPath = path.resolve(process.cwd(), './build')

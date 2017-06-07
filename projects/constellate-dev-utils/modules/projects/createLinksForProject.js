@@ -1,7 +1,7 @@
 const path = require('path')
 const fs = require('fs-extra')
 const R = require('ramda')
-const TerminalUtils = require('constellate-dev-utils/modules/terminal')
+const TerminalUtils = require('../terminal')
 
 module.exports = function createLinksForProject(projects, project) {
   project.dependencies.forEach((dependencyName) => {

@@ -1,7 +1,7 @@
-const buildProject = require('./buildProject')
 const changedSince = require('./changedSince')
 const cleanBuild = require('./cleanBuild')
 const cleanProjects = require('./cleanProjects')
+const compileProject = require('./compileProject')
 const createLinksForProject = require('./createLinksForProject')
 const getAllProjects = require('./getAllProjects')
 const getLastVersion = require('./getLastVersion')
@@ -12,10 +12,10 @@ const resolveProjects = require('./resolveProjects')
 const updateVersion = require('./updateVersion')
 
 module.exports = {
-  buildProject,
   changedSince,
   cleanBuild,
   cleanProjects,
+  compileProject,
   createLinksForProject,
   getAllProjects,
   getLastVersion,

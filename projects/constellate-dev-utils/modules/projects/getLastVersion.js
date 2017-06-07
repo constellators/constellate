@@ -1,8 +1,8 @@
 const semver = require('semver')
 const readPkg = require('read-pkg')
 const dedent = require('dedent')
-const GitUtils = require('constellate-dev-utils/modules/git')
-const TerminalUtils = require('constellate-dev-utils/modules/terminal')
+const GitUtils = require('../git')
+const TerminalUtils = require('../terminal')
 
 const resolveVersionFor = (project) => {
   const pkgJson = readPkg(project.paths.packageJson, { normalize: false })

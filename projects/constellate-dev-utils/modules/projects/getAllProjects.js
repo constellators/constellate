@@ -1,8 +1,8 @@
-const fs = require('fs')
+const fs = require('fs-extra')
 const path = require('path')
 const toposort = require('toposort')
 const R = require('ramda')
-const TerminalUtils = require('constellate-dev-utils/modules/terminal')
+const TerminalUtils = require('../terminal')
 const AppUtils = require('../app')
 
 let cache = null

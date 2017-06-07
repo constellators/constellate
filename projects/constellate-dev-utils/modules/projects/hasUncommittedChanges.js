@@ -1,4 +1,4 @@
-const GitUtils = require('constellate-dev-utils/modules/git')
+const GitUtils = require('../git')
 
 module.exports = function hasUncommittedChanges(project) {
   const uncommitedFiles = GitUtils.uncommittedChangesIn(project.paths.root)

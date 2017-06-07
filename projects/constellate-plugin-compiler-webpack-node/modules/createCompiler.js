@@ -1,5 +1,4 @@
 const webpack = require('webpack')
-
 const generateConfig = require('./generateConfig')
 
 // :: Options -> Promise<Compiler, Error>

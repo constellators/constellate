@@ -145,7 +145,7 @@ module.exports = function publish(projectsToPublish, options = {}) {
         pSeries(
           allProjects.map(project => () => {
             ProjectUtils.prepareProject(project, { versions })
-            return ProjectUtils.buildProject(project)
+            return ProjectUtils.compileProject(project)
           }),
         )
           // Then update the source pkg json files for each project to have the

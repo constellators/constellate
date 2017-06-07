@@ -1,8 +1,8 @@
 const getPort = require('get-port')
 const TerminalUtils = require('constellate-dev-utils/modules/terminal')
 const ChildProcessUtils = require('constellate-dev-utils/modules/childProcess')
+const ProjectUtils = require('constellate-dev-utils/modules/projects')
 const WebpackUtils = require('../../utils/webpack')
-const ProjectUtils = require('../../utils/projects')
 
 module.exports = function createProjectConductor(project, watcher) {
   let runningServer
@@ -113,7 +113,7 @@ module.exports = function createProjectConductor(project, watcher) {
 
       // else is targetting node
 
-      return ProjectUtils.buildProject(project).then(() =>
+      return ProjectUtils.compileProject(project).then(() =>
         kill().then(() => {
           if (project.config.role === 'server') {
             return ensureNodeServerRunning()

@@ -1,5 +1,9 @@
 # Constellate Roadmap / Todo
 
+peerDependencies
+refactor everything into plugins!!
+develop servers resolved from plugins should resolve into an known API, e.g. { kill: () => Promise }
+
  - [ ] FEATURE - Look at using NODE_PATH to do module resolution for projects during development mode.
        https://github.com/facebookincubator/create-react-app/issues/253
  - [X] BUG! - Need to rework the versioning/publishing process. We will have to update the source package.json files directly in order to ensure correct publishing chain reactions.
