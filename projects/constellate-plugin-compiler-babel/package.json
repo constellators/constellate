@@ -1,4 +1,5 @@
 {
+	"version": "0.3.0",
 	"name": "constellate-plugin-compiler-babel",
 	"description": "A Babel compiler plugin for Constellate projects.",
 	"main": "modules/index.js",
