@@ -12,7 +12,7 @@ process.on('unhandledRejection', (err) => {
 const program = require('commander')
 const R = require('ramda')
 const TerminalUtils = require('constellate-dev-utils/modules/terminal')
-const ProjectUtils = require('../utils/projects')
+const ProjectUtils = require('constellate-dev-utils/modules/projects')
 const packageJson = require('../../package.json')
 
 TerminalUtils.header(`constellate v${packageJson.version || '0.0.0-develop'}`)

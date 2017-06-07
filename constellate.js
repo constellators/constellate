@@ -8,20 +8,9 @@ module.exports = {
     },
     'constellate-plugin-compiler-webpack': {
       dependencies: ['constellate-dev-utils', 'constellate-dev-utils-webpack'],
-      peerDependencies: ['constellate-plugin-compiler-babel'],
     },
     'constellate-plugin-compiler-webpack-node': {
-      dependencies: ['constellate-dev-utils'],
-    },
-    'constellate-plugin-devserver-webpack': {
-      dependencies: ['constellate-dev-utils'],
-    },
-    'constellate-plugin-develop-webpack': {
       dependencies: ['constellate-dev-utils', 'constellate-dev-utils-webpack'],
-      peerDependencies: [
-        'constellate-plugin-compiler-webpack',
-        'constellate-plugin-compiler-babel',
-      ],
     },
   },
 }

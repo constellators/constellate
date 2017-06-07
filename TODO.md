@@ -1,6 +1,5 @@
 # Constellate Roadmap / Todo
 
-peerDependencies
 refactor everything into plugins!!
 develop servers resolved from plugins should resolve into an known API, e.g. { kill: () => Promise }
 

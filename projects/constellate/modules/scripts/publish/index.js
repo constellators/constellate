@@ -6,8 +6,8 @@ const readPkg = require('read-pkg')
 const TerminalUtils = require('constellate-dev-utils/modules/terminal')
 const GitUtils = require('constellate-dev-utils/modules/git')
 const ChildProcessUtils = require('constellate-dev-utils/modules/childProcess')
-const AppUtils = require('../../utils/app')
-const ProjectUtils = require('../../utils/projects')
+const AppUtils = require('constellate-dev-utils/modules/app')
+const ProjectUtils = require('constellate-dev-utils/modules/projects')
 const requestNextVersion = require('./requestNextVersion')
 
 module.exports = function publish(projectsToPublish, options = {}) {
