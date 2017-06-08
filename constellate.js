@@ -1,7 +1,7 @@
 module.exports = {
   projects: {
     constellate: {
-      dependencies: ['constellate-dev-utils', 'eslint-config-constellate'],
+      dependencies: ['constellate-dev-utils'],
     },
     'constellate-dev-utils-webpack': {
       dependencies: ['constellate-dev-utils'],
