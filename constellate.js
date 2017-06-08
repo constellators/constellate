@@ -15,5 +15,11 @@ module.exports = {
     'constellate-plugin-compiler-webpack-node': {
       dependencies: ['constellate-dev-utils', 'constellate-dev-utils-webpack'],
     },
+    'constellate-utils': {
+      compiler: 'babel',
+      compilerOptions: {
+        nodeVersion: '4.8.3',
+      },
+    },
   },
 }
