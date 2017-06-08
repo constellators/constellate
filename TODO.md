@@ -31,14 +31,12 @@ getLastVersion on a project with no version should return 0.0.0?
    - [ ] Blog post
    - [ ] SIGTERM effective usage
    - [ ] constellate.js
- - [X] FEATURE - Use config.releaseBranch to control the branch that is used for release generation (defaults to master)
  - [ ] FEATURE - Validate the constellate configuration (tcomb?)
  - [ ] FEATURE - Copy some base files across always - .npmignore, /README(.md)?/i
  - [ ] FEATURE - Copy across non-JS files when compiling
  - [ ] FEATURE - Allow for additional files to be specified in package.json files
  - [ ] FEATURE - Support NPM tags.
  - [ ] FEATURE - Make the target browserlist configurable.
- - [ ] FEATURE - Support a 'none' compiler. This is complicated as the NPM publishing process falls over if you symlink a folder. Therefore file copy/paste is the only easy way thusfar.
  - [ ] FEATURE - BrowserList configuration (touch point in babel and webpack config)
  - [ ] FEATURE - Chokidar events should result in the absolute minimal amount of work being done. e.g. transpile a single file. remove a dir, etc
  - [ ] FEATURE - auto-add source-map-support to build dependencies, and then re-enable for production builds.
@@ -51,6 +49,8 @@ getLastVersion on a project with no version should return 0.0.0?
    - [ ] postdevelop
    - [ ] prestart
    - [ ] poststart
+ - [X] FEATURE - Use config.releaseBranch to control the branch that is used for release generation (defaults to master)
+ - [X] FEATURE - Support a 'none' compiler. This is complicated as the NPM publishing process falls over if you symlink a folder. Therefore file copy/paste is the only easy way thusfar.
  - [X] FEATURE - plugin interface for compilers - pre/post publish
  - [X] FEATURE - Plugin architecture for compilers
  - [X] FEATURE - refactor everything into plugins!!
