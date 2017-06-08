@@ -1,11 +1,13 @@
 <p align="center">
-  <img src="https://cdn.rawgit.com/constellators/constellate/8e303aad/assets/logo-full.png" width="350" height="219" />
+  <img src="https://cdn.rawgit.com/constellators/constellate/8e303aad/assets/logo-full.png" width="300" height="138.42" />
 </p>
 
-<h1 align="center">constellate</h1>
+<hr />
+
+# constellate
 
 The ❤️ of [Constellate](https://github.com/constellators/constellate) applications.
 
-Requirements / Caveats 
+Requirements / Caveats
  - Git
  - NPM
