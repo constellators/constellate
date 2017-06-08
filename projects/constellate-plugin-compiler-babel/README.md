@@ -4,6 +4,6 @@
 
 <hr />
 
-Rapid Javascript monorepos.
+# constellate-plugin-compiler-babel
 
-Coming soon.
+See [Constellate](https://github.com/constellators/constellate)

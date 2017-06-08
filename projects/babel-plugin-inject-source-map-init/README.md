@@ -4,6 +4,6 @@
 
 <hr />
 
-Rapid Javascript monorepos.
+# babel-plugin-inject-source-map-init
 
-Coming soon.
+See [Constellate](https://github.com/constellators/constellate)

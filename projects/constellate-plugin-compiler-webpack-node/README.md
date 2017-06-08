@@ -4,6 +4,6 @@
 
 <hr />
 
-Rapid Javascript monorepos.
+# constellate-plugin-compiler-webpack-node
 
-Coming soon.
+See [Constellate](https://github.com/constellators/constellate)
