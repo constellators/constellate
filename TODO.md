@@ -1,5 +1,6 @@
 # Constellate Roadmap / Todo
 
+use bin-up to create some project specific commands
 refactor everything into plugins!!
 develop servers resolved from plugins should resolve into an known API, e.g. { kill: () => Promise }
 getLastVersion on a project with no version should return 0.0.0?

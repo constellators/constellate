@@ -2,93 +2,100 @@
 
 const R = require('ramda')
 const TerminalUtils = require('constellate-dev-utils/modules/terminal')
-const ProjectUtils = require('../../utils/projects')
-const createProjectConductor = require('./createProjectConductor')
+const ProjectUtils = require('constellate-dev-utils/modules/projects')
+const createProjectDevelopConductor = require('./createProjectDevelopConductor')
 const createProjectWatcher = require('./createProjectWatcher')
+const gracefulShutdownManager = require('./gracefulShutdownManager')
 
 module.exports = function develop(projectsToDevelop) {
   TerminalUtils.info('Press CTRL + C to exit')
 
+  // Firstly clean up shop.
+  ProjectUtils.cleanBuild()
+
+  const allProjects = ProjectUtils.getAllProjects()
+
   // Represents the current project being built
-  let currentBuild = null
+  let currentlyProcessing = null
 
   // Represents the build backlog queue. FIFO.
-  let buildQueue = []
+  let toProcessQueue = []
 
   // :: Project -> Project -> bool
   const projectHasDependant = R.curry((dependant, project) =>
     R.contains(dependant.name, project.dependants),
   )
 
-  // Firstly clean up shop.
-  ProjectUtils.cleanBuild()
-
   // :: Project -> Array<Project>
-  const getProjectDependants = project =>
-    project.dependants.map(dependant => projectsToDevelop.find(R.propEq('name', dependant)))
+  const getProjectDependants = project => project.dependants.map(name => allProjects[name])
 
-  // eslint-disable-next-line no-unused-vars
-  const onChange = project => (changes) => {
-    // TODO: Clever "minimal" changes build? Need to pass along some info?
-    queueProjectForBuild(project)
+  // :: Project -> void -> void
+  const onChange = project => () => {
+    queueProjectForProcessing(project)
     // If no active build running then we will call off to run next item in
     // the queue.
-    if (!currentBuild) {
-      buildNextInTheQueue()
+    if (!currentlyProcessing) {
+      processNextInTheQueue()
     }
   }
 
   // :: Object<string, ProjectWatcher>
-  const watchers = projectsToDevelop.reduce(
+  const projectWatchers = projectsToDevelop.reduce(
     (acc, project) =>
       Object.assign(acc, { [project.name]: createProjectWatcher(onChange(project), project) }),
     {},
   )
 
-  // :: Object<string, ProjectConductor>
-  const projectConductors = projectsToDevelop.reduce(
+  // :: Object<string, ProjectDevelopConductor>
+  const projectDevelopConductors = projectsToDevelop.reduce(
     (acc, project) =>
       Object.assign(acc, {
-        [project.name]: createProjectConductor(project, watchers[project.name]),
+        [project.name]: createProjectDevelopConductor(project, projectWatchers[project.name]),
       }),
     {},
   )
 
-  const queueProjectForBuild = (project) => {
-    TerminalUtils.verbose(`Attempting to queue ${project.name} for build`)
-    if (currentBuild !== null && projectHasDependant(project /* dependant */, currentBuild)) {
+  const queueProjectForProcessing = (projectToQueue) => {
+    TerminalUtils.verbose(`Attempting to queue ${projectToQueue.name}`)
+    if (currentlyProcessing !== null && projectHasDependant(projectToQueue, currentlyProcessing)) {
       // Do nothing as the project currently being built will result in this
       // project being built via it's dependancy chain.
-      TerminalUtils.verbose(`Skipping queue of ${project.name} as represented by currentBuild`)
-    } else if (R.any(projectHasDependant(project), buildQueue)) {
+      TerminalUtils.verbose(
+        `Skipping queue of ${projectToQueue.name} as represented by the project currently being processed`,
+      )
+    } else if (R.any(projectHasDependant(projectToQueue), toProcessQueue)) {
       // Do nothing as one of the queued projectsToDevelop will result in this project
       // getting built via it's dependancy chain.
-      TerminalUtils.verbose(`Skipping queue of ${project.name} as represented by buildQueue`)
+      TerminalUtils.verbose(
+        `Skipping queue of ${projectToQueue.name} as represented by the items within the queue`,
+      )
     } else {
       // Queue the project for building.
-      TerminalUtils.verbose(`Queuing ${project.name}`)
-      const projectDependants = getProjectDependants(project)
+      TerminalUtils.verbose(`Queuing ${projectToQueue.name}`)
+      const projectDependants = getProjectDependants(projectToQueue)
       // We'll assign the project to the build queue, removing any of the
       // project's dependants as they will be represented by the project being
       // added.
-      buildQueue = R.without(projectDependants, buildQueue).concat([project])
-      TerminalUtils.verbose(`Queue: [${buildQueue.map(x => x.name).join(',')}]`)
+      toProcessQueue = R.without(projectDependants, toProcessQueue).concat([projectToQueue])
+      TerminalUtils.verbose(`Queue: [${toProcessQueue.map(x => x.name).join(',')}]`)
     }
   }
 
-  const runBuild = (project) => {
-    currentBuild = project
-    const projectConductor = projectConductors[project.name]
-    if (!projectConductor) {
-      TerminalUtils.warn(`Did not run build for ${project.name} as no project conductor registered`)
+  const processProject = (project) => {
+    currentlyProcessing = project
+    const projectDevelopConductor = projectDevelopConductors[project.name]
+    if (!projectDevelopConductor) {
+      TerminalUtils.error(
+        `Did not run develop process for ${project.name} as there is no project develop conductor registered for it`,
+      )
       return
     }
-    projectConductor
-      // Kick off the build
-      .build()
-      // Build succeeded 🎉
+    projectDevelopConductor
+      // Kick off the develop of the project
+      .start()
+      // Develop kickstart succeeded 🎉
       .then(() => ({ success: true }))
-      // Build failed 😭
+      // Or, failed 😭
       .catch((err) => {
         TerminalUtils.error(`Please fix the following issue on ${project.name}:`, err)
         return { success: false }
@@ -96,95 +103,55 @@ module.exports = function develop(projectsToDevelop) {
       // Finally...
       .then(({ success }) => {
         // Ensure any current is removed
-        currentBuild = null
+        currentlyProcessing = null
 
         // If the build succeeded we will queue dependants
         if (success) {
           TerminalUtils.verbose(
-            `Project build successfully ${project.name}, queueing dependants...`,
+            `Develop process ran successfully for ${project.name}, queueing dependants...`,
           )
           const projectDependants = getProjectDependants(project)
-          projectDependants.forEach(queueProjectForBuild)
+          projectDependants.forEach(queueProjectForProcessing)
         }
 
-        // We will call off the next build despite a failure to build this
-        // project as any items still in the queue likely aren't dependants
-        // of this project due to the logic contained within the queueing process.
-        buildNextInTheQueue()
+        // We will call off the next item to be processe even if a failure
+        // occurred. This is because any items in the queue likely are not
+        // dependants of this failed project (due to the logic contained within
+        // the queueing function).
+        processNextInTheQueue()
       })
   }
 
-  const buildNextInTheQueue = () => {
-    if (currentBuild) {
-      TerminalUtils.warning(
-        'Tried to build next item in queue even though there is an active build running',
+  const processNextInTheQueue = () => {
+    if (currentlyProcessing) {
+      TerminalUtils.error(
+        `Tried to process the next Project in the queue even though there is a Project being processed: ${currentlyProcessing}`,
       )
       return
     }
     TerminalUtils.verbose('Popping the queue')
-    if (buildQueue.length > 0) {
+    if (toProcessQueue.length > 0) {
       // Pop the queue.
-      const nextToBuild = buildQueue[0]
-      buildQueue = buildQueue.slice(1)
-      TerminalUtils.verbose(`Popped ${nextToBuild.name}`)
-      runBuild(nextToBuild)
+      const nextToProcess = toProcessQueue[0]
+      toProcessQueue = toProcessQueue.slice(1)
+      TerminalUtils.verbose(`Popped ${nextToProcess.name}`)
+      processProject(nextToProcess)
     } else {
       TerminalUtils.verbose('Nothing to pop')
     }
   }
 
   // READY...
-  projectsToDevelop.forEach(queueProjectForBuild)
+  projectsToDevelop.forEach(queueProjectForProcessing)
 
   // SET...
-  Object.keys(watchers).forEach(projectName => watchers[projectName].start())
+  Object.keys(projectWatchers).forEach(projectName => projectWatchers[projectName].start())
 
   // GO! 🚀
-  buildNextInTheQueue()
+  processNextInTheQueue()
 
   // GRACEFUL SHUTTING DOWN HANDLED BELOW:
-
-  let shuttingDown = false
-
-  function performGracefulShutdown() {
-    // Avoid multiple calls (e.g. if ctrl+c pressed multiple times)
-    if (shuttingDown) return
-    shuttingDown = true
-
-    TerminalUtils.info('Shutting down development environment...')
-
-    // Firstly kill all our watchers.
-    Object.keys(watchers).forEach(projectName => watchers[projectName].stop())
-
-    // Then call off the `.kill()` against all our project conductors.
-    Promise.all(R.values(projectConductors).map(projectConductor => projectConductor.kill()))
-      .catch((err) => {
-        TerminalUtils.error(
-          'An error occurred whilst shutting down the development environment',
-          err,
-        )
-        process.exit(1)
-      })
-      .then(() => process.exit(0))
-
-    setTimeout(() => {
-      TerminalUtils.verbose('Forcing shutdown after grace period')
-      process.exit(0)
-    }, 5 * 1000)
-  }
-
-  // Ensure that we perform a graceful shutdown when any of the following
-  // signals are sent to our process.
-  ['SIGINT', 'SIGTERM'].forEach((signal) => {
-    process.on(signal, () => {
-      TerminalUtils.verbose(`Received ${signal} termination signal`)
-      performGracefulShutdown()
-    })
-  })
-
-  process.on('exit', () => {
-    TerminalUtils.info('Till next time. *kiss*')
-  })
+  gracefulShutdownManager()
 
   // prevent node process from exiting. (until CTRL + C is pressed at least)
   process.stdin.read()

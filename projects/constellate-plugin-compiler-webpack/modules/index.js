@@ -3,11 +3,13 @@ const readPkg = require('read-pkg')
 const ProjectUtils = require('constellate-dev-utils/modules/projects')
 const getAllBundledDependencies = require('constellate-dev-utils-webpack/modules/getAllBundledDependencies')
 const bundle = require('./bundle')
-const startDevServer = require('./startDevServer')
+const develop = require('./develop')
 
 module.exports = {
   compile: bundle,
-  develop: startDevServer,
+
+  develop,
+
   prePublishToNPM: (project) => {
     const allProjects = ProjectUtils.getAllProjects()
     // When doing a webpack bundled project we need to include all the npm

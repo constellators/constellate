@@ -6,6 +6,7 @@ const bundle = require('./bundle')
 
 module.exports = {
   compile: bundle,
+
   prePublishToNPM: (project) => {
     const allProjects = ProjectUtils.getAllProjects()
     // When doing a webpack bundled project we need to include all the npm
