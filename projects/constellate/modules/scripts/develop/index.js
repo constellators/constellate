@@ -150,8 +150,8 @@ module.exports = function develop(projectsToDevelop) {
   // GO! 🚀
   processNextInTheQueue()
 
-  // GRACEFUL SHUTTING DOWN HANDLED BELOW:
-  gracefulShutdownManager()
+  // Ensure graceful shutting down:
+  gracefulShutdownManager(projectDevelopConductors, projectWatchers)
 
   // prevent node process from exiting. (until CTRL + C is pressed at least)
   process.stdin.read()

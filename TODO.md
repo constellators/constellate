@@ -1,14 +1,9 @@
 # Constellate Roadmap / Todo
 
 use bin-up to create some project specific commands
-refactor everything into plugins!!
-develop servers resolved from plugins should resolve into an known API, e.g. { kill: () => Promise }
 getLastVersion on a project with no version should return 0.0.0?
-nodeVersion needs to allow partials i.e. 4 instead of 4.x.x
-plugin interface for compilers - pre/post publish, pre/post compile
 
- - [ ] FEATURE - Look at using NODE_PATH to do module resolution for projects during development mode.
-       https://github.com/facebookincubator/create-react-app/issues/253
+ - [ ] BUG! - nodeVersion needs to allow partials i.e. 4 instead of 4.x.x
  - [X] BUG! - Need to rework the versioning/publishing process. We will have to update the source package.json files directly in order to ensure correct publishing chain reactions.
  - [X] BUG! - When a project is published, all their dependants need to be published too.
  - [X] BUG! - Develop fails when having not previously built the projects and your are building a web client that depends on another constellate project. Mouthful.
@@ -47,7 +42,8 @@ plugin interface for compilers - pre/post publish, pre/post compile
  - [ ] FEATURE - BrowserList configuration (touch point in babel and webpack config)
  - [ ] FEATURE - Chokidar events should result in the absolute minimal amount of work being done. e.g. transpile a single file. remove a dir, etc
  - [ ] FEATURE - auto-add source-map-support to build dependencies, and then re-enable for production builds.
- - [ ] FEATURE - Plugin architecture for compilers
+ - [ ] FEATURE - plugin interface for compilers - pre/post compile
+ - [ ] FEATURE - plugin interface for compilers - pre/post develop
  - [ ] FEATURE - Command hooks
    - [ ] prebuild
    - [ ] postbuild
@@ -55,6 +51,10 @@ plugin interface for compilers - pre/post publish, pre/post compile
    - [ ] postdevelop
    - [ ] prestart
    - [ ] poststart
+ - [X] FEATURE - plugin interface for compilers - pre/post publish
+ - [X] FEATURE - Plugin architecture for compilers
+ - [X] FEATURE - refactor everything into plugins!!
+ - [X] FEATURE - develop servers resolved from plugins should resolve into an known API, e.g. { kill: () => Promise }
  - [X] FEATURE - When publish show the projects to publish and ask to confirm?
  - [X] FEATURE - Check if remote has changes to pull
  - [X] FEATURE - Make the target node version configurable.

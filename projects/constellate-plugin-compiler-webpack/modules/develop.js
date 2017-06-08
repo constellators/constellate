@@ -18,7 +18,7 @@ const killDevServerFor = (project) => {
 module.exports = function develop(project, watcher) {
   const devInstance = devInstanceMap[project.name]
   if (devInstance) {
-    return devInstance.api
+    return Promise.resolve(devInstance.api)
   }
 
   return startDevServer(project)

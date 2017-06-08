@@ -25,8 +25,8 @@ module.exports = function publish(projectsToPublish, options = {}) {
   }
 
   const appConfig = AppUtils.getConfig()
-  const enableGitPublishing = !R.path(['publishing', 'git', 'disable'], appConfig)
-  const enableNPMPublishing = !R.path(['publishing', 'npm', 'disable'], appConfig)
+  const enableGitPublishing = R.path(['publishing', 'git', 'enabled'], appConfig)
+  const enableNPMPublishing = R.path(['publishing', 'npm', 'enabled'], appConfig)
   const lastVersionTag = AppUtils.getLastVersionTag()
   const lastVersion = lastVersionTag ? semver.clean(lastVersionTag) : '0.0.0'
   TerminalUtils.verbose(`Last version is ${lastVersion}`)

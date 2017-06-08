@@ -6,13 +6,12 @@ const childProcessMap = {}
 
 const killChildProcessFor = (project) => {
   const childProcess = childProcessMap[project.name]
-  if (childProcess) {
+  if (!childProcess) {
     TerminalUtils.verbose(`No running child process for ${project.name} to kill`)
     return Promise.resolve()
   }
   return new Promise((resolve) => {
     TerminalUtils.verbose(`Killing ${project.name}`)
-
     childProcess
       .then(() => {
         TerminalUtils.verbose(`Killed ${project.name}`)

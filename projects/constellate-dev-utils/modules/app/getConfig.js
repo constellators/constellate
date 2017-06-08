@@ -1,4 +1,21 @@
+const { EOL } = require('os')
 const path = require('path')
+const fs = require('fs-extra')
+const ObjectUtils = require('../objects')
+const TerminalUtils = require('../terminal')
+
+const defaultAppConfig = {
+  releaseBranch: 'master',
+  publishing: {
+    npm: {
+      enabled: true,
+    },
+    git: {
+      enabled: true,
+      remote: 'origin',
+    },
+  },
+}
 
 let cache
 
@@ -7,10 +24,21 @@ module.exports = function getConfig() {
     return cache
   }
 
-  // eslint-disable-next-line global-require,import/no-dynamic-require
-  cache = require(path.resolve(process.cwd(), './constellate.js'))
+  const configPath = path.resolve(process.cwd(), './constellate.js')
 
-  // TODO: Some validation
+  if (!fs.existsSync(configPath)) {
+    TerminalUtils.error('No constellate.js config was found. Please make sure this file exists.')
+    process.exit(1)
+  }
+
+  cache = ObjectUtils.mergeDeep(
+    {},
+    defaultAppConfig,
+    // eslint-disable-next-line global-require,import/no-dynamic-require
+    require(configPath),
+  )
+
+  TerminalUtils.verbose(`Using app config:${EOL}${JSON.stringify(cache, null, 2)}`)
 
   return cache
 }

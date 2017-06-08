@@ -7,12 +7,13 @@ const readPkg = require('read-pkg')
 const R = require('ramda')
 const TerminalUtils = require('../terminal')
 const AppUtils = require('../app')
+const ObjectUtils = require('../objects')
 
 let cache = null
 const compilerCache = {}
 
-const defaultConfig = {
-  role: 'library', // server, client
+const defaultProjectConfig = {
+  role: 'library', // server
   compiler: 'none',
   nodeVersion: process.versions.node,
   allDependencies: [],
@@ -29,17 +30,34 @@ function resolveCompiler(projectName, compilerName) {
   }
   const pluginName = `constellate-plugin-compiler-${compilerName}`
   const pluginPath = path.resolve(process.cwd(), `./node_modules/${pluginName}`)
+
   let plugin
   try {
     // eslint-disable-next-line global-require,import/no-dynamic-require
     plugin = require(pluginPath)
   } catch (err) {
-    throw new Error(
-      dedent(
-        `Could not resolve "${compilerName}" compiler for ${projectName}. Make sure you have the plugin installed:
-          npm install ${pluginName}`,
-      ),
-    )
+    // EEK! Could be a symlink?
+
+    let resolvedViaSymLink = false
+
+    try {
+      fs.lstatSync(pluginPath)
+      const symLinkPath = fs.readlinkSync(path)
+      // eslint-disable-next-line global-require,import/no-dynamic-require
+      plugin = require(symLinkPath)
+      resolvedViaSymLink = true
+    } catch (symErr) {
+      // DO nothing
+    }
+
+    if (!resolvedViaSymLink) {
+      throw new Error(
+        dedent(
+          `Could not resolve "${compilerName}" compiler for ${projectName}. Make sure you have the plugin installed:
+            npm install ${pluginName}`,
+        ),
+      )
+    }
   }
   compilerCache[compilerName] = plugin
   return plugin
@@ -55,9 +73,9 @@ const toProject = (projectName) => {
 
   const thisProjectPath = resolveProjectPath(projectName)
 
-  const config = Object.assign(
+  const config = ObjectUtils.mergeDeep(
     {},
-    defaultConfig,
+    defaultProjectConfig,
     appConfig.projectDefaults || {},
     R.path(['projects', projectName], appConfig) || {},
   )
@@ -175,8 +193,8 @@ module.exports = function getAllProjects() {
     }, [])
 
   // :: Project -> Array<string>
-  const getDependants = project =>
-    projects.filter(x => R.contains(project.name, x.allDependencies)).map(R.prop('name'))
+  const getDependants = (project, allProjects) =>
+    allProjects.filter(x => R.contains(project.name, x.allDependencies)).map(R.prop('name'))
 
   const getAllDependants = (project, allProjects) => {
     const findProject = name => R.find(R.propEq('name', name), allProjects)
@@ -203,20 +221,21 @@ module.exports = function getAllProjects() {
     R.map((project) => {
       const dependencies = getDependencies(project, 'dependencies')
       const bundledDependencies = getDependencies(project, 'bundledDependencies')
-      return Object.assign(project, {
+      return Object.assign({}, project, {
         dependencies,
         bundledDependencies,
         allDependencies: [...dependencies, ...bundledDependencies],
       })
     }),
     // Projects that directly depend on this project.
+    x =>
+      R.map(project =>
+        Object.assign({}, project, {
+          dependants: getDependants(project, x),
+        }),
+      )(x),
     R.map(project =>
-      Object.assign(project, {
-        dependants: getDependants(project),
-      }),
-    ),
-    R.map(project =>
-      Object.assign(project, {
+      Object.assign({}, project, {
         allDependencies: [...project.dependencies, ...project.bundledDependencies],
       }),
     ),
@@ -230,6 +249,13 @@ module.exports = function getAllProjects() {
           allDependants: getAllDependants(project, x),
         }),
       )(x),
+    // Verbose logging
+    R.map((projectConfig) => {
+      TerminalUtils.verbose(
+        `Resolved config for ${projectConfig.name}:${EOL}${JSON.stringify(projectConfig, null, 2)}`,
+      )
+      return projectConfig
+    }),
     // Convert into an object map
     R.reduce((acc, cur) => Object.assign(acc, { [cur.name]: cur }), {}),
   )(projects)

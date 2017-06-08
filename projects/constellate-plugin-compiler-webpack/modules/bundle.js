@@ -3,12 +3,12 @@ const linkBundledDependencies = require('constellate-dev-utils-webpack/modules/l
 const createCompiler = require('./createCompiler')
 
 // :: Options -> Promise<Compiler, Error>
-module.exports = function bundle(project, options) {
+module.exports = function bundle(project) {
   // We need to make sure symlinking of the bundled dependencies exist so
   // that bundling will happen correctly.
   linkBundledDependencies(project)
 
-  return createCompiler(project, options).then(
+  return createCompiler(project).then(
     compiler =>
       new Promise((resolve, reject) => {
         compiler.run((err, stats) => {

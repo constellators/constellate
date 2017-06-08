@@ -18,7 +18,7 @@ module.exports = function startDevServer(project) {
       // that bundling will happen correctly.
       linkBundledDependencies(project)
 
-      const config = generateConfig(project, { development: true, devServerPort: port })
+      const config = generateConfig(project, { devServerPort: port })
       const compiler = webpack(config)
       const server = new WebpackDevServer(compiler, config.devServer)
       server.listen(port, '0.0.0.0', () => {

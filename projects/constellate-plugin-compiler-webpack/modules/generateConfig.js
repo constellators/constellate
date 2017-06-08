@@ -12,13 +12,12 @@ const ExtractTextPlugin = require('extract-text-webpack-plugin')
 const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin')
 const WatchMissingNodeModulesPlugin = require('react-dev-utils/WatchMissingNodeModulesPlugin')
 const autoprefixer = require('autoprefixer')
-const R = require('ramda')
 const { removeNil } = require('constellate-dev-utils/modules/arrays')
 const { onlyIf } = require('constellate-dev-utils/modules/logic')
 const ProjectUtils = require('constellate-dev-utils/modules/projects')
 const generateBabelConfig = require('./generateBabelConfig')
 
-module.exports = function generateConfig(project, options) {
+module.exports = function generateConfig(project, options = {}) {
   const { devServerPort } = options
 
   const env = process.env.NODE_ENV
@@ -59,7 +58,7 @@ module.exports = function generateConfig(project, options) {
       // The name format for any additional chunks produced for the bundle.
       chunkFilename: env === 'development' ? '[name]-[hash].js' : '[name]-[chunkhash].js',
 
-      publicPath: env === 'development'
+      publicPath: env === 'development' && !!devServerPort
         ? // As we run a seperate webpack-dev-server in development we need an
           // absolute http path for the public path.
           `http://0.0.0.0:${devServerPort}/constellate/${project.name}/`
@@ -285,7 +284,7 @@ module.exports = function generateConfig(project, options) {
     },
   }
 
-  if (env === 'development') {
+  if (env === 'development' && !!devServerPort) {
     webpackConfig.entry.index = [
       `webpack-dev-server/client?http://0.0.0.0:${devServerPort}`,
       'webpack/hot/dev-server',
