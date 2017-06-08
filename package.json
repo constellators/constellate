@@ -10,8 +10,8 @@
     "deploy": "constellate deploy"
   },
   "devDependencies": {
-    "constellate": "^0.3.7",
-    "eslint-config-constellate": "^0.3.7"
+    "constellate": "^0.3.8",
+    "eslint-config-constellate": "^0.3.8"
   },
   "eslintConfig": {
     "root": true,
