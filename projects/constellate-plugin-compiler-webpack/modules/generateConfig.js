@@ -7,6 +7,7 @@
  */
 
 const webpack = require('webpack')
+const R = require('ramda')
 const AssetsPlugin = require('assets-webpack-plugin')
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
 const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin')
@@ -22,7 +23,11 @@ module.exports = function generateConfig(project, options = {}) {
 
   const env = process.env.NODE_ENV
   const allProjects = ProjectUtils.getAllProjects()
-  const bundledDependencies = project.bundledDependencies.map(x => allProjects[x])
+  const bundledDependencies = (R.path(
+    ['config', 'compilerOptions', 'bundledDependencies'],
+    project,
+  ) || [])
+    .map(x => allProjects[x])
   const bundledDepsModulePaths = bundledDependencies.map(dep => dep.paths.modules)
 
   const webpackConfig = {

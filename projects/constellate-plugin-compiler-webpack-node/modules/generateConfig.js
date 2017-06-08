@@ -7,6 +7,7 @@
  */
 
 const webpack = require('webpack')
+const R = require('ramda')
 const nodeExternals = require('webpack-node-externals')
 const { removeNil } = require('constellate-dev-utils/modules/arrays')
 const { onlyIf } = require('constellate-dev-utils/modules/logic')
@@ -16,7 +17,11 @@ const generateBabelConfig = require('./generateBabelConfig')
 module.exports = function generateConfig(project) {
   const env = process.env.NODE_ENV
   const allProjects = ProjectUtils.getAllProjects()
-  const bundledDependencies = project.bundledDependencies.map(x => allProjects[x])
+  const bundledDependencies = (R.path(
+    ['config', 'compilerOptions', 'bundledDependencies'],
+    project,
+  ) || [])
+    .map(x => allProjects[x])
   const bundledDepsModulePaths = bundledDependencies.map(dep => dep.paths.modules)
 
   return {

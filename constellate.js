@@ -3,6 +3,9 @@ module.exports = {
     constellate: {
       dependencies: ['constellate-dev-utils', 'eslint-config-constellate'],
     },
+    'constellate-dev-utils-webpack': {
+      dependencies: ['constellate-dev-utils'],
+    },
     'constellate-plugin-compiler-babel': {
       dependencies: ['babel-plugin-inject-source-map-init', 'constellate-dev-utils'],
     },

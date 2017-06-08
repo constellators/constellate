@@ -13,12 +13,10 @@ let cache = null
 const compilerCache = {}
 
 const defaultProjectConfig = {
-  role: 'library', // server
+  role: 'library', // 'server'
   compiler: 'none',
   nodeVersion: process.versions.node,
-  allDependencies: [],
   dependencies: [],
-  bundledDependencies: [],
 }
 
 function resolveCompiler(projectName, compilerName) {
@@ -127,17 +125,15 @@ const toProject = (projectName) => {
 }
 
 // :: Array<Project> -> Array<Project>
-function orderByAllDependencies(projects) {
+function orderByDependencies(projects) {
   const packageDependencyGraph = project =>
-    R.pipe(R.prop('allDependencies'), R.map(dependencyName => [dependencyName, project.name]))(
-      project,
-    )
+    R.pipe(R.prop('dependencies'), R.map(dependencyName => [dependencyName, project.name]))(project)
 
   // :: Array<Project> -> Array<Array<string, string>>
   const dependencyGraph = R.chain(packageDependencyGraph)
 
   // :: Project -> bool
-  const hasNoDependencies = ({ allDependencies }) => allDependencies.length === 0
+  const hasNoDependencies = ({ dependencies }) => dependencies.length === 0
 
   // :: Array<Project>
   const projectsWithNoDependencies = R.pipe(R.filter(hasNoDependencies), R.map(R.prop('name')))(
@@ -194,7 +190,7 @@ module.exports = function getAllProjects() {
 
   // :: Project -> Array<string>
   const getDependants = (project, allProjects) =>
-    allProjects.filter(x => R.contains(project.name, x.allDependencies)).map(R.prop('name'))
+    allProjects.filter(x => R.contains(project.name, x.dependencies)).map(R.prop('name'))
 
   const getAllDependants = (project, allProjects) => {
     const findProject = name => R.find(R.propEq('name', name), allProjects)
@@ -220,11 +216,8 @@ module.exports = function getAllProjects() {
     // The projects this project directly depends on.
     R.map((project) => {
       const dependencies = getDependencies(project, 'dependencies')
-      const bundledDependencies = getDependencies(project, 'bundledDependencies')
       return Object.assign({}, project, {
         dependencies,
-        bundledDependencies,
-        allDependencies: [...dependencies, ...bundledDependencies],
       })
     }),
     // Projects that directly depend on this project.
@@ -234,14 +227,9 @@ module.exports = function getAllProjects() {
           dependants: getDependants(project, x),
         }),
       )(x),
-    R.map(project =>
-      Object.assign({}, project, {
-        allDependencies: [...project.dependencies, ...project.bundledDependencies],
-      }),
-    ),
     // Projects ordered based on their dependencies based order,
     // which mean building them in order should be safe.
-    orderByAllDependencies,
+    orderByDependencies,
     // Add the FULL dependant tree
     x =>
       R.map(project =>

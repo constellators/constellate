@@ -5,7 +5,7 @@ module.exports = function getAllBundledDependencies(project) {
   const allProjects = ProjectUtils.getAllProjects()
   return R.pipe(
     R.chain(R.pipe(x => allProjects[x], R.prop('allDependants'))),
-    R.concat(project.bundledDependencies),
+    R.concat(R.path(['config', 'compilerOptions', 'bundledDependencies'], project) || []),
     R.uniq,
-  )(project.bundledDependencies)
+  )(R.path(['config', 'compilerOptions', 'bundledDependencies'], project) || [])
 }
