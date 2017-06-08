@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://cdn.rawgit.com/constellators/constellate/7934b911/assets/logo.png" width="200" height="173" />
+  <img src="https://cdn.rawgit.com/constellators/constellate/8e303aad/assets/logo-full.png" width="350" height="119" />
 </p>
 
 <h1 align="center">create-constellate-app</h1>
