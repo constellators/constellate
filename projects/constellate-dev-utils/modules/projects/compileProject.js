@@ -3,7 +3,7 @@ const linkProject = require('./linkProject')
 
 const executeCompile = (project) => {
   TerminalUtils.verbose(`Compiling ${project.name}`)
-  return project.compilerPlugin(project).compile(project)
+  return project.compilerPlugin(project).compile()
 }
 
 // :: Project -> Promise<BuildResult>

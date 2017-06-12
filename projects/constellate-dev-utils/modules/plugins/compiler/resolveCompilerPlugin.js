@@ -16,6 +16,8 @@ const resolveCustomPlugin = (pluginName) => {
     return compilerPluginCache[simplePluginName]
   }
 
+  console.log(fullPluginName)
+
   const plugin = FSUtils.resolvePackage(fullPluginName)
 
   if (!plugin) {
