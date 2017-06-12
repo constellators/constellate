@@ -1,10 +1,10 @@
 {
-	"version": "0.5.1",
-	"name": "constellate-utils",
-	"description": "Helpful utilities for Constellate projects.",
-	"repository": "https://github.com/constellators/constellate-utils",
-	"license": "MIT",
-	"files": [
-		"modules"
-	]
+  "version": "0.5.1",
+  "name": "constellate-utils",
+  "description": "Helpful utilities for Constellate projects.",
+  "repository": "https://github.com/constellators/constellate-utils",
+  "license": "MIT",
+  "files": [
+    "modules"
+  ]
 }
