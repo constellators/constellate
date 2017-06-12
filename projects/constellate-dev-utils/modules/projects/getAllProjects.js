@@ -1,6 +1,5 @@
 const { EOL } = require('os')
 const fs = require('fs-extra')
-const dedent = require('dedent')
 const path = require('path')
 const toposort = require('toposort')
 const readPkg = require('read-pkg')
@@ -8,59 +7,17 @@ const R = require('ramda')
 const TerminalUtils = require('../terminal')
 const AppUtils = require('../app')
 const ObjectUtils = require('../objects')
+const resolveCompilerPlugin = require('../plugins/compiler/resolveCompilerPlugin')
+const resolveDevelopPlugin = require('../plugins/develop/resolveDevelopPlugin')
 
 let cache = null
-const compilerCache = {}
 
 const defaultProjectConfig = {
-  role: 'library', // 'server'
   compiler: 'none',
+  develop: 'compile',
   nodeVersion: process.versions.node,
   dependencies: [],
 }
-
-function resolveCompiler(projectName, compilerName) {
-  if (compilerName === 'none' || R.isEmpty(compilerName) || R.isNil(compilerName)) {
-    return null
-  }
-  if (compilerCache[compilerName]) {
-    return compilerCache[compilerName]
-  }
-  const pluginName = `constellate-plugin-compiler-${compilerName}`
-  const pluginPath = path.resolve(process.cwd(), `./node_modules/${pluginName}`)
-
-  let plugin
-  try {
-    // eslint-disable-next-line global-require,import/no-dynamic-require
-    plugin = require(pluginPath)
-  } catch (err) {
-    // EEK! Could be a symlink?
-
-    let resolvedViaSymLink = false
-
-    try {
-      fs.lstatSync(pluginPath)
-      const symLinkPath = fs.readlinkSync(path)
-      // eslint-disable-next-line global-require,import/no-dynamic-require
-      plugin = require(symLinkPath)
-      resolvedViaSymLink = true
-    } catch (symErr) {
-      // DO nothing
-    }
-
-    if (!resolvedViaSymLink) {
-      throw new Error(
-        dedent(
-          `Could not resolve "${compilerName}" compiler for ${projectName}. Make sure you have the plugin installed:
-            npm install ${pluginName}`,
-        ),
-      )
-    }
-  }
-  compilerCache[compilerName] = plugin
-  return plugin
-}
-
 // :: string -> string -> string
 const resolveProjectPath = projectName => relativePath =>
   path.resolve(process.cwd(), `./projects/${projectName}`, relativePath)
@@ -78,7 +35,8 @@ const toProject = (projectName) => {
     R.path(['projects', projectName], appConfig) || {},
   )
 
-  const compiler = resolveCompiler(projectName, config.compiler)
+  const compilerPlugin = resolveCompilerPlugin(config.compiler)
+  const developPlugin = resolveDevelopPlugin(config.develop)
   const buildRoot = path.resolve(process.cwd(), `./build/${projectName}`)
   const packageJsonPath = thisProjectPath('./package.json')
 
@@ -86,7 +44,8 @@ const toProject = (projectName) => {
     x =>
       Object.assign({}, x, {
         name: projectName,
-        compiler,
+        compilerPlugin,
+        developPlugin,
         config,
         packageName: readPkg.sync(packageJsonPath, { normalize: false }).name,
         paths: {
@@ -104,7 +63,7 @@ const toProject = (projectName) => {
         paths: Object.assign(
           {},
           x.paths,
-          compiler == null
+          config.compiler === 'none'
             ? {
               buildRoot: x.paths.root,
               buildPackageJson: x.paths.packageJson,

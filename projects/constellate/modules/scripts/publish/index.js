@@ -163,16 +163,15 @@ module.exports = function publish(projectsToPublish, options = {}) {
             process.exit(1)
           })
           .then(() => {
-            if (enableNPMPublishing) {
-              finalToPublish.forEach((project) => {
-                if (project.compiler && project.compiler.prePublishToNPM) {
-                  project.compiler.prePublishToNPM(project)
-                }
-              })
-            }
+            finalToPublish.forEach((project) => {
+              const compiler = project.compilerPlugin(project)
+              if (compiler.prePublish) {
+                project.compiler.prePublish(project)
+              }
+            })
           })
           .catch((err) => {
-            TerminalUtils.error('Failed to execute prePublishToNPM', err)
+            TerminalUtils.error('Failed to execute prePublish', err)
             restoreOriginalPackageJsons()
             process.exit(1)
           })
@@ -204,13 +203,12 @@ module.exports = function publish(projectsToPublish, options = {}) {
             TerminalUtils.error(null, error)
           })
           .then(() => {
-            if (enableNPMPublishing) {
-              finalToPublish.forEach((project) => {
-                if (project.compiler && project.compiler.postPublishToNPM) {
-                  project.compiler.postPublishToNPM(project)
-                }
-              })
-            }
+            finalToPublish.forEach((project) => {
+              const compiler = project.compilerPlugin(project)
+              if (compiler.postPublish) {
+                project.compiler.postPublish(project)
+              }
+            })
           })
           .catch((err) => {
             TerminalUtils.error('Failed to execute postPublishToNPM', err)

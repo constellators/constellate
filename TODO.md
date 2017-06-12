@@ -1,5 +1,6 @@
 # Constellate Roadmap / Todo
 
+allow plugin extension API?
 use bin-up to create some project specific commands
 getLastVersion on a project with no version should return 0.0.0?
 
@@ -31,6 +32,7 @@ getLastVersion on a project with no version should return 0.0.0?
    - [ ] Blog post
    - [ ] SIGTERM effective usage
    - [ ] constellate.js
+ - [ ] FEATURE - allow a "script" compiler type, with compilerOptions allowing you to target a script
  - [ ] FEATURE - Validate the constellate configuration (tcomb?)
  - [ ] FEATURE - Copy some base files across always - .npmignore, /README(.md)?/i
  - [ ] FEATURE - Copy across non-JS files when compiling

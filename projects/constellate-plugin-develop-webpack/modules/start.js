@@ -1,4 +1,4 @@
-const startDevServer = require('./startDevServer')
+const createDevServer = require('./createDevServer')
 
 const devInstanceMap = {}
 
@@ -15,13 +15,13 @@ const killDevServerFor = (project) => {
   })
 }
 
-module.exports = function develop(project, watcher) {
+module.exports = function start(project, watcher) {
   const devInstance = devInstanceMap[project.name]
   if (devInstance) {
     return Promise.resolve(devInstance.api)
   }
 
-  return startDevServer(project)
+  return createDevServer(project)
     .then((webpackDevServer) => {
       // No need for the watcher now as webpack-dev-server has an inbuilt
       // watcher.

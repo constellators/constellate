@@ -5,10 +5,10 @@ const TerminalUtils = require('constellate-dev-utils/modules/terminal')
 const { throttle } = require('constellate-dev-utils/modules/fns')
 const extractError = require('constellate-dev-utils-webpack/modules/extractError')
 const linkBundledDependencies = require('constellate-dev-utils-webpack/modules/linkBundledDependencies')
-const generateConfig = require('./generateConfig')
+const generateConfig = require('constellate-plugin-compiler-webpack/modules/generateConfig')
 
 // :: (Project, Options) -> Promise<WebpackDevServer, Error>
-module.exports = function startDevServer(project) {
+module.exports = function createDevServer(project) {
   return getPort().then((port) => {
     TerminalUtils.verbose(`Found free port ${port} for webpack dev server`)
     return new Promise((resolve, reject) => {

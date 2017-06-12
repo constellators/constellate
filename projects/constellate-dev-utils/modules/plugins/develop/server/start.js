@@ -26,8 +26,8 @@ const killChildProcessFor = (project) => {
   })
 }
 
-// :: (Project, Watcher) -> Promise
-module.exports = function serverDevelop(project) {
+// :: (Project) -> Promise
+module.exports = function start(project) {
   return (
     ProjectUtils.compileProject(project)
       // Ensure any existing childProcess is killed

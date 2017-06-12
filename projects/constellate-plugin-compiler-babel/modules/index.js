@@ -1,5 +1,8 @@
 const transpile = require('./transpile')
 
-module.exports = {
-  compile: transpile,
+// :: Project, Options -> DevelopAPI
+module.exports = function babelCompiler(project, options) {
+  return {
+    compile: transpile,
+  }
 }

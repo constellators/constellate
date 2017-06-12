@@ -2,13 +2,8 @@ const TerminalUtils = require('constellate-dev-utils/modules/terminal')
 const linkProject = require('./linkProject')
 
 const executeCompile = (project) => {
-  if (project.compiler == null) {
-    TerminalUtils.verbose(`Not compiling ${project.name} as no compiler specified`)
-    return Promise.resolve()
-  }
-
   TerminalUtils.verbose(`Compiling ${project.name}`)
-  return project.compiler.compile(project)
+  return project.compilerPlugin(project).compile(project)
 }
 
 // :: Project -> Promise<BuildResult>
