@@ -14,7 +14,9 @@ let cache = null
 
 const defaultProjectConfig = {
   compiler: 'none',
+  compilerOptions: {},
   develop: 'compile',
+  developOptions: {},
   nodeVersion: process.versions.node,
   dependencies: [],
 }
