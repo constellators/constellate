@@ -1,6 +1,6 @@
 const R = require('ramda')
 const readPkg = require('read-pkg')
-const TerminalUtils = require('constellate-dev-utils/modules/terminal')
+const TerminalUtils = require('../../../terminal')
 const ChildProcessUtils = require('../../../childProcess')
 
 const childProcessMap = {}

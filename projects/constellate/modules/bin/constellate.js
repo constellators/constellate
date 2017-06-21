@@ -30,9 +30,9 @@ program
   .description('Installs the dependencies for the application and each project')
   .action(() => {
     TerminalUtils.title('Starting install...')
-    if (!process.env.NODE_ENV) {
-      process.env.NODE_ENV = 'production'
-    }
+    // We must not use "production" as a NODE_ENV because then only our
+    // production dependencies will get installed, i.e. no devDependencies
+    process.env.NODE_ENV = 'development'
     const bootstrap = require('../scripts/bootstrap')
     return ProjectUtils.resolveProjects()
       .then(bootstrap)
@@ -45,9 +45,9 @@ program
   .description('Runs an interactive dependency update process for the application and each project')
   .action(() => {
     TerminalUtils.title('Running update...')
-    if (!process.env.NODE_ENV) {
-      process.env.NODE_ENV = 'production'
-    }
+    // We must not use "production" as a NODE_ENV because then only our
+    // production dependencies will get installed, i.e. no devDependencies
+    process.env.NODE_ENV = 'development'
     const update = require('../scripts/update')
     return ProjectUtils.resolveProjects()
       .then(update)

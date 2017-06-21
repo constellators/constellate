@@ -1,6 +1,6 @@
-const TerminalUtils = require('constellate-dev-utils/modules/terminal')
-const ChildProcessUtils = require('constellate-dev-utils/modules/childProcess')
-const ProjectUtils = require('constellate-dev-utils/modules/projects')
+const TerminalUtils = require('../../../terminal')
+const ChildProcessUtils = require('../../../childProcess')
+const ProjectUtils = require('../../../projects')
 
 const childProcessMap = {}
 

@@ -1,4 +1,4 @@
-const TerminalUtils = require('constellate-dev-utils/modules/terminal')
+const TerminalUtils = require('../terminal')
 const linkProject = require('./linkProject')
 
 const executeCompile = (project) => {

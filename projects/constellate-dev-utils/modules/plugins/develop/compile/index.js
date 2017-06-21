@@ -1,18 +1,12 @@
 const ProjectUtils = require('../../../projects')
 
-// console.log('POOP', compileProject)
-
 // :: (Project, DevelopOptions, Watcher) -> DevelopAPI
-module.exports = function compileDevelop(project, options, watcher) {
+module.exports = function compileDevelop(project) {
   return {
-    start: () => {
-      console.log('Poop', ProjectUtils)
-      return (
-        ProjectUtils.compileProject(project)
-          // we ensure that nothing is returned as we won't be resolving a
-          // develop instance with kill cmd etc
-          .then(() => undefined)
-      )
-    },
+    start: () =>
+      ProjectUtils.compileProject(project)
+        // we ensure that nothing is returned as we won't be resolving a
+        // develop instance with kill cmd etc
+        .then(() => undefined),
   }
 }
