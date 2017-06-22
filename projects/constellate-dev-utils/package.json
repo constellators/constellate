@@ -14,7 +14,7 @@
 		"figures": "^2.0.0",
 		"fs-extra": "^3.0.1",
 		"globby": "^6.1.0",
-		"inquirer": "^3.1.0",
+		"inquirer": "^3.1.1",
 		"load-json-file": "^2.0.0",
 		"ramda": "^0.24.1",
 		"read-pkg": "^2.0.0",
