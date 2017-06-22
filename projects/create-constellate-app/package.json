@@ -1,13 +1,13 @@
 {
-	"version": "0.5.3",
-	"name": "create-constellate-app",
-	"description": "CLI to bootstrap Constellate applications.",
-	"bin": {
-		"create-constellate-app": "modules/bin/create-constellate-app.js"
-	},
-	"repository": "constellators/constellate",
-	"license": "MIT",
-	"bugs": {
-		"url": "https://github.com/constellators/constellate/issues"
-	}
+  "version": "0.5.3",
+  "name": "create-constellate-app",
+  "description": "CLI to bootstrap Constellate applications.",
+  "bin": {
+    "create-constellate-app": "modules/bin/create-constellate-app.js"
+  },
+  "repository": "constellators/constellate",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/constellators/constellate/issues"
+  }
 }
