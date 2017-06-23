@@ -6,7 +6,7 @@ const childProcessMap = {}
 
 const killChildProcessFor = (project) => {
   const childProcess = childProcessMap[project.name]
-  if (!childProcess || !childProcess.connected) {
+  if (!childProcess) {
     TerminalUtils.verbose(`No running child process for ${project.name} to kill`)
     return Promise.resolve()
   }
@@ -58,23 +58,36 @@ module.exports = function start(project) {
                 )
                 reject(new Error(`${project.name} has problems. Please fix`))
               } else {
+                let killed = false
+
                 childProcess.stderr.on('data', (data) => {
                   TerminalUtils.error(`Runtime error in ${project.name}`, data.toString())
                 })
 
                 childProcess.on('close', () => {
                   TerminalUtils.verbose(`Server process ${project.name} stopped`)
-                  // This can be executed quite some time later, i.e. after
-                  // a new instance has started. EEK!
-                  // if (childProcessMap[project.name]) {
-                  //   delete childProcessMap[project.name]
-                  // }
+                  if (childProcessMap[project.name]) {
+                    delete childProcessMap[project.name]
+                  }
+                  killed = true
                 })
 
                 childProcessMap[project.name] = childProcess
 
                 resolve({
-                  kill: () => killChildProcessFor(project),
+                  kill: () =>
+                    killChildProcessFor(project).then(
+                      () =>
+                        new Promise((killResolve) => {
+                          const checkInterval = setInterval(() => {
+                            if (killed) {
+                              TerminalUtils.verbose(`Kill for ${project.name} resolved`)
+                              clearInterval(checkInterval)
+                              killResolve()
+                            }
+                          }, 50)
+                        }),
+                    ),
                 })
               }
             })
