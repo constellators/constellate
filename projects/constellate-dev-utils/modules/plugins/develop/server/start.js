@@ -10,19 +10,38 @@ const killChildProcessFor = (project) => {
     TerminalUtils.verbose(`No running child process for ${project.name} to kill`)
     return Promise.resolve()
   }
+
+  TerminalUtils.verbose(`Killing ${project.name}...`)
+
   return new Promise((resolve) => {
-    TerminalUtils.verbose(`Killing ${project.name}`)
-    childProcess
-      .then(() => {
-        TerminalUtils.verbose(`Killed ${project.name}`)
+    let killed = false
+
+    childProcess.on('close', () => {
+      TerminalUtils.verbose(`${project.name} killed successfully`)
+      if (childProcessMap[project.name]) {
+        delete childProcessMap[project.name]
+      }
+      killed = true
+    })
+
+    childProcess.catch((err) => {
+      TerminalUtils.verbose(`${project.name} was not killed with errors`)
+      TerminalUtils.verbose(err)
+      resolve()
+    })
+
+    const checkInterval = setInterval(() => {
+      if (killed) {
+        TerminalUtils.verbose(`Kill for ${project.name} resolved`)
+        clearInterval(checkInterval)
         resolve()
-      })
-      .catch(() => {
-        TerminalUtils.verbose(`Killed ${project.name}`)
-        resolve()
-      })
+      }
+    }, 50)
 
     childProcess.kill('SIGTERM')
+  }).catch((err) => {
+    TerminalUtils.verbose(`Fatal error whilst killing ${project.name}`)
+    throw err
   })
 }
 
@@ -48,7 +67,10 @@ module.exports = function start(project) {
                 cwd: project.paths.root,
               },
             )
-            childProcess.catch(err => reject(err))
+            childProcess.catch((err) => {
+              TerminalUtils.verbose(`Error starting ${project.name}`)
+              reject(err)
+            })
 
             // Allow the catch a tick to resolve an error
             process.nextTick(() => {
@@ -58,36 +80,18 @@ module.exports = function start(project) {
                 )
                 reject(new Error(`${project.name} has problems. Please fix`))
               } else {
-                let killed = false
-
                 childProcess.stderr.on('data', (data) => {
                   TerminalUtils.error(`Runtime error in ${project.name}`, data.toString())
                 })
 
                 childProcess.on('close', () => {
                   TerminalUtils.verbose(`Server process ${project.name} stopped`)
-                  if (childProcessMap[project.name]) {
-                    delete childProcessMap[project.name]
-                  }
-                  killed = true
                 })
 
                 childProcessMap[project.name] = childProcess
 
                 resolve({
-                  kill: () =>
-                    killChildProcessFor(project).then(
-                      () =>
-                        new Promise((killResolve) => {
-                          const checkInterval = setInterval(() => {
-                            if (killed) {
-                              TerminalUtils.verbose(`Kill for ${project.name} resolved`)
-                              clearInterval(checkInterval)
-                              killResolve()
-                            }
-                          }, 50)
-                        }),
-                    ),
+                  kill: () => killChildProcessFor(project),
                 })
               }
             })
