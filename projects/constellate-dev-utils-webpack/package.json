@@ -1,10 +1,10 @@
 {
-	"version": "0.5.6",
-	"name": "constellate-dev-utils-webpack",
-	"description": "Shared utils for Webpack related Constellate core packages",
-	"dependencies": {
-		"fs-extra": "^3.0.1",
-		"ramda": "^0.24.1",
-		"read-pkg": "^2.0.0"
-	}
+  "version": "0.5.6",
+  "name": "constellate-dev-utils-webpack",
+  "description": "Shared utils for Webpack related Constellate core packages",
+  "dependencies": {
+    "fs-extra": "^3.0.1",
+    "ramda": "^0.24.1",
+    "read-pkg": "^2.0.0"
+  }
 }
