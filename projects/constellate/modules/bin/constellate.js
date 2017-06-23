@@ -73,11 +73,12 @@ program
 
 program
   .command('clean')
-  .description('Deletes the all build and node_modules directories')
-  .action(() => {
+  .description('Deletes the build, node_modules, and package-lock.json files for projects')
+  .option('-p, --projects <projects>', 'Specify the projects to clean', OptionValueHandlers.list)
+  .action(({ projects }) => {
     TerminalUtils.title('Running clean...')
     const clean = require('../scripts/clean')
-    return ProjectUtils.resolveProjects()
+    return ProjectUtils.resolveProjects(projects)
       .then(clean)
       .then(() => TerminalUtils.success('Done'))
       .catch(err => TerminalUtils.error('Eeek, an error!', err))

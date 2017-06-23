@@ -170,7 +170,7 @@ module.exports = function getAllProjects() {
 
     // Let's get a sorted version of allDependants by filtering allProjects
     // which will already be in a safe build order.
-    return allProjects.filter(cur => !!R.find(R.equals(cur), allDependants))
+    return allProjects.filter(x => !!R.find(R.equals(x.name), allDependants)).map(R.prop('name'))
   }
 
   cache = R.pipe(

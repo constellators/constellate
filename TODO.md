@@ -6,8 +6,8 @@ getLastVersion on a project with no version should return 0.0.0?
 add script compiler plugin
 
  - [ ] BUG! - Hot module reload inject code
- - [ ] BUG! - Dependency chain publishing not working. e.g. update and publish constellate-dev-utils
  - [ ] BUG! - nodeVersion needs to allow partials i.e. 4 instead of 4.x.x
+ - [X] BUG! - Dependency chain publishing not working. e.g. update and publish constellate-dev-utils
  - [X] BUG! - Need to rework the versioning/publishing process. We will have to update the source package.json files directly in order to ensure correct publishing chain reactions.
  - [X] BUG! - When a project is published, all their dependants need to be published too.
  - [X] BUG! - Develop fails when having not previously built the projects and your are building a web client that depends on another constellate project. Mouthful.
@@ -33,9 +33,9 @@ add script compiler plugin
    - [ ] Intro
    - [ ] Video overview
    - [ ] Blog post
-   - [ ] SIGTERM effective usage
    - [ ] constellate.js
- - [ ] FEATURE - allow a "script" compiler type, with compilerOptions allowing you to target a script
+   - [ ] SIGTERM/SIGINT effective usage
+ - [X] FEATURE - allow a "script" compiler type, with compilerOptions allowing you to target a script
  - [ ] FEATURE - Validate the constellate configuration (tcomb?)
  - [ ] FEATURE - Copy some base files across always - .npmignore, /README(.md)?/i
  - [ ] FEATURE - Copy across non-JS files when compiling
