@@ -10,9 +10,9 @@
     "deploy": "constellate deploy"
   },
   "devDependencies": {
-    "constellate": "^0.5.5",
-    "constellate-plugin-compiler-babel": "^0.5.5",
-    "eslint-config-constellate": "^0.5.5"
+    "constellate": "^0.5.10",
+    "constellate-plugin-compiler-babel": "^0.5.9",
+    "eslint-config-constellate": "^0.5.9"
   },
   "eslintConfig": {
     "root": true,

@@ -40,8 +40,7 @@ module.exports = function scriptDevelop(project, options) {
         const childProcess = ChildProcessUtils.spawn(
           'npm',
           ['run', options.scriptName],
-          // Ensure that output supports color etc
-          // We use pipe for the error so that we can log a header for ther error.
+          // Ensure that output supports color etc.
           {
             stdio: 'inherit',
             cwd: project.paths.root,
