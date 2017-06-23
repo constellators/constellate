@@ -1,5 +1,5 @@
 {
-	"version": "0.5.12",
+	"version": "0.6.0",
 	"name": "create-constellate-app",
 	"description": "CLI to bootstrap Constellate applications.",
 	"bin": {
