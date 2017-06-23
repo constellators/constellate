@@ -31,4 +31,4 @@ function killChildProcess(project, childProcess) {
   })
 }
 
-module.exports = killChildProcess
+module.exports = { killChildProcess }
