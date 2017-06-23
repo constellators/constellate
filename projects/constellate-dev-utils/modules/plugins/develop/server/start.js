@@ -1,6 +1,7 @@
 const TerminalUtils = require('../../../terminal')
 const ChildProcessUtils = require('../../../childProcess')
 const ProjectUtils = require('../../../projects')
+const DevelopPluginUtils = require('../utils')
 
 const childProcessMap = {}
 
@@ -11,37 +12,11 @@ const killChildProcessFor = (project) => {
     return Promise.resolve()
   }
 
-  TerminalUtils.verbose(`Killing ${project.name}...`)
-
-  return new Promise((resolve) => {
-    let killed = false
-
-    childProcess.on('close', () => {
-      TerminalUtils.verbose(`${project.name} killed successfully`)
-      if (childProcessMap[project.name]) {
-        delete childProcessMap[project.name]
-      }
-      killed = true
-    })
-
-    childProcess.catch((err) => {
-      TerminalUtils.verbose(`${project.name} was not killed with errors`)
-      TerminalUtils.verbose(err)
-      resolve()
-    })
-
-    const checkInterval = setInterval(() => {
-      if (killed) {
-        TerminalUtils.verbose(`Kill for ${project.name} resolved`)
-        clearInterval(checkInterval)
-        resolve()
-      }
-    }, 50)
-
-    childProcess.kill('SIGTERM')
-  }).catch((err) => {
-    TerminalUtils.verbose(`Fatal error whilst killing ${project.name}`)
-    throw err
+  return DevelopPluginUtils.killChildProcess(project, childProcess).then(() => {
+    TerminalUtils.verbose(`${project.name} killed successfully`)
+    if (childProcessMap[project.name]) {
+      delete childProcessMap[project.name]
+    }
   })
 }
 

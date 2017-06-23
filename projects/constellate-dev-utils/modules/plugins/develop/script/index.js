@@ -2,6 +2,7 @@ const R = require('ramda')
 const readPkg = require('read-pkg')
 const TerminalUtils = require('../../../terminal')
 const ChildProcessUtils = require('../../../childProcess')
+const DevelopPluginUtils = require('../utils')
 
 const childProcessMap = {}
 
@@ -11,19 +12,11 @@ const killChildProcessFor = (project) => {
     TerminalUtils.verbose(`No running child process for ${project.name} to kill`)
     return Promise.resolve()
   }
-  return new Promise((resolve) => {
-    TerminalUtils.verbose(`Killing ${project.name}`)
-    childProcess
-      .then(() => {
-        TerminalUtils.verbose(`Killed ${project.name}`)
-        resolve()
-      })
-      .catch(() => {
-        TerminalUtils.verbose(`Killed ${project.name}`)
-        resolve()
-      })
-
-    childProcess.kill('SIGTERM')
+  return DevelopPluginUtils.killChildProcess(project, childProcess).then(() => {
+    TerminalUtils.verbose(`${project.name} killed successfully`)
+    if (childProcessMap[project.name]) {
+      delete childProcessMap[project.name]
+    }
   })
 }
 
@@ -50,7 +43,7 @@ module.exports = function scriptDevelop(project, options) {
           // Ensure that output supports color etc
           // We use pipe for the error so that we can log a header for ther error.
           {
-            stdio: [process.stdin, process.stdout, 'pipe'],
+            stdio: 'inherit',
             cwd: project.paths.root,
           },
         )
@@ -58,29 +51,18 @@ module.exports = function scriptDevelop(project, options) {
 
         // Allow the catch a tick to resolve an error
         process.nextTick(() => {
-          if (!childProcess.stderr) {
-            TerminalUtils.verbose(
-              'Not resolving server as childProcess was not created properly. An error probably occurred.',
-            )
-            reject(new Error(`${project.name} has problems. Please fix`))
-          } else {
-            childProcess.stderr.on('data', (data) => {
-              TerminalUtils.error(`Runtime error in ${project.name}`, data.toString())
-            })
+          childProcess.on('close', () => {
+            TerminalUtils.verbose(`Server process ${project.name} stopped`)
+            if (childProcessMap[project.name]) {
+              delete childProcessMap[project.name]
+            }
+          })
 
-            childProcess.on('close', () => {
-              TerminalUtils.verbose(`Server process ${project.name} stopped`)
-              if (childProcessMap[project.name]) {
-                delete childProcessMap[project.name]
-              }
-            })
+          childProcessMap[project.name] = childProcess
 
-            childProcessMap[project.name] = childProcess
-
-            resolve({
-              kill: () => killChildProcessFor(project),
-            })
-          }
+          resolve({
+            kill: () => killChildProcessFor(project),
+          })
         })
       }),
   }

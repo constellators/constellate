@@ -29,7 +29,7 @@ program
   .command('bootstrap')
   .description('Installs the dependencies for the application and each project')
   .action(() => {
-    TerminalUtils.title('Starting install...')
+    TerminalUtils.title('Running bootstrap...')
     // We must not use "production" as a NODE_ENV because then only our
     // production dependencies will get installed, i.e. no devDependencies
     process.env.NODE_ENV = 'development'
