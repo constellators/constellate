@@ -6,7 +6,7 @@ const childProcessMap = {}
 
 const killChildProcessFor = (project) => {
   const childProcess = childProcessMap[project.name]
-  if (!childProcess) {
+  if (!childProcess || !childProcess.connected) {
     TerminalUtils.verbose(`No running child process for ${project.name} to kill`)
     return Promise.resolve()
   }
@@ -64,9 +64,11 @@ module.exports = function start(project) {
 
                 childProcess.on('close', () => {
                   TerminalUtils.verbose(`Server process ${project.name} stopped`)
-                  if (childProcessMap[project.name]) {
-                    delete childProcessMap[project.name]
-                  }
+                  // This can be executed quite some time later, i.e. after
+                  // a new instance has started. EEK!
+                  // if (childProcessMap[project.name]) {
+                  //   delete childProcessMap[project.name]
+                  // }
                 })
 
                 childProcessMap[project.name] = childProcess
