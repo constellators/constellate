@@ -2,67 +2,71 @@ const R = require('ramda')
 const readPkg = require('read-pkg')
 const TerminalUtils = require('../../../terminal')
 const ChildProcessUtils = require('../../../childProcess')
-const DevelopPluginUtils = require('../utils')
-
-const childProcessMap = {}
-
-const killChildProcessFor = (project) => {
-  const childProcess = childProcessMap[project.name]
-  if (!childProcess) {
-    TerminalUtils.verbose(`No running child process for ${project.name} to kill`)
-    return Promise.resolve()
-  }
-  return DevelopPluginUtils.killChildProcess(project, childProcess).then(() => {
-    TerminalUtils.verbose(`${project.name} killed successfully`)
-    if (childProcessMap[project.name]) {
-      delete childProcessMap[project.name]
-    }
-  })
-}
 
 // :: (Project, DevelopOptions, Watcher) -> DevelopAPI
 module.exports = function scriptDevelop(project, options) {
-  if (!options.scriptName) {
-    throw new Error(`No script name was provided for the develop configuration of ${project.name}.`)
+  if (!options.startScriptName) {
+    throw new Error(
+      `No startScriptName was provided for the develop configuration of ${project.name}.`,
+    )
   }
+
+  const pkgJson = readPkg.sync(project.paths.packageJson)
+
+  const stopScript = () =>
+    new Promise((resolve) => {
+      const scriptCmd = R.path(['scripts', options.stopScriptName], pkgJson)
+      if (!scriptCmd || R.isEmpty(scriptCmd)) {
+        return
+      }
+
+      TerminalUtils.verbose(`Executing stopScript "${options.stopScriptName}" for ${project.name}`)
+
+      try {
+        ChildProcessUtils.execSync('npm', ['run', options.stopScriptName], {
+          stdio: 'inherit',
+          cwd: project.paths.root,
+        })
+        TerminalUtils.verbose(`Finished executing stopScript for ${project.name}`)
+      } catch (err) {
+        TerminalUtils.verbose(`Error running stopScript for ${project.name}`)
+        TerminalUtils.verbose(err)
+      }
+
+      resolve()
+    })
 
   return {
     start: () =>
-      new Promise((resolve, reject) => {
-        const pkgJson = readPkg.sync(project.paths.packageJson)
-        const scriptToExec = R.path(['scripts', options.scriptName], pkgJson)
-        if (!scriptToExec || R.isEmpty(scriptToExec)) {
-          throw new Error(
-            `Could not resolve a script by name of ${options.scriptName} on ${project.name}`,
-          )
-        }
-
-        const childProcess = ChildProcessUtils.spawn(
-          'npm',
-          ['run', options.scriptName],
-          // Ensure that output supports color etc.
-          {
-            stdio: 'inherit',
-            cwd: project.paths.root,
-          },
-        )
-        childProcess.catch(err => reject(err))
-
-        // Allow the catch a tick to resolve an error
-        process.nextTick(() => {
-          childProcess.on('close', () => {
-            TerminalUtils.verbose(`Server process ${project.name} stopped`)
-            if (childProcessMap[project.name]) {
-              delete childProcessMap[project.name]
+      stopScript().then(
+        () =>
+          new Promise((resolve, reject) => {
+            const scriptCmd = R.path(['scripts', options.startScriptName], pkgJson)
+            if (!scriptCmd || R.isEmpty(scriptCmd)) {
+              throw new Error(
+                `Could not resolve a start script named "${options.startScriptName}" on ${project.name}`,
+              )
             }
-          })
 
-          childProcessMap[project.name] = childProcess
+            TerminalUtils.info(
+              `Executing startScript "${options.startScriptName}" for ${project.name}`,
+            )
 
-          resolve({
-            kill: () => killChildProcessFor(project),
-          })
-        })
-      }),
+            const childProcess = ChildProcessUtils.spawn('npm', ['run', options.startScriptName], {
+              stdio: 'inherit',
+              cwd: project.paths.root,
+            })
+            childProcess.catch(err => reject(err))
+
+            // Give the catch above a tick of space, so that it can resolve any
+            // error that may have occurred
+            process.nextTick(() => {
+              childProcess.on('close', () => {
+                TerminalUtils.verbose(`"Start" script finished execution for ${project.name}`)
+              })
+              resolve()
+            })
+          }),
+      ),
   }
 }
