@@ -36,8 +36,6 @@ module.exports = function generateConfig(project, options = {}) {
 
     target: 'web',
 
-    context: project.paths.root,
-
     entry: {
       // We name it "index" to make it easy to resolve the entry files within
       // the bundled output.
@@ -301,8 +299,8 @@ module.exports = function generateConfig(project, options = {}) {
     webpackConfig.devServer = {
       host: '0.0.0.0',
       port: devServerPort,
-      contentBase: false,
       disableHostCheck: true,
+      contentBase: false,
       headers: {
         'Access-Control-Allow-Origin': '*',
       },

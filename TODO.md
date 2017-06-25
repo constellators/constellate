@@ -5,9 +5,9 @@ use bin-up to create some project specific commands
 getLastVersion on a project with no version should return 0.0.0?
 add script compiler plugin
 
- - [X] BUG! - Develop process CMD + C doesn't seem to execute the "stop" for each process
- - [ ] BUG! - Hot module reload inject code
  - [ ] BUG! - nodeVersion needs to allow partials i.e. 4 instead of 4.x.x
+ - [X] BUG! - Hot module reload inject code
+ - [X] BUG! - Develop process CMD + C doesn't seem to execute the "stop" for each process
  - [X] BUG! - Dependency chain publishing not working. e.g. update and publish constellate-dev-utils
  - [X] BUG! - Need to rework the versioning/publishing process. We will have to update the source package.json files directly in order to ensure correct publishing chain reactions.
  - [X] BUG! - When a project is published, all their dependants need to be published too.
