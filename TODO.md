@@ -5,6 +5,7 @@ use bin-up to create some project specific commands
 getLastVersion on a project with no version should return 0.0.0?
 add script compiler plugin
 
+ - [X] BUG! - Develop process CMD + C doesn't seem to execute the "stop" for each process
  - [ ] BUG! - Hot module reload inject code
  - [ ] BUG! - nodeVersion needs to allow partials i.e. 4 instead of 4.x.x
  - [X] BUG! - Dependency chain publishing not working. e.g. update and publish constellate-dev-utils
@@ -34,7 +35,9 @@ add script compiler plugin
    - [ ] Video overview
    - [ ] Blog post
    - [ ] constellate.js
-   - [ ] SIGTERM/SIGINT effective usage
+   - [ ] Develop tips and tricks
+     - [ ] SIGTERM/SIGINT effective usage
+     - [ ] Usage of process.stdin.read() to stop process exiting (even though it has child processes)
  - [X] FEATURE - allow a "script" compiler type, with compilerOptions allowing you to target a script
  - [ ] FEATURE - Validate the constellate configuration (tcomb?)
  - [ ] FEATURE - Copy some base files across always - .npmignore, /README(.md)?/i

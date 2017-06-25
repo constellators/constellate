@@ -47,7 +47,8 @@ module.exports = function start(project) {
               reject(err)
             })
 
-            // Allow the catch a tick to resolve an error
+            // Give the catch above a tick of space, so that it can resolve any
+            // error that may have occurred
             process.nextTick(() => {
               if (!childProcess.stderr) {
                 TerminalUtils.verbose(
