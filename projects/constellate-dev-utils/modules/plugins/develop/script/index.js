@@ -31,7 +31,7 @@ module.exports = function scriptDevelop(project, options) {
   return {
     start: () =>
       new Promise((resolve) => {
-        if (project.options.scriptRunOnce && childProcessMap[project.name]) {
+        if (options.scriptRunOnce && childProcessMap[project.name]) {
           resolve()
         } else {
           resolve(killChildProcessFor(project))
