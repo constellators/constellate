@@ -48,5 +48,5 @@ module.exports = function getWebProjectManifest(projectName) {
     manifest,
   }
 
-  return cache
+  return cache[projectName]
 }
