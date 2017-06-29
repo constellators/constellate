@@ -1,22 +1,22 @@
 {
-	"version": "0.6.5",
-	"name": "constellate",
-	"description": "The ❤️ of Constellate applications.",
-	"bin": {
-		"constellate": "modules/bin/constellate.js"
-	},
-	"repository": "constellators/constellate",
-	"license": "MIT",
-	"bugs": {
-		"url": "https://github.com/constellators/constellate/issues"
-	},
-	"dependencies": {
-		"chokidar": "^1.7.0",
-		"commander": "^2.9.0",
-		"fs-extra": "^3.0.1",
-		"p-series": "^1.0.0",
-		"ramda": "^0.24.1",
-		"read-pkg": "^2.0.0",
-		"semver": "^5.3.0"
-	}
+  "version": "0.6.5",
+  "name": "constellate",
+  "description": "The ❤️ of Constellate applications.",
+  "bin": {
+    "constellate": "modules/bin/constellate.js"
+  },
+  "repository": "constellators/constellate",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/constellators/constellate/issues"
+  },
+  "dependencies": {
+    "chokidar": "^1.7.0",
+    "commander": "^2.9.0",
+    "fs-extra": "^3.0.1",
+    "p-series": "^1.0.0",
+    "ramda": "^0.24.1",
+    "read-pkg": "^2.0.0",
+    "semver": "^5.3.0"
+  }
 }
