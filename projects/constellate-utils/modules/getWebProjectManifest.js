@@ -3,12 +3,13 @@
 const path = require('path')
 const fs = require('fs-extra')
 
-const requireFn = typeof __non_webpack_require__ !== 'undefined'
-  ? // eslint-disable-next-line no-undef
-    __non_webpack_require__
-  : require
+const requireFn =
+  typeof __non_webpack_require__ !== 'undefined'
+    ? // eslint-disable-next-line no-undef
+      __non_webpack_require__
+    : require
 
-let cache = null
+const cache = {}
 
 /**
  * Gets the manifest for the constellate web project by the given name.
@@ -17,8 +18,8 @@ let cache = null
  * @return {Object}             The manifest
  */
 module.exports = function getWebProjectManifest(projectName) {
-  if (cache) {
-    return cache
+  if (cache[projectName]) {
+    return cache[projectName]
   }
 
   const serverRootPath = path.resolve(process.cwd(), `./node_modules/${projectName}/modules`)
@@ -35,7 +36,7 @@ module.exports = function getWebProjectManifest(projectName) {
   const jsParts = manifest.index.js.substr(manifest.index.js.indexOf('/constellate/')).split('/')
   const rootHttpPath = jsParts.slice(0, jsParts.length - 1).join('/')
 
-  cache = {
+  cache[projectName] = {
     serverPaths: {
       root: serverRootPath,
     },
