@@ -44,6 +44,18 @@ module.exports = function createPublishPackageJson(project, versions) {
         ),
         sourcePkgJson.dependencies || {},
       ),
+      devDependencies: Object.assign(
+        {},
+        // Add devDependencies references to our constellate dependencies
+        project.devDependencies.reduce(
+          (acc, dependencyName) =>
+            Object.assign(acc, {
+              [allProjects[dependencyName].packageName]: `^${versions[dependencyName]}`,
+            }),
+          {},
+        ),
+        sourcePkgJson.devDependencies || {},
+      ),
     },
   )
 
