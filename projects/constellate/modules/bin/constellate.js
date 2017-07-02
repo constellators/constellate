@@ -55,6 +55,24 @@ program
       .catch(err => TerminalUtils.error('Eeek, an error!', err))
   })
 
+program.command('link').description('Links the projects').action(() => {
+  TerminalUtils.title('Linking projects...')
+  const link = require('../scripts/link')
+  ProjectUtils.resolveProjects()
+    .then(link)
+    .then(() => TerminalUtils.success('Done'))
+    .catch(err => TerminalUtils.error('Eeek, an error!', err))
+})
+
+program.command('unlink').description('Unlinks the projects').action(() => {
+  TerminalUtils.title('Unlinking projects...')
+  const link = require('../scripts/unlink')
+  ProjectUtils.resolveProjects()
+    .then(link)
+    .then(() => TerminalUtils.success('Done'))
+    .catch(err => TerminalUtils.error('Eeek, an error!', err))
+})
+
 program
   .command('build')
   .description('Builds the projects')

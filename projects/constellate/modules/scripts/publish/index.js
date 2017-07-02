@@ -14,6 +14,8 @@ const requestNextVersion = require('./requestNextVersion')
 module.exports = function publish(projectsToPublish, options = {}) {
   const force = !!options.force
 
+  ProjectUtils.linkAllProjects()
+
   const allProjects = ProjectUtils.getAllProjects()
   const allProjectsArray = R.values(allProjects)
 

@@ -43,7 +43,7 @@ function success(msg) {
 }
 
 function header(msg) {
-  console.log(chalk.underline(`\n${msg}`))
+  console.log(chalk.bold(`\n${msg}`))
 }
 
 function select(message, { choices, filter, validate } = {}) {

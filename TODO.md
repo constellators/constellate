@@ -1,11 +1,7 @@
 # Constellate Roadmap / Todo
 
-allow plugin extension API?
-use bin-up to create some project specific commands
-getLastVersion on a project with no version should return 0.0.0?
-add script compiler plugin
-
  - [ ] BUG! - nodeVersion needs to allow partials i.e. 4 instead of 4.x.x
+ - [X] BUG! - update pwns modules - we may need to unlink existing prior to running update
  - [X] BUG! - Hot module reload inject code
  - [X] BUG! - Develop process CMD + C doesn't seem to execute the "stop" for each process
  - [X] BUG! - Dependency chain publishing not working. e.g. update and publish constellate-dev-utils
@@ -25,8 +21,6 @@ add script compiler plugin
  - [X] COMMAND - Develop
  - [X] COMMAND - Publish
  - [ ] COMMAND - Deploy
- - [ ] COMMAND - Prettify
- - [ ] COMMAND - Test
  - [ ] DEVELOP - Manual reload override.
  - [ ] DEVELOP - CONFIG - Allow for explicit dependency rebuild ignore.
  - [X] DEVELOP - Dependency based reloads.
@@ -38,7 +32,7 @@ add script compiler plugin
    - [ ] Develop tips and tricks
      - [ ] SIGTERM/SIGINT effective usage
      - [ ] Usage of process.stdin.read() to stop process exiting (even though it has child processes)
- - [X] FEATURE - allow a "script" compiler type, with compilerOptions allowing you to target a script
+ - [ ] FEATURE - allow plugin extension API
  - [ ] FEATURE - Validate the constellate configuration (tcomb?)
  - [ ] FEATURE - Copy some base files across always - .npmignore, /README(.md)?/i
  - [ ] FEATURE - Copy across non-JS files when compiling
@@ -57,6 +51,9 @@ add script compiler plugin
    - [ ] postdevelop
    - [ ] prestart
    - [ ] poststart
+ - [X] FEATURE - add script compiler plugin
+ - [X] FEATURE - need a devDependencies and softDependencies
+ - [X] FEATURE - allow a "script" compiler type, with compilerOptions allowing you to target a script
  - [X] FEATURE - Use config.releaseBranch to control the branch that is used for release generation (defaults to master)
  - [X] FEATURE - Support a 'none' compiler. This is complicated as the NPM publishing process falls over if you symlink a folder. Therefore file copy/paste is the only easy way thusfar.
  - [X] FEATURE - plugin interface for compilers - pre/post publish

@@ -5,6 +5,9 @@ module.exports = function build(toBuild) {
   // First clear down any existing build
   ProjectUtils.cleanBuild()
 
+  // Then ensure all the projects are linked
+  ProjectUtils.linkAllProjects()
+
   // :: Project -> void -> Promise
   const queueBuild = project => () => ProjectUtils.compileProject(project)
 

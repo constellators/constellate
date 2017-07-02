@@ -4,6 +4,6 @@
   "description": "Injects a safe initialisation of source-map-support into your transpiled files",
   "main": "modules/index.js",
   "dependencies": {
-    "babel-template": "^6.25.0"
+    "babel-template": "6.25.0"
   }
 }

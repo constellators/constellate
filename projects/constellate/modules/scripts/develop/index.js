@@ -10,6 +10,8 @@ const gracefulShutdownManager = require('./gracefulShutdownManager')
 module.exports = function develop(projectsToDevelop) {
   TerminalUtils.info('Press CTRL + C to exit')
 
+  ProjectUtils.linkAllProjects()
+
   // Firstly clean up shop.
   ProjectUtils.cleanBuild()
 

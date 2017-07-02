@@ -1,5 +1,4 @@
 const TerminalUtils = require('../terminal')
-const linkProject = require('./linkProject')
 
 const executeCompile = (project) => {
   TerminalUtils.verbose(`Compiling ${project.name}`)
@@ -9,9 +8,6 @@ const executeCompile = (project) => {
 // :: Project -> Promise<BuildResult>
 module.exports = function compileProject(project) {
   TerminalUtils.info(`Building ${project.name}...`)
-
-  // Ensure all the links exist for the project.
-  linkProject(project)
 
   return executeCompile(project)
     .then(() => {

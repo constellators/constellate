@@ -8,10 +8,14 @@ module.exports = function bootstrap(projects) {
   ProjectUtils.cleanProjects(projects)
 
   // Then run install for each project
-  return pSeries(
-    projects.map(project => () => {
-      TerminalUtils.info(`Installing dependencies for ${project.name}...`)
-      ChildProcessUtils.execSync('npm', ['install'], { cwd: project.paths.root })
-    }),
+  return (
+    pSeries(
+      projects.map(project => () => {
+        TerminalUtils.info(`Installing dependencies for ${project.name}...`)
+        ChildProcessUtils.execSync('npm', ['install'], { cwd: project.paths.root })
+      }),
+    )
+      // Then link the projects
+      .then(() => ProjectUtils.linkAllProjects())
   )
 }

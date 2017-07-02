@@ -20,6 +20,13 @@ const defaultProjectConfig = {
   nodeVersion: process.versions.node,
   dependencies: [],
 }
+
+// :: Project -> Array<string>
+const allDeps = project =>
+  (project.dependencies || [])
+    .concat(project.devDependencies || [])
+    .concat(project.softDependencies || [])
+
 // :: string -> string -> string
 const resolveProjectPath = projectName => relativePath =>
   path.resolve(process.cwd(), `./projects/${projectName}`, relativePath)
@@ -88,7 +95,7 @@ const toProject = (projectName) => {
 // :: Array<Project> -> Array<Project>
 function orderByDependencies(projects) {
   const packageDependencyGraph = project =>
-    R.pipe(R.prop('dependencies'), R.map(dependencyName => [dependencyName, project.name]))(project)
+    R.pipe(allDeps, R.map(dependencyName => [dependencyName, project.name]))(project)
 
   // :: Array<Project> -> Array<Array<string, string>>
   const dependencyGraph = R.chain(packageDependencyGraph)
@@ -138,7 +145,7 @@ module.exports = function getAllProjects() {
 
   // :: Project -> Array<string>
   const getDependencies = (project, dependencyType) =>
-    project.config[dependencyType].reduce((acc, dependencyName) => {
+    (project.config[dependencyType] || []).reduce((acc, dependencyName) => {
       const dependency = R.find(R.propEq('name', dependencyName), projects)
       if (!dependency) {
         TerminalUtils.warning(
@@ -151,7 +158,7 @@ module.exports = function getAllProjects() {
 
   // :: Project -> Array<string>
   const getDependants = (project, allProjects) =>
-    allProjects.filter(x => R.contains(project.name, x.dependencies)).map(R.prop('name'))
+    allProjects.filter(x => R.contains(project.name, allDeps(x))).map(R.prop('name'))
 
   const getAllDependants = (project, allProjects) => {
     const findProject = name => R.find(R.propEq('name', name), allProjects)
@@ -177,8 +184,12 @@ module.exports = function getAllProjects() {
     // The projects this project directly depends on.
     R.map((project) => {
       const dependencies = getDependencies(project, 'dependencies')
+      const devDependencies = getDependencies(project, 'devDependencies')
+      const softDependencies = getDependencies(project, 'softDependencies')
       return Object.assign({}, project, {
         dependencies,
+        devDependencies,
+        softDependencies,
       })
     }),
     // Projects that directly depend on this project.

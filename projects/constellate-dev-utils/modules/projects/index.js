@@ -7,7 +7,10 @@ const getAllProjects = require('./getAllProjects')
 const getLastVersion = require('./getLastVersion')
 const hasUncommittedChanges = require('./hasUncommittedChanges')
 const linkProject = require('./linkProject')
+const linkAllProjects = require('./linkAllProjects')
 const resolveProjects = require('./resolveProjects')
+const unlinkProject = require('./unlinkProject')
+const unlinkAllProjects = require('./unlinkAllProjects')
 const updateVersion = require('./updateVersion')
 
 module.exports = {
@@ -20,6 +23,9 @@ module.exports = {
   getLastVersion,
   hasUncommittedChanges,
   linkProject,
+  linkAllProjects,
   resolveProjects,
+  unlinkProject,
+  unlinkAllProjects,
   updateVersion,
 }
