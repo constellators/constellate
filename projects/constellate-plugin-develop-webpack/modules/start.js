@@ -33,7 +33,6 @@ module.exports = function start(project, watcher) {
       return new Promise((resolve, reject) => {
         let hasResolved = false
         let showNextSuccess = false
-        let showNextError = false
 
         // We need to make sure symlinking of the bundled dependencies exist so
         // that bundling will happen correctly.
@@ -51,19 +50,12 @@ module.exports = function start(project, watcher) {
 
         compiler.plugin('done', (doneStats) => {
           const doneError = extractError(project, null, doneStats)
-          if (doneError) {
-            if (showNextError) {
-              TerminalUtils.error(`Please fix the following issue on ${project.name}`, doneError)
-            } else {
-              TerminalUtils.verbose(`Error on ${project.name}`)
-              TerminalUtils.verbose(doneError)
-            }
+          if (doneError && hasResolved) {
+            TerminalUtils.error(`Please fix the following issue on ${project.name}`, doneError)
             showNextSuccess = hasResolved && true
-            showNextError = false
           } else {
             TerminalUtils[showNextSuccess ? 'success' : 'verbose'](`${project.name} is good again`)
             showNextSuccess = false
-            showNextError = true
           }
           if (!hasResolved) {
             // This can only be the first time the plugin has run, and therefore

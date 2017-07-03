@@ -2,6 +2,7 @@
 
 ## Bugs
 
+ - [ ] Show consecutive build errors as may contain new info.
  - [ ] constellate-utils publishing one version behind?
  - [ ] nodeVersion needs to allow partials i.e. 4 instead of 4.x.x
  - [X] update pwns modules - we may need to unlink existing prior to running update
