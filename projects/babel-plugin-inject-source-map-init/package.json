@@ -1,9 +1,9 @@
 {
-	"version": "0.7.2",
-	"name": "babel-plugin-inject-source-map-init",
-	"description": "Injects a safe initialisation of source-map-support into your transpiled files",
-	"main": "modules/index.js",
-	"dependencies": {
-		"babel-template": "6.25.0"
-	}
+  "version": "0.7.2",
+  "name": "babel-plugin-inject-source-map-init",
+  "description": "Injects a safe initialisation of source-map-support into your transpiled files",
+  "main": "modules/index.js",
+  "dependencies": {
+    "babel-template": "6.25.0"
+  }
 }
