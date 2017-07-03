@@ -8,7 +8,7 @@ const defaultAppConfig = {
   releaseBranch: 'master',
   publishing: {
     npm: {
-      enabled: true,
+      enabled: false,
     },
     git: {
       enabled: true,

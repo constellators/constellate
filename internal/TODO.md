@@ -48,9 +48,9 @@
  - [ ] SIGTERM/SIGINT effective usage
  - [ ] Usage of process.stdin.read() to stop process exiting (even though it has child processes)
 
-
 ## Features
 
+ - [ ] Support for Node >=6
  - [ ] Update to Webpack v3
  - [ ] Plugin extension API
  - [ ] Validate the constellate configuration (tcomb?)

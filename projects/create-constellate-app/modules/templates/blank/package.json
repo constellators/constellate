@@ -1,0 +1,37 @@
+{
+  "private": true,
+  "scripts": {
+    "bootstrap": "constellate bootstrap",
+    "update": "constellate update",
+    "clean": "constellate clean",
+    "build": "constellate build",
+    "link": "constellate link",
+    "unlink": "constellate unlink",
+    "develop": "constellate develop",
+    "publish": "constellate publish",
+    "deploy": "constellate deploy",
+    "precommit": "npm run test && lint-staged",
+    "test": "jest --forceExit",
+    "test:watch": "jest --forceExit --watch",
+    "format": "prettier-eslint --write \"projects/**/*.js\""
+  },
+  "devDependencies": {
+    "constellate": "0.7.3",
+    "constellate-plugin-compiler-webpack": "0.7.3",
+    "constellate-plugin-develop-webpack": "0.7.3",
+    "eslint-config-constellate": "0.7.3",
+    "husky": "0.14.2",
+    "jest": "20.0.4",
+    "lint-staged": "4.0.0",
+    "prettier": "1.5.2",
+    "prettier-eslint": "6.4.1",
+    "prettier-eslint-cli": "4.1.1"
+  },
+  "eslintConfig": {
+    "root": true,
+    "extends": "constellate"
+  },
+  "lint-staged": {
+    "*.js": ["prettier-eslint --write \"projects/**/*.js\"", "git add"]
+  }
+}
