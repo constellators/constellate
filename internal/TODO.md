@@ -50,6 +50,7 @@
 
 ## Features
 
+ - [ ] Update to Webpack v3
  - [ ] Plugin extension API
  - [ ] Validate the constellate configuration (tcomb?)
  - [ ] Copy some base files across always - .npmignore, /README(.md)?/i
