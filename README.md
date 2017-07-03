@@ -7,3 +7,5 @@
 Rapid Javascript monorepos.
 
 Coming soon.
+
+In crazy production cycles, but looking exciting.  Can't wait to share. 😀
