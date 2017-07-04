@@ -23,19 +23,26 @@ module.exports = async function createApp(name, { example }) {
   try {
     const copyTemplateDirSpinner = ora('Creating app files').start()
     await copyTemplateDir(srcPath, targetPath, { name })
+    const npmIgnoreFilePath = path.resolve(process.cwd(), 'name', '.npmignore')
+    const gitIgnoreFilePath = path.resolve(process.cwd(), 'name', '.gitignore')
+    if (fs.existsSync(npmIgnoreFilePath)) {
+      fs.moveSync(npmIgnoreFilePath, gitIgnoreFilePath)
+    }
     copyTemplateDirSpinner.succeed('Files created')
 
     if (example) {
       // todo
     }
 
-    const initGitSpinner = ora('Initializing git repo').start()
-    await execa('git', ['init'], { cwd: targetPath })
-    initGitSpinner.succeed('Git repo initialized')
-
     const installingDepsSpinner = ora('Installing dependencies').start()
     await execa('npm', ['install'], { cwd: targetPath })
     installingDepsSpinner.succeed('Dependencies installed')
+
+    const initGitSpinner = ora('Initializing git repo').start()
+    await execa('git', ['init'], { cwd: targetPath })
+    await execa('git', ['add', '.'], { cwd: targetPath })
+    await execa('git', ['commit', '-m', '"Bootstrapped app"'], { cwd: targetPath })
+    initGitSpinner.succeed('Git repo initialized')
 
     console.log('')
     console.log(
