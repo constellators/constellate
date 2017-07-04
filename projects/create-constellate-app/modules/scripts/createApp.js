@@ -46,18 +46,19 @@ module.exports = async function createApp(name, { example }) {
 
           ${chalk.blue('cd')} ${chalk.blue(name)}
           ${chalk.blue('npm run create-project')}
-    `),
+      `),
     )
     console.log('')
   } catch (err) {
     console.error(
       dedent(`
-    Oh no! We ran into an error whilst trying to boostrap your application.
+        Oh no! We ran into an error whilst trying to create your application.
 
-    Please feel free to report any issues at:
-      https://github.com/constellators/constellate/issues
-  `),
+        Please feel free to report any issues at:
+          https://github.com/constellators/constellate/issues
+      `),
     )
+    console.log('')
     console.error(err)
   }
 }
