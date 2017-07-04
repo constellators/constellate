@@ -1,7 +1,13 @@
 module.exports = {
   projects: {
+    'babel-plugin-inject-source-map-init': {
+      // no config
+    },
     constellate: {
       dependencies: ['constellate-dev-utils'],
+    },
+    'constellate-dev-utils': {
+      // no config
     },
     'constellate-dev-utils-webpack': {
       dependencies: ['constellate-dev-utils'],
@@ -27,6 +33,12 @@ module.exports = {
       compilerOptions: {
         nodeVersion: '4.8.3',
       },
+    },
+    'create-constellate-app': {
+      // no config
+    },
+    'eslint-config-constellate': {
+      // no config
     },
   },
 }

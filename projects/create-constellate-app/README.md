@@ -10,7 +10,5 @@ CLI to bootstrap [Constellate](https://github.com/constellators/constellate) app
 
 ```
 npm install create-constellate-app -g
-create-constellate-app
+create-constellate-app my-app-name
 ```
-
-Coming soon.
