@@ -1,4 +1,9 @@
 module.exports = {
+  publishing: {
+    npm: {
+      enabled: true,
+    },
+  },
   projects: {
     'babel-plugin-inject-source-map-init': {
       // no config
