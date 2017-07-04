@@ -16,10 +16,8 @@
     "format": "prettier-eslint --write \"projects/**/*.js\""
   },
   "devDependencies": {
-    "constellate": "0.7.3",
-    "constellate-plugin-compiler-webpack": "0.7.3",
-    "constellate-plugin-develop-webpack": "0.7.3",
-    "eslint-config-constellate": "0.7.3",
+    "constellate": "0.8.0",
+    "eslint-config-constellate": "0.8.0",
     "husky": "0.14.2",
     "jest": "20.0.4",
     "lint-staged": "4.0.0",
