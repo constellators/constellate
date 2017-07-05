@@ -1,5 +1,5 @@
 {
-	"version": "0.9.0",
+	"version": "0.9.4",
 	"name": "constellate-dev-utils-webpack",
 	"description": "Shared utils for Webpack related Constellate core packages",
 	"dependencies": {
