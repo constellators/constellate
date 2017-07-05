@@ -6,7 +6,7 @@ const inquirer = require('inquirer')
 
 function verbose(msg) {
   if (process.env.DEBUG) {
-    console.log(msg)
+    console.log(chalk.dim(msg))
   }
 }
 

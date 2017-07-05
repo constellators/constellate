@@ -1,6 +1,7 @@
 /* eslint-disable global-require */
 
 const dedent = require('dedent')
+const chalk = require('chalk')
 const R = require('ramda')
 const FSUtils = require('../../fs')
 
@@ -20,10 +21,11 @@ const resolveCustomPlugin = (pluginName) => {
 
   if (!plugin) {
     throw new Error(
-      dedent(
-        `Could not resolve "${pluginName}" compiler. Make sure you have the plugin installed:
-          npm install ${fullPluginName}`,
-      ),
+      dedent(`
+        Could not resolve "${pluginName}" compiler. Make sure you have the plugin installed:
+
+            ${chalk.blue('npm install -D')} ${chalk.green(fullPluginName)}
+      `),
     )
   }
 
