@@ -1,5 +1,5 @@
 {
-	"version": "0.8.0",
+	"version": "0.9.0",
 	"name": "constellate-plugin-develop-webpack",
 	"description": "Provides webpack-dev-server support for 'webpack' compiled constellate projects",
 	"main": "modules/index.js",
