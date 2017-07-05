@@ -10,7 +10,6 @@ process.on('unhandledRejection', (err) => {
 })
 
 const program = require('commander')
-const R = require('ramda')
 const TerminalUtils = require('constellate-dev-utils/modules/terminal')
 const ProjectUtils = require('constellate-dev-utils/modules/projects')
 const packageJson = require('../../package.json')
@@ -120,24 +119,31 @@ program
   })
 
 program
-  .command('publish')
-  .description('Publish your projects')
-  .option('-p, --projects <projects>', 'Specify the projects to publish', OptionValueHandlers.list)
-  .option(
-    '-f, --force',
-    'Forces publishing of projects even if there are no changes to them',
-    R.always(true),
-  )
-  .action(({ projects, force }) => {
-    TerminalUtils.title('Running publish...')
+  .command('release')
+  .description('Creates a release for all the projects that have changed')
+  .action(async () => {
+    TerminalUtils.title('Running release...')
     if (!process.env.NODE_ENV) {
       process.env.NODE_ENV = 'production'
     }
-    const publish = require('../scripts/publish')
-    ProjectUtils.resolveProjects(projects)
-      .then(toPublish => publish(toPublish, { force }))
-      .then(() => TerminalUtils.success('Done'))
-      .catch(err => TerminalUtils.error('Eeek, an error!', err))
+    const release = require('../scripts/release')
+    try {
+      await release()
+    } catch (err) {
+      TerminalUtils.error('Eeek, an error!', err)
+    }
   })
+
+program.command('publish').description('Publish your projects to a NPM registry').action(() => {
+  TerminalUtils.title('Running publish...')
+  if (!process.env.NODE_ENV) {
+    process.env.NODE_ENV = 'production'
+  }
+  const publish = require('../scripts/publish')
+  ProjectUtils.resolveProjects()
+    .then(publish)
+    .then(() => TerminalUtils.success('Done'))
+    .catch(err => TerminalUtils.error('Eeek, an error!', err))
+})
 
 program.parse(process.argv)

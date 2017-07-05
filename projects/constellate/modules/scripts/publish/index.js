@@ -4,16 +4,15 @@ const semver = require('semver')
 const pSeries = require('p-series')
 const readPkg = require('read-pkg')
 const writePkg = require('write-pkg')
+const chalk = require('chalk')
+const dedent = require('dedent')
 const TerminalUtils = require('constellate-dev-utils/modules/terminal')
 const GitUtils = require('constellate-dev-utils/modules/git')
 const ChildProcessUtils = require('constellate-dev-utils/modules/childProcess')
 const AppUtils = require('constellate-dev-utils/modules/app')
 const ProjectUtils = require('constellate-dev-utils/modules/projects')
-const requestNextVersion = require('./requestNextVersion')
 
-module.exports = function publish(projectsToPublish, options = {}) {
-  const force = !!options.force
-
+module.exports = async function publish() {
   ProjectUtils.linkAllProjects()
 
   const allProjects = ProjectUtils.getAllProjects()
@@ -27,50 +26,72 @@ module.exports = function publish(projectsToPublish, options = {}) {
   }
 
   const appConfig = AppUtils.getConfig()
-  const enableGitPublishing = R.path(['publishing', 'git', 'enabled'], appConfig)
-  const enableNPMPublishing = R.path(['publishing', 'npm', 'enabled'], appConfig)
+  const targetBranch = R.path(['publishing', 'branchName'], appConfig)
+  const customRegistry = R.path(['publishing', 'customRegistry'], appConfig)
+
   const lastVersionTag = AppUtils.getLastVersionTag()
+  if (!lastVersionTag) {
+    TerminalUtils.error(
+      dedent(`
+        You have no releases to publish. Please create a release first.
+
+            ${chalk.blue('npm run release')}
+      `),
+    )
+  }
+
   const lastVersion = lastVersionTag ? semver.clean(lastVersionTag) : '0.0.0'
   TerminalUtils.verbose(`Last version is ${lastVersion}`)
 
   // Ensure there are no uncommitted changes
-  const projectsWithUncommitedChanges = allProjectsArray.filter(ProjectUtils.hasUncommittedChanges)
-  if (projectsWithUncommitedChanges.length > 0) {
+  if (GitUtils.uncommittedChanges().length > 0) {
     TerminalUtils.error(
-      `The following projects have uncommitted changes within them. Please commit your changes and then try again.${EOL}${projectsWithUncommitedChanges
-        .map(R.prop('name'))
-        .join(', ')}`,
+      'You have uncommitted changes. Please commit your changes and then try again.',
     )
     process.exit(1)
   }
 
   // Ensure on correct branch
-  const targetBranch = R.path(['releaseBranch'], appConfig) || 'master'
-  const targetRemote = R.path(['publishing', 'git', 'remote'], appConfig) || 'origin'
   const actualBranch = GitUtils.getCurrentBranch()
   if (targetBranch !== actualBranch) {
-    try {
-      GitUtils.checkout(targetBranch)
-    } catch (err) {
-      TerminalUtils.error(`Could not switch to the "release" branch (${targetBranch})`, err)
-      process.exit(1)
-    }
+    TerminalUtils.error(
+      dedent(`
+        You are not on the "publish" branch (${targetBranch}).
+
+          ${chalk.blue(`npm run ${targetBranch}`)}
+      `),
+    )
+    process.exit(1)
   }
 
-  if (enableGitPublishing) {
-    // Does the target remote exist?
-    const remoteExists = GitUtils.doesRemoteExist(targetRemote)
-    if (!remoteExists) {
-      TerminalUtils.error(`Target git remote '${targetRemote}' does not exist.`)
-      process.exit(1)
-    }
-    if (!GitUtils.isUpToDateWithRemote(targetRemote)) {
-      TerminalUtils.error(
-        `There are changes on remote '${targetRemote}' that need to be merged into your local repository.`,
-      )
-      process.exit(1)
-    }
+  // Checkout release
+  try {
+    GitUtils.checkout(lastVersionTag)
+  } catch (err) {
+    TerminalUtils.error(`Could not checkout target tagged release ${lastVersionTag}`, err)
+    process.exit(1)
   }
+
+  TerminalUtils.info(`Resolved last tagged release as ${lastVersion}`)
+
+  const projectsAtVersion = allProjectsArray
+    .filter(project => semver.eq(lastVersion, ProjectUtils.getLastVersion(project)))
+    .map(R.prop('name'))
+
+  const projectsToPublish = await TerminalUtils.multiSelect(
+    'Which projects would you like to publish?',
+    {
+      choices: allProjectsArray.map(p => ({
+        checked: R.contains(p.name, projectsAtVersion),
+        value: p.name,
+        name: `${p.name} (${ProjectUtils.getLastVersion(p)})`,
+      })),
+    },
+  )
+
+  console.log('Publishing', projectsToPublish)
+
+  /*
 
   // Ask for the next version
   return requestNextVersion(lastVersion).then((nextVersion) => {
@@ -149,7 +170,7 @@ module.exports = function publish(projectsToPublish, options = {}) {
 
       // Upate the package.jsons for each project to be the "publish" ready
       // versions.
-      allProjectsArray.forEach(cur => ProjectUtils.createPublishPackageJson(cur, versions))
+      allProjectsArray.forEach(cur => ProjectUtils.createReleasePackageJson(cur, versions))
 
       const restoreOriginalPackageJsons = () =>
         allProjectsArray.forEach(cur =>
@@ -265,4 +286,5 @@ module.exports = function publish(projectsToPublish, options = {}) {
       )
     })
   })
+  */
 }

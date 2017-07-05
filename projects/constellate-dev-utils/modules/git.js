@@ -85,6 +85,10 @@ function getLastAnnotatedTagInfo() {
   }
 }
 
+function uncommittedChanges() {
+  return multiLineStringToArray(ChildProcessUtils.execSync('git', ['diff', '--name-only']))
+}
+
 function uncommittedChangesIn(location) {
   return multiLineStringToArray(
     ChildProcessUtils.execSync('git', ['diff', '--name-only', '--', location]),
@@ -99,6 +103,10 @@ function changedFilesSinceIn(since, location) {
 
 function addAnnotatedTag(tag) {
   ChildProcessUtils.execSync('git', ['tag', '-a', tag, '-m', tag])
+}
+
+function removeTag(tag) {
+  ChildProcessUtils.execSync('git', ['tag', '-d', tag])
 }
 
 function pushWithTags(remote, tags) {
@@ -135,6 +143,8 @@ module.exports = {
   isInitialized,
   isUpToDateWithRemote,
   pushWithTags,
+  removeTag,
   stageAllChanges,
+  uncommittedChanges,
   uncommittedChangesIn,
 }

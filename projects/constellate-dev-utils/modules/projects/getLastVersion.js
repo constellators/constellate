@@ -5,7 +5,7 @@ const GitUtils = require('../git')
 const TerminalUtils = require('../terminal')
 
 const resolveVersionFor = (project) => {
-  const pkgJson = readPkg(project.paths.packageJson, { normalize: false })
+  const pkgJson = readPkg.sync(project.paths.packageJson, { normalize: false })
   const lastAppVersionTag = GitUtils.getLastAnnotatedTagInfo()
 
   if (pkgJson.version && lastAppVersionTag && semver.gt(pkgJson.version, lastAppVersionTag.tag)) {

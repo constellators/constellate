@@ -16,6 +16,9 @@
   },
   "eslintConfig": {
     "root": true,
-    "extends": "constellate"
+    "extends": "constellate",
+    "rules": {
+      "no-console": 0
+    }
   }
 }

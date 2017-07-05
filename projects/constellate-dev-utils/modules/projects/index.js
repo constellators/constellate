@@ -2,7 +2,7 @@ const changedSince = require('./changedSince')
 const cleanBuild = require('./cleanBuild')
 const cleanProjects = require('./cleanProjects')
 const compileProject = require('./compileProject')
-const createPublishPackageJson = require('./createPublishPackageJson')
+const createReleasePackageJson = require('./createReleasePackageJson')
 const getAllProjects = require('./getAllProjects')
 const getLastVersion = require('./getLastVersion')
 const hasUncommittedChanges = require('./hasUncommittedChanges')
@@ -18,7 +18,7 @@ module.exports = {
   cleanBuild,
   cleanProjects,
   compileProject,
-  createPublishPackageJson,
+  createReleasePackageJson,
   getAllProjects,
   getLastVersion,
   hasUncommittedChanges,

@@ -27,23 +27,40 @@ function error(msg, err) {
 }
 
 function warning(msg) {
-  console.log(chalk.yellow(`\n${figures.warning} ${msg}`))
+  console.log(chalk.yellow(`${figures.warning} ${msg}`))
 }
 
 function title(msg) {
-  console.log(chalk.blue(`\n${figures.play} ${msg}`))
+  console.log(chalk.bold.magenta(msg))
 }
 
 function info(msg) {
-  console.log(chalk.blue(`\n${figures.info} ${msg}`))
+  console.log(chalk.blue(msg))
 }
 
 function success(msg) {
-  console.log(chalk.green(`\n${figures.tick} ${msg}`))
+  console.log(chalk.green(`${figures.tick} ${msg}`))
 }
 
 function header(msg) {
-  console.log(chalk.bold(`\n${msg}`))
+  console.log(chalk.bold(msg))
+}
+
+function multiSelect(message, { choices, selected, filter, validate } = {}) {
+  return inquirer
+    .prompt([
+      {
+        type: 'checkbox',
+        name: 'prompt',
+        message,
+        choices,
+        pageSize: choices.length,
+        filter,
+        validate,
+        default: selected,
+      },
+    ])
+    .then(answers => answers.prompt)
 }
 
 function select(message, { choices, filter, validate } = {}) {
@@ -98,6 +115,7 @@ module.exports = {
   info,
   success,
   verbose,
+  multiSelect,
   select,
   input,
   confirm,

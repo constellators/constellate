@@ -5,7 +5,7 @@ const writePkg = require('write-pkg')
 const TerminalUtils = require('../terminal')
 const getAllProjects = require('./getAllProjects')
 
-module.exports = function createPublishPackageJson(project, versions) {
+module.exports = function createReleasePackageJson(project, versions) {
   const allProjects = getAllProjects()
 
   const projectHasVersion = p => R.find(R.equals(p.name), Object.keys(versions))
