@@ -23,8 +23,8 @@ module.exports = async function createApp(name, { example }) {
   try {
     const copyTemplateDirSpinner = ora('Creating app files').start()
     await copyTemplateDir(srcPath, targetPath, { name })
-    const npmIgnoreFilePath = path.resolve(process.cwd(), 'name', '.npmignore')
-    const gitIgnoreFilePath = path.resolve(process.cwd(), 'name', '.gitignore')
+    const npmIgnoreFilePath = path.resolve(targetPath, '.npmignore')
+    const gitIgnoreFilePath = path.resolve(targetPath, '.gitignore')
     if (fs.existsSync(npmIgnoreFilePath)) {
       fs.moveSync(npmIgnoreFilePath, gitIgnoreFilePath)
     }
