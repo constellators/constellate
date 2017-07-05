@@ -1,9 +1,11 @@
 {
-  "version": "0.9.0",
-  "name": "constellate-utils",
-  "description": "Helpful utilities for Constellate projects.",
-  "repository": "https://github.com/constellators/constellate-utils",
-  "license": "MIT",
-  "main": "modules/index.js",
-  "files": ["modules"]
+	"version": "0.9.3",
+	"name": "constellate-utils",
+	"description": "Helpful utilities for Constellate projects.",
+	"repository": "https://github.com/constellators/constellate-utils",
+	"license": "MIT",
+	"main": "modules/index.js",
+	"files": [
+		"modules"
+	]
 }
