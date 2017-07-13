@@ -14,6 +14,7 @@ function exec(command, args, opts) {
     Object.assign(
       {},
       {
+        env: process.env,
         stdio: 'pipe', // node default
       },
       opts,
@@ -24,7 +25,7 @@ function exec(command, args, opts) {
 // :: (string, ?Array<string>, ?Object) -> string
 // throws Error
 function execSync(command, args, opts) {
-  return execa.sync(command, args, opts).stdout
+  return execa.sync(command, args, Object.assign({}, { env: process.env }, opts)).stdout
 }
 
 // :: (string, ?Array<string>, ?Object) -> Promise
@@ -35,6 +36,7 @@ function spawn(command, args, opts) {
     Object.assign(
       {},
       {
+        env: process.env,
         stdio: 'inherit',
       },
       opts,

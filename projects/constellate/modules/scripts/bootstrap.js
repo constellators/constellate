@@ -1,5 +1,4 @@
 const pSeries = require('p-series')
-const ChildProcessUtils = require('constellate-dev-utils/modules/childProcess')
 const TerminalUtils = require('constellate-dev-utils/modules/terminal')
 const ProjectUtils = require('constellate-dev-utils/modules/projects')
 
@@ -12,7 +11,7 @@ module.exports = function bootstrap(projects) {
     pSeries(
       projects.map(project => () => {
         TerminalUtils.info(`Installing dependencies for ${project.name}...`)
-        ChildProcessUtils.execSync('npm', ['install'], { cwd: project.paths.root })
+        ProjectUtils.installDeps(project)
       }),
     )
       // Then link the projects

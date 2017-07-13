@@ -10,12 +10,13 @@ const gracefulShutdownManager = require('./gracefulShutdownManager')
 module.exports = function develop(projectsToDevelop) {
   TerminalUtils.info('Press CTRL + C to exit')
 
-  ProjectUtils.linkAllProjects()
+  const allProjects = ProjectUtils.getAllProjects()
 
   // Firstly clean up shop.
   ProjectUtils.cleanBuild()
 
-  const allProjects = ProjectUtils.getAllProjects()
+  // Then ensure all the projects are linked
+  ProjectUtils.linkAllProjects()
 
   // Represents the current project being built
   let currentlyProcessing = null

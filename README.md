@@ -7,7 +7,7 @@
 </p>
 
 <p align="center">
-Rapid development, publishing, and deployment of modern Javascript/Node projects/applications.
+A toolchain to bootstrap, develop, release, publish, and deploy complex Node applications rapidly.
 </p>
 
 ---
@@ -23,7 +23,7 @@ Rapid development, publishing, and deployment of modern Javascript/Node projects
 
 ## Introduction
 
-Constellate allows you to quickly bootstrap Javscript/Node project(s), allowing you to work in a [monorepo](https://medium.com/@bebraw/the-case-for-monorepos-907c1361708a) format in a manner very similar to [Lerna](https://lernajs.io/), albeit in a more opinionated manner.
+Constellate allows you to quickly create and deploy Node applications. You could build a simple single server Express application, or fan out a micro-service based system using a [monorepo](https://medium.com/@bebraw/the-case-for-monorepos-907c1361708a) format allowing you to share code and develop the system as the toolchain live update your servers whilst you code.
 
 Most of the development tooling (bundling, transpiling, hot module reloading) are hidden away from you, available through a series of [plugins](#plugins).
 

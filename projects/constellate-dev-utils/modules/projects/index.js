@@ -6,6 +6,7 @@ const createReleasePackageJson = require('./createReleasePackageJson')
 const getAllProjects = require('./getAllProjects')
 const getLastVersion = require('./getLastVersion')
 const hasUncommittedChanges = require('./hasUncommittedChanges')
+const installDeps = require('./installDeps')
 const linkProject = require('./linkProject')
 const linkAllProjects = require('./linkAllProjects')
 const resolveProjects = require('./resolveProjects')
@@ -22,6 +23,7 @@ module.exports = {
   getAllProjects,
   getLastVersion,
   hasUncommittedChanges,
+  installDeps,
   linkProject,
   linkAllProjects,
   resolveProjects,

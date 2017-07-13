@@ -3,8 +3,8 @@
 ## Bugs
 
  - [ ] Show consecutive build errors as may contain new info.
- - [ ] constellate-utils publishing one version behind?
  - [ ] nodeVersion needs to allow partials i.e. 4 instead of 4.x.x
+ - [X] constellate-utils publishing one version behind?
  - [X] update pwns modules - we may need to unlink existing prior to running update
  - [X] Hot module reload inject code
  - [X] Develop process CMD + C doesn't seem to execute the "stop" for each process
@@ -50,6 +50,17 @@
 
 ## Features
 
+ - [ ] Ensure npx
+ - [ ] Change config format
+       {
+          compiler: {
+            name: 'foo',
+            options: {
+              ...
+            }
+          }
+       }
+ - [ ] Finish all inline TODO comments within code.
  - [ ] Support for Node >=6
  - [ ] Update to Webpack v3
  - [ ] Plugin extension API
@@ -91,7 +102,6 @@
 
  - [ ] Application template
  - [ ] Empty project
-
 
 ## Test
 

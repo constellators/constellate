@@ -26,6 +26,9 @@ module.exports = {
     'constellate-plugin-compiler-webpack-node': {
       dependencies: ['constellate-dev-utils', 'constellate-dev-utils-webpack'],
     },
+    'constellate-plugin-deploy-now': {
+      dependencies: ['constellate-dev-utils'],
+    },
     'constellate-plugin-develop-webpack': {
       dependencies: [
         'constellate-plugin-compiler-webpack',
