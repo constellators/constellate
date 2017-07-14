@@ -50,6 +50,7 @@
 
 ## Features
 
+ - [ ] Rename release to tag
  - [ ] Rename bootstrap command to install
  - [ ] Ensure npx
  - [ ] Change config format
