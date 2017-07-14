@@ -1,5 +1,5 @@
 {
-	"version": "0.10.0",
+	"version": "0.10.1",
 	"name": "constellate-plugin-compiler-webpack-node",
 	"description": "A Webpack compiler (targetting Node) plugin for Constellate projects.",
 	"main": "modules/index.js",

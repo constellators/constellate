@@ -1,5 +1,5 @@
 {
-	"version": "0.10.0",
+	"version": "0.10.1",
 	"name": "constellate-plugin-deploy-now",
 	"description": "Allows deployment of constellate projects to Zeit's now",
 	"main": "modules/index.js"
