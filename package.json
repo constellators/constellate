@@ -1,18 +1,9 @@
 {
   "private": true,
-  "scripts": {
-    "bootstrap": "constellate bootstrap",
-    "update": "constellate update",
-    "clean": "constellate clean",
-    "build": "constellate build",
-    "develop": "constellate develop",
-    "publish": "constellate publish",
-    "deploy": "constellate deploy"
-  },
   "devDependencies": {
-    "constellate": "0.8.0",
-    "constellate-plugin-compiler-babel": "0.8.0",
-    "eslint-config-constellate": "0.8.0"
+    "constellate": "0.10.0",
+    "constellate-plugin-compiler-babel": "0.10.0",
+    "eslint-config-constellate": "0.10.0"
   },
   "eslintConfig": {
     "root": true,
