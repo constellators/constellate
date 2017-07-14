@@ -50,6 +50,7 @@
 
 ## Features
 
+ - [ ] Rename bootstrap command to install
  - [ ] Ensure npx
  - [ ] Change config format
        {

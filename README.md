@@ -1,4 +1,4 @@
-> WIP, coming soon.
+> WIP, coming soon. 👀
 
 ---
 
@@ -7,16 +7,14 @@
 </p>
 
 <p align="center">
-A toolchain to bootstrap, develop, release, publish, and deploy complex Node applications rapidly.
+A toolchain to rapidly create and deploy Node applications.
 </p>
-
----
 
 ## TOC
 
  - [Introduction](#introduction)
- - [Getting started](#getting-started)
  - [Features](#features)
+ - [Getting started](#getting-started)
  - [Plugins](#plugins)
  - [Plugin Development](#plugin-development)
  - [Templates](#templates)
@@ -27,11 +25,11 @@ Constellate allows you to quickly create and deploy Node applications. You could
 
 Most of the development tooling (bundling, transpiling, hot module reloading) are hidden away from you, available through a series of [plugins](#plugins).
 
-## Getting Started
+## Features
 
 > TODO
 
-## Features
+## Getting Started
 
 > TODO
 
