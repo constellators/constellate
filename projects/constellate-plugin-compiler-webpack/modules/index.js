@@ -1,4 +1,3 @@
-const R = require('ramda')
 const readPkg = require('read-pkg')
 const ProjectUtils = require('constellate-dev-utils/modules/projects')
 const getAllBundledDependencies = require('constellate-dev-utils-webpack/modules/getAllBundledDependencies')
@@ -15,7 +14,7 @@ module.exports = function webpackCompiler(project, options) {
       // dependencies from our constellate dependencies as we will inline
       // bundle all our constellate dependencies.
       getAllBundledDependencies(project).reduce((acc, dependencyName) => {
-        const dependency = R.find(R.propEq('name', dependencyName), allProjects)
+        const dependency = allProjects[dependencyName]
         const pkgJson = readPkg.sync(dependency.paths.packageJson, { normalize: false })
         return Object.assign(acc, pkgJson.dependencies || {})
       }, {})

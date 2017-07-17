@@ -15,6 +15,7 @@
 		"commander": "2.11.0",
 		"dotenv": "4.0.0",
 		"fs-extra": "3.0.1",
+		"jest": "20.0.4",
 		"npm-check": "5.4.4",
 		"p-series": "1.0.0",
 		"ramda": "0.24.1",

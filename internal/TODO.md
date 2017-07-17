@@ -50,8 +50,15 @@
 
 ## Features
 
- - [ ] Rename release to tag
- - [ ] Rename bootstrap command to install
+ - [ ] Consolidate gracefullyShutdown and configureGracefulExit
+ - [ ] Allow specifying an exact tag version for doing publishing from
+ - [ ] Command hooks + error handling of them!
+   - [X] predevelop
+   - [X] postdevelop
+   - [X] pretest
+   - [X] posttest
+   - [ ] prepublish
+   - [ ] postpublish
  - [ ] Ensure npx
  - [ ] Change config format
        {
@@ -64,7 +71,6 @@
        }
  - [ ] Finish all inline TODO comments within code.
  - [ ] Support for Node >=6
- - [ ] Update to Webpack v3
  - [ ] Plugin extension API
  - [ ] Validate the constellate configuration (tcomb?)
  - [ ] Copy some base files across always - .npmignore, /README(.md)?/i
@@ -77,13 +83,9 @@
  - [ ] auto-add source-map-support to build dependencies, and then re-enable for production builds.
  - [ ] plugin interface for compilers - pre/post compile
  - [ ] plugin interface for compilers - pre/post develop
- - [ ] Command hooks
-   - [ ] prebuild
-   - [ ] postbuild
-   - [ ] predevelop
-   - [ ] postdevelop
-   - [ ] prestart
-   - [ ] poststart
+ - [X] Update to Webpack v3
+ - [X] Rename release to tag
+ - [X] Rename bootstrap command to install
  - [X] add script compiler plugin
  - [X] need a devDependencies and softDependencies
  - [X] allow a "script" compiler type, with compilerOptions allowing you to target a script
@@ -116,6 +118,7 @@
 
 ## UX
 
+ - [ ] Nice messages and help for constellate command
  - [ ] Publish command Error resilience.
  - [ ] Terminal "centerer" https://stackoverflow.com/questions/30335637/get-width-of-terminal-in-node-js
  - [ ] use why-is-node-running for helpful errors?

@@ -1,15 +1,6 @@
-/**
- * Tons of inspiration taken from the amazing Lerna project.
- * https://github.com/lerna/lerna
- * ❤️
- */
-
 const ChildProcessUtils = require('./childProcess')
-const { multiLineStringToArray } = require('./strings')
+const StringUtils = require('./strings')
 const TerminalUtils = require('./terminal')
-
-// Get all tags along with commit ids.
-// git show-ref --tags
 
 function isInitialized() {
   let initialized
@@ -33,6 +24,10 @@ function stageAllChanges() {
 
 function commit(message) {
   ChildProcessUtils.execSync('git', ['commit', '-m', message])
+}
+
+function undoPreviousCommit() {
+  ChildProcessUtils.execSync('git', ['reset', '--hard', 'HEAD~'])
 }
 
 function doesRemoteExist(remote) {
@@ -86,17 +81,19 @@ function getLastAnnotatedTagInfo() {
 }
 
 function uncommittedChanges() {
-  return multiLineStringToArray(ChildProcessUtils.execSync('git', ['diff', '--name-only']))
+  return StringUtils.multiLineStringToArray(
+    ChildProcessUtils.execSync('git', ['diff', '--name-only']),
+  )
 }
 
 function uncommittedChangesIn(location) {
-  return multiLineStringToArray(
+  return StringUtils.multiLineStringToArray(
     ChildProcessUtils.execSync('git', ['diff', '--name-only', '--', location]),
   )
 }
 
 function changedFilesSinceIn(since, location) {
-  return multiLineStringToArray(
+  return StringUtils.multiLineStringToArray(
     ChildProcessUtils.execSync('git', ['diff', '--name-only', since, '--', location]),
   )
 }
@@ -147,4 +144,5 @@ module.exports = {
   stageAllChanges,
   uncommittedChanges,
   uncommittedChangesIn,
+  undoPreviousCommit,
 }

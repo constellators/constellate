@@ -1,7 +1,10 @@
 const pSeries = require('p-series')
 const ProjectUtils = require('constellate-dev-utils/modules/projects')
+const TerminalUtils = require('constellate-dev-utils/modules/terminal')
 
-module.exports = function build(toBuild) {
+module.exports = async function build() {
+  TerminalUtils.title('Running build...')
+
   // First clear down any existing build
   ProjectUtils.cleanBuild()
 
@@ -10,6 +13,7 @@ module.exports = function build(toBuild) {
 
   // :: Project -> void -> Promise
   const queueBuild = project => () => ProjectUtils.compileProject(project)
+  await pSeries(ProjectUtils.getAllProjectsArray().map(queueBuild))
 
-  return pSeries(toBuild.map(queueBuild))
+  TerminalUtils.success('Done')
 }

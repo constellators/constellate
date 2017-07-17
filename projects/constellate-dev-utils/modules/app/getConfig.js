@@ -5,14 +5,13 @@ const ObjectUtils = require('../objects')
 const TerminalUtils = require('../terminal')
 
 const defaultAppConfig = {
-  publishing: {
-    branchName: 'master',
-    customRegistry: null,
-  },
-  releasing: {
-    branchName: 'master',
+  masterBranchName: 'master',
+  tagging: {
     remoteName: 'origin',
     enableRemotePush: true,
+  },
+  publishing: {
+    customRegistry: null,
   },
 }
 

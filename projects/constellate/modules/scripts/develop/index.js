@@ -2,15 +2,23 @@
 
 const R = require('ramda')
 const TerminalUtils = require('constellate-dev-utils/modules/terminal')
+const AppUtils = require('constellate-dev-utils/modules/app')
 const ProjectUtils = require('constellate-dev-utils/modules/projects')
 const createProjectDevelopConductor = require('./createProjectDevelopConductor')
 const createProjectWatcher = require('./createProjectWatcher')
 const gracefulShutdownManager = require('./gracefulShutdownManager')
 
-module.exports = function develop(projectsToDevelop) {
-  TerminalUtils.info('Press CTRL + C to exit')
+module.exports = async function develop() {
+  const appConfig = AppUtils.getConfig()
+  const preDevelopHook = R.path(['commands', 'develop', 'pre'], appConfig)
+
+  if (preDevelopHook) {
+    TerminalUtils.info('Running the pre develop hook')
+    await preDevelopHook()
+  }
 
   const allProjects = ProjectUtils.getAllProjects()
+  const allProjectsArray = ProjectUtils.getAllProjectsArray()
 
   // Firstly clean up shop.
   ProjectUtils.cleanBuild()
@@ -43,14 +51,14 @@ module.exports = function develop(projectsToDevelop) {
   }
 
   // :: Object<string, ProjectWatcher>
-  const projectWatchers = projectsToDevelop.reduce(
+  const projectWatchers = allProjectsArray.reduce(
     (acc, project) =>
       Object.assign(acc, { [project.name]: createProjectWatcher(onChange(project), project) }),
     {},
   )
 
   // :: Object<string, ProjectDevelopConductor>
-  const projectDevelopConductors = projectsToDevelop.reduce(
+  const projectDevelopConductors = allProjectsArray.reduce(
     (acc, project) =>
       Object.assign(acc, {
         [project.name]: createProjectDevelopConductor(project, projectWatchers[project.name]),
@@ -145,7 +153,7 @@ module.exports = function develop(projectsToDevelop) {
   }
 
   // READY...
-  projectsToDevelop.forEach(queueProjectForProcessing)
+  allProjectsArray.forEach(queueProjectForProcessing)
 
   // SET...
   Object.keys(projectWatchers).forEach(projectName => projectWatchers[projectName].start())
@@ -157,5 +165,8 @@ module.exports = function develop(projectsToDevelop) {
   gracefulShutdownManager(projectDevelopConductors, projectWatchers)
 
   // prevent node process from exiting. (until CTRL + C is pressed at least)
-  process.stdin.read()
+  TerminalUtils.info('Press CTRL + C to exit')
+  return new Promise(() => {
+    // NEVER RESOLVE
+  })
 }

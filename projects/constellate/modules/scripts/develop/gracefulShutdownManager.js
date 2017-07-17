@@ -1,8 +1,21 @@
 const R = require('ramda')
+const AppUtils = require('constellate-dev-utils/modules/app')
 const TerminalUtils = require('constellate-dev-utils/modules/terminal')
 
 module.exports = function gracefulShutdownManager(projectDevelopConductors, projectWatchers) {
   let shuttingDown = false
+  let postDevelopRun = false
+
+  const appConfig = AppUtils.getConfig()
+  const postDevelopHook = R.path(['commands', 'develop', 'pre'], appConfig)
+
+  const ensurePostDevelopHookRun = async () => {
+    if (postDevelopHook && !postDevelopRun) {
+      TerminalUtils.info('Running post develop hook')
+      await postDevelopHook()
+    }
+    postDevelopRun = true
+  }
 
   async function performGracefulShutdown(exitCode) {
     // Avoid multiple calls (e.g. if ctrl+c pressed multiple times)
@@ -13,9 +26,18 @@ module.exports = function gracefulShutdownManager(projectDevelopConductors, proj
 
       // This will ensure that the process exits after a 10 second grace period.
       // Hopefully all the dispose functions below would have completed
-      setTimeout(() => {
+      setTimeout(async () => {
         TerminalUtils.verbose('Forcing shutdown after grace period')
-        process.exit(0)
+        setTimeout(() => {
+          TerminalUtils.warning(
+            'Your post develop hook seems to be taking a long time to complete.  10 seconds have passed so we are now forcing an exit on the develop process.',
+          )
+          process.exit(1)
+        }, 10 * 1000)
+        // Even if we are forcing an exit we should wait for pross develop
+        // hook to execute
+        await ensurePostDevelopHookRun()
+        process.exit(1)
       }, 10 * 1000)
 
       // Firstly kill all our projectWatchers.
@@ -27,6 +49,9 @@ module.exports = function gracefulShutdownManager(projectDevelopConductors, proj
           projectDevelopConductor.stop(),
         ),
       )
+
+      // Then call the post develop hook
+      await ensurePostDevelopHookRun()
     } catch (err) {
       TerminalUtils.error('An error occurred whilst shutting down the development environment', err)
       process.exit(1)

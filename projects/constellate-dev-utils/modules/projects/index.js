@@ -4,6 +4,7 @@ const cleanProjects = require('./cleanProjects')
 const compileProject = require('./compileProject')
 const createReleasePackageJson = require('./createReleasePackageJson')
 const getAllProjects = require('./getAllProjects')
+const getAllProjectsArray = require('./getAllProjectsArray')
 const getLastVersion = require('./getLastVersion')
 const hasUncommittedChanges = require('./hasUncommittedChanges')
 const installDeps = require('./installDeps')
@@ -21,6 +22,7 @@ module.exports = {
   compileProject,
   createReleasePackageJson,
   getAllProjects,
+  getAllProjectsArray,
   getLastVersion,
   hasUncommittedChanges,
   installDeps,

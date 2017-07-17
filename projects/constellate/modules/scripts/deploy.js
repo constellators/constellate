@@ -1,5 +1,9 @@
-module.exports = function deploy() {
+const AppUtils = require('constellate-dev-utils/modules/app')
+
+module.exports = async function deploy() {
   console.log('Coming soon ⏰')
+
+  console.log(AppUtils.getLastXVersionTags(5))
 }
 
 // TODO
