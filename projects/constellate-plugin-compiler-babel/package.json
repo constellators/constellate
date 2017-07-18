@@ -24,6 +24,8 @@
 		"globby": "6.1.0",
 		"p-limit": "1.1.0",
 		"pify": "3.0.0",
-		"ramda": "0.24.1"
+		"ramda": "0.24.1",
+		"babel-plugin-inject-source-map-init": "0.12.0",
+		"constellate-dev-utils": "0.12.0"
 	}
 }

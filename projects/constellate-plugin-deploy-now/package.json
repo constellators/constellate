@@ -2,5 +2,8 @@
 	"version": "0.12.0",
 	"name": "constellate-plugin-deploy-now",
 	"description": "Allows deployment of constellate projects to Zeit's now",
-	"main": "modules/index.js"
+	"main": "modules/index.js",
+	"dependencies": {
+		"constellate-dev-utils": "0.12.0"
+	}
 }
