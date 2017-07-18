@@ -3,6 +3,7 @@ const R = require('ramda')
 const dedent = require('dedent')
 const fs = require('fs-extra')
 const path = require('path')
+const pSeries = require('p-series')
 const writeJsonFile = require('write-json-file')
 const TerminalUtils = require('constellate-dev-utils/modules/terminal')
 const ProjectUtils = require('constellate-dev-utils/modules/projects')
@@ -45,9 +46,7 @@ module.exports = async function deploy() {
 
   rollbackRepo()
 
-  const projectsToDeploy = allProjectsArray.filter(
-    project => project.config.deploy && project.config.deploy !== 'none',
-  )
+  const projectsToDeploy = allProjectsArray.filter(project => project.deployPlugin)
 
   // TODO: Allow them to select which projects they would like to deploy
   TerminalUtils.info(
@@ -58,18 +57,22 @@ module.exports = async function deploy() {
   `),
   )
 
-  projectsToDeploy.forEach((project) => {
-    const deployRoot = path.resolve(process.cwd(), `./deploy/${project.name}`)
-    fs.ensureDirSync(deployRoot)
-    const tempPkgJson = { name: `deploy-${project.name}`, private: true }
-    const tempPkgJsonPath = path.resolve(deployRoot, './package.json')
-    writeJsonFile.sync(tempPkgJsonPath, tempPkgJson)
-    ChildProcessUtils.execSync(
-      'npm',
-      ['install', `${project.packageName}@${currentVersions[project.name]}`],
-      { cwd: deployRoot },
-    )
-  })
+  await pSeries(
+    projectsToDeploy.map(project => async () => {
+      const installRoot = path.resolve(process.cwd(), `./deploy/${project.name}`)
+      fs.ensureDirSync(installRoot)
+      const tempPkgJson = { name: `deploy-${project.name}`, private: true }
+      const tempPkgJsonPath = path.resolve(installRoot, './package.json')
+      writeJsonFile.sync(tempPkgJsonPath, tempPkgJson)
+      ChildProcessUtils.execSync(
+        'npm',
+        ['install', `${project.packageName}@${currentVersions[project.name]}`],
+        { cwd: installRoot },
+      )
+      const deployRoot = path.resolve(installRoot, `./node_modules/${project.packageName}`)
+      await project.deployPlugin(deployRoot, project.config.deployOptions || {}, project).deploy()
+    }),
+  )
 
   TerminalUtils.success('Done')
 }

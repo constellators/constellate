@@ -1,12 +1,70 @@
+const { EOL } = require('os')
+const tempWrite = require('temp-write')
+const writeJsonFile = require('write-json-file')
 const TerminalUtils = require('constellate-dev-utils/modules/terminal')
+const ChildProcessUtils = require('constellate-dev-utils/modules/childProcess')
 
-if (process.env.NOW_TOKEN == null) {
-  TerminalUtils.error('You must supply your "now" API token via a NOW_TOKEN environment variable.')
-  process.exit(1)
-}
+module.exports = function nowDeploy(deployPath, options, project) {
+  /*
+  if (process.env.NOW_LOGIN == null) {
+    TerminalUtils.error('You must supply your "now" login id via a NOW_LOGIN environment variable.')
+    process.exit(1)
+  }
 
-module.exports = function nowDeploy(path, options, project) {
-  // TODO
+  if (process.env.NOW_TOKEN == null) {
+    TerminalUtils.error(
+      'You must supply your "now" API token via a NOW_TOKEN environment variable.',
+    )
+    process.exit(1)
+  }
+  */
+
+  return {
+    deploy: async () => {
+      try {
+        ChildProcessUtils.execSync('now', ['-v'])
+      } catch (err) {
+        TerminalUtils.error(
+          'You need to have the "now" CLI installed on your machine and available on your PATH in order to deploy to now.',
+        )
+        throw err
+      }
+
+      const alias = options.alias || project.packageName
+      const envVars = options.passThroughEnvVars
+        ? options.passThroughEnvVars.reduce(
+            (acc, cur) => [...acc, '-e', `${cur}=${process.env[cur]}`],
+            [],
+          )
+        : []
+
+      const createNowConfig = () => {
+        const tempFilePath = tempWrite.sync()
+        writeJsonFile.sync(tempFilePath, options.nowConfig)
+        return ['-c', tempFilePath]
+      }
+
+      const configArgs = options.nowConfig ? createNowConfig() : []
+
+      const args = [
+        'deploy',
+        '-n',
+        alias,
+        ...envVars,
+        ...configArgs,
+        '-C',
+        // '-L',
+        // process.env.NOW_LOGIN,
+        // '-t',
+        // process.env.NOW_TOKEN,
+      ]
+
+      TerminalUtils.verbose(`Executing now with args:${EOL}\t[${args}]`)
+      TerminalUtils.verbose(`Target deploy path:${EOL}\t${deployPath}`)
+
+      await ChildProcessUtils.spawn('now', args, { cwd: deployPath })
+    },
+  }
 }
 
 // TODO

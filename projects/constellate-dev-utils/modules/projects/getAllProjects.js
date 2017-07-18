@@ -9,6 +9,7 @@ const AppUtils = require('../app')
 const ObjectUtils = require('../objects')
 const resolveCompilerPlugin = require('../plugins/compiler/resolveCompilerPlugin')
 const resolveDevelopPlugin = require('../plugins/develop/resolveDevelopPlugin')
+const resolveDeployPlugin = require('../plugins/deploy/resolveDeployPlugin')
 
 let cache = null
 
@@ -59,6 +60,7 @@ const toProject = (projectName) => {
         name: projectName,
         compilerPlugin,
         developPlugin,
+        deployPlugin: config.deploy ? resolveDeployPlugin(config.deploy) : undefined,
         config,
         packageJson,
         packageName: packageJson.name,

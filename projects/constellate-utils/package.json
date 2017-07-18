@@ -7,5 +7,8 @@
 	"main": "modules/index.js",
 	"files": [
 		"modules"
-	]
+	],
+	"dependencies": {
+		"fs-extra": "4.0.0"
+	}
 }
