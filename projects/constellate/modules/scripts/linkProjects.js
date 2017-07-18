@@ -1,3 +1,4 @@
+const R = require('ramda')
 const ProjectUtils = require('constellate-dev-utils/modules/projects')
 const TerminalUtils = require('constellate-dev-utils/modules/terminal')
 
@@ -5,7 +6,7 @@ module.exports = async function linkProjects() {
   TerminalUtils.title('Running linking process...')
 
   const allProjects = ProjectUtils.getAllProjects()
-  const allProjectsArray = ProjectUtils.getAllProjectsArray()
+  const allProjectsArray = R.sortBy(R.prop('name'), ProjectUtils.getAllProjectsArray())
 
   if (allProjectsArray.length < 2) {
     throw new Error('You need at least 2 projects in order to create a link')
