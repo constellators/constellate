@@ -5,12 +5,10 @@ const ObjectUtils = require('../objects')
 const TerminalUtils = require('../terminal')
 
 const defaultAppConfig = {
-  masterBranchName: 'master',
-  tagging: {
-    remoteName: 'origin',
-    enableRemotePush: true,
-  },
   publishing: {
+    gitBranchName: 'master',
+    gitRemoteName: 'origin',
+    enableGitRemotePush: true,
     customRegistry: null,
   },
 }

@@ -27,6 +27,9 @@ const allDeps = project =>
     .concat(project.devDependencies || [])
     .concat(project.softDependencies || [])
 
+// :: Project -> Array<string>
+const linkDeps = project => (project.dependencies || []).concat(project.devDependencies || [])
+
 // :: string -> string -> string
 const resolveProjectPath = projectName => relativePath =>
   path.resolve(process.cwd(), `./projects/${projectName}`, relativePath)
@@ -48,6 +51,7 @@ const toProject = (projectName) => {
   const developPlugin = resolveDevelopPlugin(config.develop)
   const buildRoot = path.resolve(process.cwd(), `./build/${projectName}`)
   const packageJsonPath = thisProjectPath('./package.json')
+  const packageJson = readPkg.sync(packageJsonPath, { normalize: false })
 
   return R.pipe(
     x =>
@@ -56,7 +60,9 @@ const toProject = (projectName) => {
         compilerPlugin,
         developPlugin,
         config,
-        packageName: readPkg.sync(packageJsonPath, { normalize: false }).name,
+        packageJson,
+        packageName: packageJson.name,
+        version: packageJson.version || '0.0.0',
         paths: {
           root: thisProjectPath('./'),
           packageJson: packageJsonPath,
@@ -128,10 +134,12 @@ function orderByDependencies(projects) {
  *
  * @return {Array<Project>} The project meta object
  */
-module.exports = function getAllProjects() {
-  if (cache) {
+module.exports = function getAllProjects(skipCache) {
+  if (!skipCache && cache) {
     return cache
   }
+
+  TerminalUtils.verbose('Resolving project data from disk')
 
   const projectsRoot = path.resolve(process.cwd(), './projects')
 
@@ -144,23 +152,42 @@ module.exports = function getAllProjects() {
     .map(toProject)
 
   // :: Project -> Array<string>
-  const getDependencies = (project, dependencyType) =>
-    (project.config[dependencyType] || []).reduce((acc, dependencyName) => {
+  const getSoftDependencies = project =>
+    (project.config.softDependencies || []).reduce((acc, dependencyName) => {
       const dependency = R.find(R.propEq('name', dependencyName), projects)
       if (!dependency) {
         TerminalUtils.warning(
-          `Could not find ${dependencyName} referenced as dependency for ${project.name}`,
+          `Could not find ${dependencyName} referenced as soft dependency for ${project.name}`,
         )
         return acc
       }
       return acc.concat([dependencyName])
     }, [])
 
-  // :: Project -> Array<string>
-  const getDependants = (project, allProjects) =>
+  // :: (Project, string) -> Array<string>
+  const getDependencies = (allProjects, project, dependencyType) => {
+    const targetDependencies = R.path(['packageJson', dependencyType], project)
+    if (!targetDependencies) {
+      return []
+    }
+    return Object.keys(targetDependencies).reduce((acc, cur) => {
+      const match = allProjects.find(x => x.packageName === cur)
+      return match ? [...acc, match.name] : acc
+    }, [])
+  }
+
+  // :: -> Array<string>
+  const getDependants = (allProjects, project) =>
     allProjects.filter(x => R.contains(project.name, allDeps(x))).map(R.prop('name'))
 
-  const getAllDependants = (project, allProjects) => {
+  // :: -> Array<string>
+  const getLinkedDependants = (allProjects, project) =>
+    allProjects.filter(x => R.contains(project.name, linkDeps(x))).map(R.prop('name'))
+
+  // TODO: getAllDependants and getAllLinkedDependants can be generalised.
+
+  // :: -> Array<string>
+  const getAllDependants = (allProjects, project) => {
     const findProject = name => R.find(R.propEq('name', name), allProjects)
 
     // :: String -> Array<String>
@@ -180,35 +207,73 @@ module.exports = function getAllProjects() {
     return allProjects.filter(x => !!R.find(R.equals(x.name), allDependants)).map(R.prop('name'))
   }
 
+  // :: -> Array<string>
+  const getAllLinkedDependants = (allProjects, project) => {
+    const findProject = name => R.find(R.propEq('name', name), allProjects)
+
+    // :: String -> Array<String>
+    const resolveLinkedDependants = (dependantName) => {
+      const dependant = findProject(dependantName)
+      return [
+        dependant.name,
+        ...dependant.linkedDependants,
+        ...R.map(resolveLinkedDependants, dependant.linkedDependants),
+      ]
+    }
+
+    const allLinkedDependants = R.chain(resolveLinkedDependants, project.linkedDependants)
+
+    // Let's get a sorted version of allDependants by filtering allProjects
+    // which will already be in a safe build order.
+    return allProjects
+      .filter(x => !!R.find(R.equals(x.name), allLinkedDependants))
+      .map(R.prop('name'))
+  }
+
   cache = R.pipe(
     // The projects this project directly depends on.
-    R.map((project) => {
-      const dependencies = getDependencies(project, 'dependencies')
-      const devDependencies = getDependencies(project, 'devDependencies')
-      const softDependencies = getDependencies(project, 'softDependencies')
-      return Object.assign({}, project, {
-        dependencies,
-        devDependencies,
-        softDependencies,
-      })
-    }),
-    // Projects that directly depend on this project.
-    x =>
+    allProjects =>
+      R.map((project) => {
+        const dependencies = getDependencies(allProjects, project, 'dependencies')
+        const devDependencies = getDependencies(allProjects, project, 'devDependencies')
+        const softDependencies = getSoftDependencies(project)
+        return Object.assign({}, project, {
+          dependencies,
+          devDependencies,
+          softDependencies,
+        })
+      })(allProjects),
+    // Projects that directly depend (via link) on this project.
+    allProjects =>
       R.map(project =>
         Object.assign({}, project, {
-          dependants: getDependants(project, x),
+          linkedDependants: getLinkedDependants(allProjects, project),
         }),
-      )(x),
-    // Projects ordered based on their dependencies based order,
-    // which mean building them in order should be safe.
+      )(allProjects),
+    // Projects that directly depend (via link or soft dep) on this project.
+    allProjects =>
+      R.map(project =>
+        Object.assign({}, project, {
+          dependants: getDependants(allProjects, project),
+        }),
+      )(allProjects),
+    // Projects ordered based on their dependencies (via link or soft dep)
+    // based order, which mean building them in order should be safe.
     orderByDependencies,
-    // Add the FULL dependant tree
-    x =>
+    // Add the FULL linked dependant tree
+    allProjects =>
       R.map(project =>
         Object.assign(project, {
-          allDependants: getAllDependants(project, x),
+          allLinkedDependants: getAllLinkedDependants(allProjects, project),
         }),
-      )(x),
+      )(allProjects),
+    // Add the FULL dependant tree
+    allProjects =>
+      R.map(project =>
+        Object.assign(project, {
+          allDependants: getAllDependants(allProjects, project),
+        }),
+      )(allProjects),
     // Verbose logging
     R.map((projectConfig) => {
       TerminalUtils.verbose(

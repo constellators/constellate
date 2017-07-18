@@ -7,7 +7,6 @@
  */
 
 const webpack = require('webpack')
-const R = require('ramda')
 const nodeExternals = require('webpack-node-externals')
 const { removeNil } = require('constellate-dev-utils/modules/arrays')
 const { onlyIf } = require('constellate-dev-utils/modules/logic')
@@ -17,12 +16,6 @@ const generateBabelConfig = require('./generateBabelConfig')
 module.exports = function generateConfig(project) {
   const env = process.env.NODE_ENV
   const allProjects = ProjectUtils.getAllProjects()
-  const bundledDependencies = (R.path(
-    ['config', 'compilerOptions', 'bundledDependencies'],
-    project,
-  ) || [])
-    .map(x => allProjects[x])
-  const bundledDepsModulePaths = bundledDependencies.map(dep => dep.paths.modules)
 
   return {
     // Keep quiet in dev mode.
@@ -80,7 +73,6 @@ module.exports = function generateConfig(project) {
           /\.(svg|png|jpg|jpeg|gif|ico)$/,
           /\.(mp4|mp3|ogg|swf|webp)$/,
           /\.(css|scss|sass|sss|less)$/,
-          ...bundledDependencies.map(dep => allProjects[dep.name].packageName),
         ]),
         modulesDir: project.paths.nodeModules,
       }),
@@ -146,7 +138,7 @@ module.exports = function generateConfig(project) {
               options: generateBabelConfig(project),
             },
           ],
-          include: [project.paths.modules, ...bundledDepsModulePaths],
+          include: [project.paths.modules],
         },
 
         {
@@ -166,7 +158,7 @@ module.exports = function generateConfig(project) {
         {
           test: /\.css$/,
           loaders: ['css-loader/locals'],
-          include: [project.paths.modules, project.paths.nodeModules, ...bundledDepsModulePaths],
+          include: [project.paths.modules, project.paths.nodeModules],
         },
       ]),
     },

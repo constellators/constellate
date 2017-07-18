@@ -7,7 +7,6 @@
  */
 
 const webpack = require('webpack')
-const R = require('ramda')
 const AssetsPlugin = require('assets-webpack-plugin')
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
 const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin')
@@ -15,20 +14,12 @@ const WatchMissingNodeModulesPlugin = require('react-dev-utils/WatchMissingNodeM
 const autoprefixer = require('autoprefixer')
 const { removeNil } = require('constellate-dev-utils/modules/arrays')
 const { onlyIf } = require('constellate-dev-utils/modules/logic')
-const ProjectUtils = require('constellate-dev-utils/modules/projects')
 const generateBabelConfig = require('./generateBabelConfig')
 
 module.exports = function generateConfig(project, options = {}) {
   const { devServerPort } = options
 
   const env = process.env.NODE_ENV
-  const allProjects = ProjectUtils.getAllProjects()
-  const bundledDependencies = (R.path(
-    ['config', 'compilerOptions', 'bundledDependencies'],
-    project,
-  ) || [])
-    .map(x => allProjects[x])
-  const bundledDepsModulePaths = bundledDependencies.map(dep => dep.paths.modules)
 
   const webpackConfig = {
     // Keep quiet in dev mode.
@@ -51,21 +42,23 @@ module.exports = function generateConfig(project, options = {}) {
 
       // The filename format for the entry chunk.
       // eslint-disable-next-line no-nested-ternary
-      filename: env === 'production'
-        ? // For a production build of a web target we want a cache busting
-          // name format.
-          '[name]-[chunkhash].js'
-        : // Else we use a predictable name format.
-          '[name].js',
+      filename:
+        env === 'production'
+          ? // For a production build of a web target we want a cache busting
+            // name format.
+            '[name]-[chunkhash].js'
+          : // Else we use a predictable name format.
+            '[name].js',
 
       // The name format for any additional chunks produced for the bundle.
       chunkFilename: env === 'development' ? '[name]-[hash].js' : '[name]-[chunkhash].js',
 
-      publicPath: env === 'development' && !!devServerPort
-        ? // As we run a seperate webpack-dev-server in development we need an
-          // absolute http path for the public path.
-          `http://0.0.0.0:${devServerPort}/constellate/${project.name}/`
-        : `/constellate/${project.name}/`,
+      publicPath:
+        env === 'development' && !!devServerPort
+          ? // As we run a seperate webpack-dev-server in development we need an
+            // absolute http path for the public path.
+            `http://0.0.0.0:${devServerPort}/constellate/${project.name}/`
+          : `/constellate/${project.name}/`,
 
       // Add /* filename */ comments to generated require()s in the output.
       pathinfo: env === 'development',
@@ -78,11 +71,12 @@ module.exports = function generateConfig(project, options = {}) {
     },
 
     // Source map settings.
-    devtool: env === 'development'
-      ? // Produces an external source map (lives next to bundle output files).
-        'source-map'
-      : // Produces no source map.
-        'hidden-source-map',
+    devtool:
+      env === 'development'
+        ? // Produces an external source map (lives next to bundle output files).
+          'source-map'
+        : // Produces no source map.
+          'hidden-source-map',
     // Only maps line numbers
     // 'cheap-eval-source-map',
 
@@ -209,7 +203,7 @@ module.exports = function generateConfig(project, options = {}) {
               options: generateBabelConfig(project),
             },
           ],
-          include: [project.paths.modules, ...bundledDepsModulePaths],
+          include: [project.paths.modules],
         },
 
         {
@@ -250,7 +244,7 @@ module.exports = function generateConfig(project, options = {}) {
               },
             },
           ],
-          include: [project.paths.modules, project.paths.nodeModules, ...bundledDepsModulePaths],
+          include: [project.paths.modules, project.paths.nodeModules],
         })),
 
         // For a production web target we use the ExtractTextPlugin which
@@ -281,7 +275,7 @@ module.exports = function generateConfig(project, options = {}) {
               },
             ],
           }),
-          include: [project.paths.modules, project.paths.nodeModules, ...bundledDepsModulePaths],
+          include: [project.paths.modules, project.paths.nodeModules],
         })),
       ]),
     },

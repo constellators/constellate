@@ -97,26 +97,21 @@ program.command('install').description('Installs the dependencies for every proj
   }),
 )
 
-program.command('link').description('Links the projects').action(
+program.command('link-projects').description('Links project(s) to a project').action(
   createAction({
-    resolveScript: () => require('../scripts/link'),
+    resolveScript: () => require('../scripts/linkProjects'),
   }),
 )
 
-program.command('publish').description('Publishes selected projects to an NPM registry').action(
-  createAction({
-    resolveScript: () => require('../scripts/publish'),
-    gracefulExit: rollbackRepo,
-    errorMsg:
-      'Your projects may not have been fully published. Please check your target publish repository.',
-  }),
-)
-
-program.command('tag').description('Tags a release for the application').action(
-  createAction({
-    resolveScript: () => require('../scripts/tag'),
-  }),
-)
+program
+  .command('publish')
+  .description("Creates and publishes a new version of your application and it's projects")
+  .action(
+    createAction({
+      resolveScript: () => require('../scripts/publish'),
+      gracefulExit: rollbackRepo,
+    }),
+  )
 
 program
   .command('test')
@@ -139,12 +134,6 @@ program
       },
     }),
   )
-
-program.command('unlink').description('Unlinks the projects').action(
-  createAction({
-    resolveScript: () => require('../scripts/unlink'),
-  }),
-)
 
 program
   .command('update')

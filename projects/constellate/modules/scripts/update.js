@@ -7,7 +7,9 @@ const ProjectUtils = require('constellate-dev-utils/modules/projects')
 module.exports = async function update() {
   TerminalUtils.title('Running update...')
 
-  // Unlink projects first as this messes with the package resolving.
+  const allProjects = ProjectUtils.getAllProjects()
+
+  // Remove sym links projects first as this messes with the package resolving.
   ProjectUtils.unlinkAllProjects()
 
   const npmCheckPath = path.resolve(process.cwd(), './node_modules/.bin/npm-check')
@@ -15,11 +17,27 @@ module.exports = async function update() {
   // Then run update for each the projects
   await pSeries(
     ProjectUtils.getAllProjectsArray().map(project => () => {
-      TerminalUtils.info(`Checking for updates on ${project.name}'s dependencies`)
-      ChildProcessUtils.execSync(npmCheckPath, ['-u'], {
-        cwd: project.paths.root,
-        stdio: 'inherit',
-      })
+      const linkedDependencies = project.dependencies.map(x => allProjects[x])
+      const linkedDevDependencies = project.devDependencies.map(x => allProjects[x])
+      const relinkDeps = () => {
+        ProjectUtils.addLinkedDependencies(project, linkedDependencies, 'dependencies')
+        ProjectUtils.addLinkedDependencies(project, linkedDevDependencies, 'devDependencies')
+      }
+      ProjectUtils.removeLinkedDependencies(
+        project,
+        linkedDependencies.concat(linkedDevDependencies),
+      )
+      try {
+        TerminalUtils.info(`Checking for updates on ${project.name}'s dependencies`)
+        ChildProcessUtils.execSync(npmCheckPath, ['-u'], {
+          cwd: project.paths.root,
+          stdio: 'inherit',
+        })
+      } catch (err) {
+        relinkDeps()
+        throw err
+      }
+      relinkDeps()
     }),
   )
 

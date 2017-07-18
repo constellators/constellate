@@ -9,6 +9,9 @@ const createProjectWatcher = require('./createProjectWatcher')
 const gracefulShutdownManager = require('./gracefulShutdownManager')
 
 module.exports = async function develop() {
+  // Keep this message up here so it always comes before any others
+  TerminalUtils.info('Press CTRL + C to exit')
+
   const appConfig = AppUtils.getConfig()
   const preDevelopHook = R.path(['commands', 'develop', 'pre'], appConfig)
 
@@ -165,7 +168,6 @@ module.exports = async function develop() {
   gracefulShutdownManager(projectDevelopConductors, projectWatchers)
 
   // prevent node process from exiting. (until CTRL + C is pressed at least)
-  TerminalUtils.info('Press CTRL + C to exit')
   return new Promise(() => {
     // NEVER RESOLVE
   })

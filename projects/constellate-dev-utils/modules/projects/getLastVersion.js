@@ -1,11 +1,10 @@
 const semver = require('semver')
-const readPkg = require('read-pkg')
 const dedent = require('dedent')
 const GitUtils = require('../git')
 const TerminalUtils = require('../terminal')
 
 const resolveVersionFor = (project) => {
-  const pkgJson = readPkg.sync(project.paths.packageJson, { normalize: false })
+  const pkgJson = project.packageJson
   const lastAppVersionTag = GitUtils.getLastAnnotatedTagInfo()
 
   if (pkgJson.version && lastAppVersionTag && semver.gt(pkgJson.version, lastAppVersionTag.tag)) {
@@ -22,9 +21,9 @@ const resolveVersionFor = (project) => {
     return semver.clean(pkgJson.version)
   }
 
-  if (lastAppVersionTag) {
-    return semver.clean(lastAppVersionTag.tag)
-  }
+  // if (lastAppVersionTag) {
+  //   return semver.clean(lastAppVersionTag.tag)
+  // }
 
   return '0.0.0'
 }

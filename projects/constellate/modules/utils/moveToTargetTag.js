@@ -7,7 +7,7 @@ const AppUtils = require('constellate-dev-utils/modules/app')
 
 module.exports = async function moveToTargetTag({ question }) {
   const appConfig = AppUtils.getConfig()
-  const targetBranch = R.path(['masterBranchName'], appConfig)
+  const targetBranch = R.path(['publishing', 'gitBranchName'], appConfig)
 
   // Ensure there are no uncommitted changes.
   if (GitUtils.uncommittedChanges().length > 0) {
@@ -31,9 +31,9 @@ module.exports = async function moveToTargetTag({ question }) {
   if (mostRecentVersionTags.length === 0) {
     throw new Error(
       dedent(`
-        You have no tags. Please create a tag first.
+        You have no published versions. Please publish a version first.
 
-            ${chalk.blue('npx constellate tag')}
+            ${chalk.blue('npx constellate publish')}
       `),
     )
   }
@@ -51,7 +51,7 @@ module.exports = async function moveToTargetTag({ question }) {
   try {
     GitUtils.checkout(targetTag)
   } catch (err) {
-    throw new Error(`Could not checkout target tag ${targetTag}`, err)
+    throw new Error(`Could not checkout target version ${targetTag}`, err)
   }
 
   return targetTag

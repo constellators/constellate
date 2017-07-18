@@ -3,7 +3,6 @@ const getPort = require('get-port')
 const WebpackDevServer = require('webpack-dev-server')
 const TerminalUtils = require('constellate-dev-utils/modules/terminal')
 const extractError = require('constellate-dev-utils-webpack/modules/extractError')
-const linkBundledDependencies = require('constellate-dev-utils-webpack/modules/linkBundledDependencies')
 const generateConfig = require('constellate-plugin-compiler-webpack/modules/generateConfig')
 
 const devInstanceMap = {}
@@ -33,10 +32,6 @@ module.exports = function start(project, watcher) {
       return new Promise((resolve, reject) => {
         let hasResolved = false
         let showNextSuccess = false
-
-        // We need to make sure symlinking of the bundled dependencies exist so
-        // that bundling will happen correctly.
-        linkBundledDependencies(project)
 
         const config = generateConfig(project, { devServerPort: port })
         const compiler = webpack(config)

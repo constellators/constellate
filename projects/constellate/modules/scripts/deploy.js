@@ -1,9 +1,77 @@
-const AppUtils = require('constellate-dev-utils/modules/app')
+const { EOL } = require('os')
+const R = require('ramda')
+const dedent = require('dedent')
+const fs = require('fs-extra')
+const path = require('path')
+const writeJsonFile = require('write-json-file')
+const TerminalUtils = require('constellate-dev-utils/modules/terminal')
+const ProjectUtils = require('constellate-dev-utils/modules/projects')
+const ChildProcessUtils = require('constellate-dev-utils/modules/childProcess')
+
+const moveToTargetTag = require('../utils/moveToTargetTag')
+const rollbackRepo = require('../utils/rollbackRepo')
 
 module.exports = async function deploy() {
-  console.log('Coming soon ⏰')
+  TerminalUtils.title('Running deploy...')
 
-  console.log(AppUtils.getLastXVersionTags(5))
+  const allProjects = ProjectUtils.getAllProjects()
+  const allProjectsArray = R.values(allProjects)
+
+  // Ask the user which tag to operate against
+  const targetTag = await moveToTargetTag({
+    question: 'Which version of the application would you like to deploy from?',
+  })
+
+  TerminalUtils.info(`Moving repo to ${targetTag} to determine project versions`)
+
+  // Get the current versions for each project (will be based within the
+  // context of the current checked out version of the repo 👍)
+  const currentVersions = allProjectsArray.reduce(
+    (acc, cur) => Object.assign(acc, { [cur.name]: cur.version }),
+    {},
+  )
+
+  TerminalUtils.info(
+    dedent(`
+    Resolved project versions as:
+
+    \t${Object.keys(currentVersions)
+      .map(name => `- ${name}@${currentVersions[name]}`)
+      .join(`${EOL}\t`)}
+  `),
+  )
+
+  TerminalUtils.info('Rolling back repo to current and prepping for deployment...')
+
+  rollbackRepo()
+
+  const projectsToDeploy = allProjectsArray.filter(
+    project => project.config.deploy && project.config.deploy !== 'none',
+  )
+
+  // TODO: Allow them to select which projects they would like to deploy
+  TerminalUtils.info(
+    dedent(`
+    The following projects will be deployed:
+
+    \t${projectsToDeploy.map(x => `- ${x.name}`).join(`${EOL}\t`)}
+  `),
+  )
+
+  projectsToDeploy.forEach((project) => {
+    const deployRoot = path.resolve(process.cwd(), `./deploy/${project.name}`)
+    fs.ensureDirSync(deployRoot)
+    const tempPkgJson = { name: `deploy-${project.name}`, private: true }
+    const tempPkgJsonPath = path.resolve(deployRoot, './package.json')
+    writeJsonFile.sync(tempPkgJsonPath, tempPkgJson)
+    ChildProcessUtils.execSync(
+      'npm',
+      ['install', `${project.packageName}@${currentVersions[project.name]}`],
+      { cwd: deployRoot },
+    )
+  })
+
+  TerminalUtils.success('Done')
 }
 
 // TODO

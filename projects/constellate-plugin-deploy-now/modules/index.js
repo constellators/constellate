@@ -1,29 +1,12 @@
-// Authorization: Bearer nl6qEpkSHxVk4lPxCMAHYUo8
-
-// error format:
-/*
-{
-  "error": {
-    "code": "error_code",
-    "message": "An english description of the error that just occurred",
-    "url": "https://zeit.co/errors/endpoint/error_code"
-   }
-}
-*/
-
-// some consistent error codes:
-/*
-authentication_error	Authentication failed.
-rate_limited	You exceeded the maximum alloted requests.
-bad_request	Some required parameters were not present or were invalid.
-internal_server_error	An unexpected server error occurred.
-*/
-
 const TerminalUtils = require('constellate-dev-utils/modules/terminal')
 
 if (process.env.NOW_TOKEN == null) {
   TerminalUtils.error('You must supply your "now" API token via a NOW_TOKEN environment variable.')
   process.exit(1)
+}
+
+module.exports = function nowDeploy(path, options, project) {
+  // TODO
 }
 
 // TODO

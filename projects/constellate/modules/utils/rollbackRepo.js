@@ -9,7 +9,7 @@ const TerminalUtils = require('constellate-dev-utils/modules/terminal')
 module.exports = function rollbackRepo() {
   TerminalUtils.info('Rolling repo back to current...')
   const appConfig = AppUtils.getConfig()
-  const targetBranch = R.path(['masterBranchName'], appConfig)
+  const targetBranch = R.path(['publishing', 'gitBranchName'], appConfig)
   try {
     const allProjects = ProjectUtils.getAllProjects()
     const allProjectsArray = R.values(allProjects)
