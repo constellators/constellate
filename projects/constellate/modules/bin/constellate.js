@@ -16,10 +16,10 @@ const noop = () => undefined
 
 TerminalUtils.header(`constellate v${packageJson.version || '0.0.0-develop'}`)
 
-// Ensure the project is a git repo.
-if (!GitUtils.isInitialized()) {
-  throw new Error('Constellate requires that your project is initialised as a Git repository.')
-}
+// // Ensure the project is a git repo.
+// if (!GitUtils.isInitialized()) {
+//   throw new Error('Constellate requires that your project is initialised as a Git repository.')
+// }
 
 program.version(packageJson.version || '0.0.0-develop')
 

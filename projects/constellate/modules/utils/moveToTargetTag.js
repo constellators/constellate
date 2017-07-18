@@ -11,31 +11,36 @@ module.exports = async function moveToTargetTag({ question }) {
 
   // Ensure there are no uncommitted changes.
   if (GitUtils.uncommittedChanges().length > 0) {
-    throw new Error('You have uncommitted changes. Please commit your changes and then try again.')
+    TerminalUtils.error(
+      'You have uncommitted changes. Please commit your changes and then try again.',
+    )
+    process.exit(1)
   }
 
   // Ensure on correct branch.
   const actualBranch = GitUtils.getCurrentBranch()
   if (targetBranch !== actualBranch) {
-    throw new Error(
+    TerminalUtils.error(
       dedent(`
         You are not on the "master" branch (${targetBranch}).
 
           ${chalk.blue(`git checkout ${targetBranch}`)}
       `),
     )
+    process.exit(1)
   }
 
   // Get the last X versions and display them as options to be published
   const mostRecentVersionTags = AppUtils.getLastXVersionTags(5)
   if (mostRecentVersionTags.length === 0) {
-    throw new Error(
+    TerminalUtils.error(
       dedent(`
         You have no published versions. Please publish a version first.
 
             ${chalk.blue('npx constellate publish')}
       `),
     )
+    process.exit(1)
   }
 
   // Ask the user from which tag version they would like to move to, using the

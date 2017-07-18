@@ -5,6 +5,7 @@
 	"main": "modules/index.js",
 	"dependencies": {
 		"get-port": "3.1.0",
+		"p-retry": "1.0.0",
 		"webpack": "3.3.0",
 		"webpack-dev-server": "2.5.1",
 		"constellate-dev-utils": "0.12.4",
