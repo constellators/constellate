@@ -22,16 +22,17 @@ module.exports = function getConfig() {
 
   const configPath = path.resolve(process.cwd(), './constellate.js')
 
-  if (!fs.existsSync(configPath)) {
-    TerminalUtils.error('No constellate.js config was found. Please make sure this file exists.')
-    process.exit(1)
+  const configExists = fs.existsSync(configPath)
+
+  if (!configExists) {
+    TerminalUtils.info('No constellate.js config was found. Using defaults.')
   }
 
   cache = ObjectUtils.mergeDeep(
     {},
     defaultAppConfig,
     // eslint-disable-next-line global-require,import/no-dynamic-require
-    require(configPath),
+    configExists ? require(configPath) : {},
   )
 
   TerminalUtils.verbose(`Using app config:${EOL}${JSON.stringify(cache, null, 2)}`)
