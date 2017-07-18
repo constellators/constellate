@@ -58,12 +58,13 @@
 
 ## Features/Chores
 
- - [ ] Remove scripts/link and scripts/unlink
+ - [ ] Better messages during publish process
+ - [X] Remove scripts/link and scripts/unlink
  - [ ] Rename ProjectUtils.link/unlink to createSymLinks/removeSymLinks
  - [ ] Rename all dependencies and devDependencies to linked*
  - [ ] Babel plugin reads node version from engines, or it uses current node.
  - [ ] Require package.json files to be declared, and a main for server/bundle types.
- - [ ] Actually store the reference to the dependencies.
+ - [X] Actually store the reference to the dependencies.
  - [ ] Rename all instances of "compile" -> "build"
  - [ ] Consolidate gracefullyShutdown and configureGracefulExit
  - [ ] Allow specifying an exact tag version for doing publishing from
