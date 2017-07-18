@@ -2,10 +2,10 @@ const R = require('ramda')
 const fs = require('fs-extra')
 const loadJsonFile = require('load-json-file')
 const writeJsonFile = require('write-json-file')
-const ProjectUtils = require('constellate-dev-utils/modules/projects')
+const getAllProjectsArray = require('./getAllProjectsArray')
 
 module.exports = function updateVersions(project, versions) {
-  const allProjectsArray = ProjectUtils.getAllProjectsArray()
+  const allProjectsArray = getAllProjectsArray()
 
   const updateJsonFile = (file) => {
     const pkgJson = loadJsonFile.sync(file)
