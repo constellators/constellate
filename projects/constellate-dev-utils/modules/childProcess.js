@@ -15,7 +15,7 @@ function exec(command, args, opts) {
       {},
       {
         env: process.env,
-        stdio: process.env.DEBUG ? 'inherit' : undefined,
+        stdio: 'pipe',
       },
       opts,
     ),
@@ -32,7 +32,6 @@ function execSync(command, args, opts) {
       {},
       {
         env: process.env,
-        stdio: process.env.DEBUG ? 'inherit' : undefined,
       },
       opts,
     ),
