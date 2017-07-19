@@ -73,7 +73,7 @@ module.exports = function nowDeploy(deployPath, options, project) {
 
       TerminalUtils.info(`Setting alias for new deployment of ${project.name} to ${alias}....`)
       await new Promise(resolve => setTimeout(resolve, 5000))
-      await ChildProcessUtils.spawn('now', ['alias', 'set', deploymentUrl, alias])
+      await ChildProcessUtils.execSync('now', ['alias', 'set', deploymentUrl, alias])
 
       const minScale = R.path(['scale', 'min'], options) || '1'
       const maxScale = R.path(['scale', 'max'], options)
@@ -84,11 +84,10 @@ module.exports = function nowDeploy(deployPath, options, project) {
       const scale = async () => {
         TerminalUtils.verbose('Trying to set scale factor for deployment')
         await new Promise(resolve => setTimeout(resolve, 5000))
-        await ChildProcessUtils.spawn(
+        await ChildProcessUtils.execSync(
           'now',
           ['scale', deploymentUrl, minScale, maxScale].filter(x => x != null),
         )
-        TerminalUtils.info(`Set now scale for ${project.name} to `)
       }
 
       await pRetry(scale, { retries: 5 })

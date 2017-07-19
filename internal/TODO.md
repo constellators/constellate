@@ -25,6 +25,7 @@
 
 ## Features/Chores
 
+ - [ ] Check for project changes before asking for version on publish command, early bailout.
  - [ ] Terminal "centerer" https://stackoverflow.com/questions/30335637/get-width-of-terminal-in-node-js
  - [ ] use why-is-node-running for helpful errors?
  - [ ] Application template
