@@ -95,21 +95,23 @@ module.exports = function nowDeploy(deployPath, options, project) {
       }
       await pRetry(setAlias, { retries: 12 })
 
-      const minScale = R.path(['scale', 'min'], options) || '1'
-      const maxScale = R.path(['scale', 'max'], options)
-      TerminalUtils.info(
-        `Setting the scale factor for new deployment of ${project.name} to ${minScale} ${maxScale ||
-          ''}....`,
-      )
-      const setScale = async () => {
-        TerminalUtils.verbose('Trying to set scale factor for deployment')
-        await new Promise(resolve => setTimeout(resolve, 5000))
-        await ChildProcessUtils.exec(
-          'now',
-          ['scale', deploymentUrl, minScale, maxScale].filter(x => x != null),
+      const minScale = R.path(['scale', 'min'], options)
+      if (minScale) {
+        const maxScale = R.path(['scale', 'max'], options)
+        TerminalUtils.info(
+          `Setting the scale factor for new deployment of ${project.name} to ${minScale} ${maxScale ||
+            ''}....`,
         )
+        const setScale = async () => {
+          TerminalUtils.verbose('Trying to set scale factor for deployment')
+          await new Promise(resolve => setTimeout(resolve, 5000))
+          await ChildProcessUtils.exec(
+            'now',
+            ['scale', deploymentUrl, minScale, maxScale].filter(x => x != null),
+          )
+        }
+        await pRetry(setScale, { retries: 12 })
       }
-      await pRetry(setScale, { retries: 12 })
 
       if (options.aliasRules) {
         TerminalUtils.info('Applying alias rules...')
