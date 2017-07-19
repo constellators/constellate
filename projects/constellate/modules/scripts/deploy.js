@@ -23,6 +23,8 @@ module.exports = async function deploy() {
     question: 'Which version of the application would you like to deploy from?',
   })
 
+  TerminalUtils.info('Resolving projects at version that can be deployed...')
+
   TerminalUtils.verbose(`Moving repo to ${targetTag} to determine project versions`)
 
   // Get the current versions for each project (will be based within the

@@ -94,7 +94,7 @@ module.exports = function nowDeploy(deployPath, options, project) {
         )
       }
 
-      await pRetry(scale, { retries: 5 })
+      await pRetry(scale, { retries: 12 })
 
       if (options.aliasRules) {
         TerminalUtils.info('Applying alias rules...')
