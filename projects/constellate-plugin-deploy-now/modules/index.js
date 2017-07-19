@@ -22,8 +22,9 @@ module.exports = function nowDeploy(deployPath, options, project) {
     process.exit(1)
   }
 
-  if (!options.alias) {
-    TerminalUtils.error('You must supply an "alias" name as options to the "now" deploy plugin')
+  if (R.isNil(options.alias) || R.isEmpty(options.alias)) {
+    TerminalUtils.error('You must supply an "alias" for the "now" deploy plugin.')
+    process.exit(1)
   }
 
   return {
@@ -36,6 +37,8 @@ module.exports = function nowDeploy(deployPath, options, project) {
         )
         throw err
       }
+
+      const deploymentName = project.packageName.replace(/[^a-zA-Z0-9-]/g, '')
 
       const alias = options.alias
       const envVars = options.passThroughEnvVars
@@ -66,7 +69,17 @@ module.exports = function nowDeploy(deployPath, options, project) {
       )
       writeJsonFile.sync(nowConfigPath, nowConfig)
 
-      const args = ['deploy', ...envVars, '-c', nowConfigPath, '-C', '-t', process.env.NOW_TOKEN]
+      const args = [
+        'deploy',
+        '-n',
+        'deploymentName',
+        ...envVars,
+        '-c',
+        nowConfigPath,
+        '-C',
+        '-t',
+        process.env.NOW_TOKEN,
+      ]
 
       TerminalUtils.verbose(`Executing now with args:${EOL}\t[${args}]`)
       TerminalUtils.verbose(`Target deploy path:${EOL}\t${deployPath}`)
@@ -76,8 +89,11 @@ module.exports = function nowDeploy(deployPath, options, project) {
       TerminalUtils.verbose(`Now deployment for ${project.name} created at ${deploymentUrl}`)
 
       TerminalUtils.info(`Setting alias for new deployment of ${project.name} to ${alias}....`)
-      await new Promise(resolve => setTimeout(resolve, 5000))
-      await ChildProcessUtils.execSync('now', ['alias', 'set', deploymentUrl, alias])
+      const setAlias = async () => {
+        await new Promise(resolve => setTimeout(resolve, 5000))
+        await ChildProcessUtils.execSync('now', ['alias', 'set', deploymentUrl, alias])
+      }
+      await pRetry(setAlias, { retries: 12 })
 
       const minScale = R.path(['scale', 'min'], options) || '1'
       const maxScale = R.path(['scale', 'max'], options)
@@ -85,7 +101,7 @@ module.exports = function nowDeploy(deployPath, options, project) {
         `Setting the scale factor for new deployment of ${project.name} to ${minScale} ${maxScale ||
           ''}....`,
       )
-      const scale = async () => {
+      const setScale = async () => {
         TerminalUtils.verbose('Trying to set scale factor for deployment')
         await new Promise(resolve => setTimeout(resolve, 5000))
         await ChildProcessUtils.execSync(
@@ -93,14 +109,18 @@ module.exports = function nowDeploy(deployPath, options, project) {
           ['scale', deploymentUrl, minScale, maxScale].filter(x => x != null),
         )
       }
-
-      await pRetry(scale, { retries: 12 })
+      await pRetry(setScale, { retries: 12 })
 
       if (options.aliasRules) {
         TerminalUtils.info('Applying alias rules...')
         const aliasRulesPath = tempWrite.sync()
         writeJsonFile.sync(aliasRulesPath, { rules: options.aliasRules })
         await ChildProcessUtils.execSync('now', ['alias', alias, '-r', aliasRulesPath])
+      }
+
+      if (!options.disableRemovePrevious) {
+        // Removes previous deployments 👍
+        await ChildProcessUtils.execSync('now', ['rm', deploymentName, '--safe'])
       }
 
       TerminalUtils.success(`${project.name} has been successfully deployed`)
