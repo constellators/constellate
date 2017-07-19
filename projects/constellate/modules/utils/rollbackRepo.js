@@ -16,6 +16,7 @@ module.exports = function rollbackRepo(options = defaultOptions) {
   try {
     const allProjects = ProjectUtils.getAllProjects()
     const allProjectsArray = R.values(allProjects)
+    GitUtils.resetHead()
     GitUtils.checkout('.')
     GitUtils.checkout(targetBranch)
     allProjectsArray.forEach(ProjectUtils.installDeps)
@@ -26,6 +27,7 @@ module.exports = function rollbackRepo(options = defaultOptions) {
       Ah, snap :( we failed to roll your repo back.  You may be operating on a disconnected HEAD now.  You may need to manually reset your repo back to current.
 
         ${chalk.blue('git status')}
+        ${chalk.blue('git reset HEAD')}
         ${chalk.blue('git checkout .')}
         ${chalk.blue(`git checkout ${targetBranch}`)}
 

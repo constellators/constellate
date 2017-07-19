@@ -102,6 +102,10 @@ function addAnnotatedTag(tag) {
   ChildProcessUtils.execSync('git', ['tag', '-a', tag, '-m', tag])
 }
 
+function resetHead() {
+  ChildProcessUtils.execSync('git', ['reset', 'HEAD'])
+}
+
 function removeTag(tag) {
   ChildProcessUtils.execSync('git', ['tag', '-d', tag])
 }
@@ -141,6 +145,7 @@ module.exports = {
   isUpToDateWithRemote,
   pushWithTags,
   removeTag,
+  resetHead,
   stageAllChanges,
   uncommittedChanges,
   uncommittedChangesIn,
