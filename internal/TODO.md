@@ -1,19 +1,5 @@
 # Constellate Roadmap / Todo
 
- - [ ] NEW WORKFLOW
-    -> create-project foo
-    -> create-project bar
-    -> linkprojects
-        source foo
-  			target bar
-  			type dependencies
-  		  bar { dependencies: { foo } }
-    -> install (remove linked deps first, then replace linked deps)
-    -> update (remove linked deps first, then replace linked deps)
-    -> develop
-    -> publish
-    -> deploy
-
 ## Bugs
 
  - [ ] Show consecutive build errors as may contain new info.
@@ -27,25 +13,6 @@
  - [X] When a project is published, all their dependants need to be published too.
  - [X] Develop fails when having not previously built the projects and your are building a web client that depends on another constellate project. Mouthful.
 
-## Commands
-
- - [ ] Link projects
- - [ ] Unlink projects
- - [ ] Create project
- - [ ] Deploy
- - [X] Install
- - [X] Update
- - [X] Clean
- - [X] Build
- - [X] Develop
- - [X] Publish
-
-## Develop
-
- - [ ] Manual reload override.
- - [ ] CONFIG - Allow for explicit dependency rebuild ignore.
- - [X] Dependency based reloads.
-
 ## Docs
 
  - [ ] Intro
@@ -58,13 +25,14 @@
 
 ## Features/Chores
 
+ - [ ] Manual reload override for development mode.
+ - [ ] Allow for explicit ignoring of a dependency when doing hot development reloads.
+ - [ ] Create project command
  - [ ] Better messages during publish process
- - [X] Remove scripts/link and scripts/unlink
  - [ ] Rename ProjectUtils.link/unlink to createSymLinks/removeSymLinks
  - [ ] Rename all dependencies and devDependencies to linked*
  - [ ] Babel plugin reads node version from engines, or it uses current node.
  - [ ] Require package.json files to be declared, and a main for server/bundle types.
- - [X] Actually store the reference to the dependencies.
  - [ ] Rename all instances of "compile" -> "build"
  - [ ] Consolidate gracefullyShutdown and configureGracefulExit
  - [ ] Allow specifying an exact tag version for doing publishing from
@@ -99,6 +67,29 @@
  - [ ] auto-add source-map-support to build dependencies, and then re-enable for production builds.
  - [ ] plugin interface for compilers - pre/post compile
  - [ ] plugin interface for compilers - pre/post develop
+ - [X] Actually store the reference to the dependencies.
+ - [X] Remove scripts/link and scripts/unlink
+ - [X] Dependency based reloads.
+ - [X] Deploy command
+ - [X] Install
+ - [X] Update
+ - [X] Clean
+ - [X] Build
+ - [X] Develop
+ - [X] Publish
+ - [X] NEW WORKFLOW
+    -> create-project foo
+    -> create-project bar
+    -> linkprojects
+        source foo
+  			target bar
+  			type dependencies
+  		  bar { dependencies: { foo } }
+    -> install (remove linked deps first, then replace linked deps)
+    -> update (remove linked deps first, then replace linked deps)
+    -> develop
+    -> publish
+    -> deploy
  - [X] replace cross-spawn with execa
  - [X] move constellate-utils into it's own repo
  - [X] Change this constellate repo back over to node 8 and update eslint config accordingly.

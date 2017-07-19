@@ -62,50 +62,41 @@ module.exports = function nowDeploy(deployPath, options, project) {
       )
       writeJsonFile.sync(nowConfigPath, nowConfig)
 
-      // const deploymentName = `${process.env.NODE_ENV}-${project.packageName}`
-
-      const args = [
-        'deploy',
-        // '-n',
-        // deploymentName,
-        ...envVars,
-        '-c',
-        nowConfigPath,
-        '-C',
-        '-t',
-        process.env.NOW_TOKEN,
-      ]
+      const args = ['deploy', ...envVars, '-c', nowConfigPath, '-C', '-t', process.env.NOW_TOKEN]
 
       TerminalUtils.verbose(`Executing now with args:${EOL}\t[${args}]`)
       TerminalUtils.verbose(`Target deploy path:${EOL}\t${deployPath}`)
 
+      TerminalUtils.info(`Deploying ${project.name} to now....`)
       const deploymentUrl = ChildProcessUtils.execSync('now', args, { cwd: deployPath })
+      TerminalUtils.verbose(`Now deployment for ${project.name} created at ${deploymentUrl}`)
 
-      console.log(deploymentUrl)
-
+      TerminalUtils.info(`Setting alias for new deployment of ${project.name} to ${alias}....`)
       await new Promise(resolve => setTimeout(resolve, 5000))
-
       await ChildProcessUtils.spawn('now', ['alias', 'set', deploymentUrl, alias])
 
+      const minScale = R.path(['scale', 'min'], options) || '1'
+      const maxScale = R.path(['scale', 'max'], options)
+      TerminalUtils.info(
+        `Setting the scale factor for new deployment of ${project.name} to ${minScale} ${maxScale ||
+          ''}....`,
+      )
       const scale = async () => {
+        TerminalUtils.verbose('Trying to set scale factor for deployment')
         await new Promise(resolve => setTimeout(resolve, 5000))
         await ChildProcessUtils.spawn(
           'now',
-          [
-            'scale',
-            deploymentUrl,
-            R.path(['scale', 'min'], options) || '1',
-            R.path(['scale', 'max'], options),
-          ].filter(x => x != null),
+          ['scale', deploymentUrl, minScale, maxScale].filter(x => x != null),
         )
+        TerminalUtils.info(`Set now scale for ${project.name} to `)
       }
 
-      pRetry(scale, { retries: 5 })
+      await pRetry(scale, { retries: 5 })
 
-      await ChildProcessUtils.spawn('now-purge', ['-t', process.env.NOW_TOKEN, '-n', alias])
-
-      // TODO: purge previous
-      // https://github.com/matiastucci/now-purge
+      TerminalUtils.success(`${project.name} has been successfully deployed`)
+      TerminalUtils.info(
+        'We recommend that you remove your previous deployments using a tool like now-purge',
+      )
     },
   }
 }

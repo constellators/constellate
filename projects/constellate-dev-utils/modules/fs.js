@@ -21,6 +21,8 @@ function resolvePackage(resolvedPackageName) {
       resolvedPackage = require(symLinkPath)
     } catch (symErr) {
       // DO nothing
+      TerminalUtils.verbose(`Failed to resolve package ${packagePath} as a symlink`)
+      TerminalUtils.verbose(symErr)
     }
   }
 

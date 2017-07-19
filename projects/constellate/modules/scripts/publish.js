@@ -141,9 +141,13 @@ module.exports = async function publish() {
     process.exit(0)
   }
 
+  TerminalUtils.info('Building projects in preparation for publish...')
+
   // Build..
   ProjectUtils.linkAllProjects()
-  await pSeries(allProjectsArray.map(project => () => ProjectUtils.compileProject(project)))
+  await pSeries(
+    allProjectsArray.map(project => () => ProjectUtils.compileProject(project, { quiet: true })),
+  )
 
   // Then update the versions for each project
   finalToUpdateVersionFor.forEach((project) => {
@@ -188,10 +192,18 @@ module.exports = async function publish() {
     }
   }
 
+  TerminalUtils.info('Updating versions for each project and their linked dependencies...')
+
   // Rebuild to ensure new versions are being referenced
   const updatedAllProjectsArray = ProjectUtils.getAllProjectsArray(true)
   ProjectUtils.linkAllProjects()
-  await pSeries(updatedAllProjectsArray.map(project => () => ProjectUtils.compileProject(project)))
+  await pSeries(
+    updatedAllProjectsArray.map(project => () =>
+      ProjectUtils.compileProject(project, { quiet: true }),
+    ),
+  )
+
+  TerminalUtils.info('Projects are ready, publishing...')
 
   // 📦 Publish
 

@@ -23,7 +23,7 @@ module.exports = async function deploy() {
     question: 'Which version of the application would you like to deploy from?',
   })
 
-  TerminalUtils.info(`Moving repo to ${targetTag} to determine project versions`)
+  TerminalUtils.verbose(`Moving repo to ${targetTag} to determine project versions`)
 
   // Get the current versions for each project (will be based within the
   // context of the current checked out version of the repo 👍)
@@ -32,30 +32,38 @@ module.exports = async function deploy() {
     {},
   )
 
-  TerminalUtils.info(
+  TerminalUtils.verbose(
     dedent(`
     Resolved project versions as:
-
     \t${Object.keys(currentVersions)
       .map(name => `- ${name}@${currentVersions[name]}`)
       .join(`${EOL}\t`)}
   `),
   )
 
-  TerminalUtils.info('Rolling back repo to current and prepping for deployment...')
-
+  TerminalUtils.verbose('Rolling back repo to current and prepping for deployment...')
   rollbackRepo()
 
-  const projectsToDeploy = allProjectsArray.filter(project => project.deployPlugin)
+  const projectsWithDeployConfig = allProjectsArray.filter(project => project.deployPlugin)
 
-  // TODO: Allow them to select which projects they would like to deploy
-  TerminalUtils.info(
-    dedent(`
-    The following projects will be deployed:
+  if (projectsWithDeployConfig.length === 0) {
+    TerminalUtils.info('You do not have any projects with a deploy configuration.  Exiting...')
+    process.exit(0)
+  }
 
-    \t${projectsToDeploy.map(x => `- ${x.name}`).join(`${EOL}\t`)}
-  `),
-  )
+  const projectsToDeploy = TerminalUtils.multiSelect('Which projects would you like to deploy?', {
+    choices: projectsWithDeployConfig.map(x => ({
+      value: x.name,
+      text: `${x.name} (${x.version})`,
+    })),
+  })
+
+  if (projectsToDeploy.length === 0) {
+    TerminalUtils.info('No projects selected. Exiting...')
+    process.exit(0)
+  }
+
+  TerminalUtils.info('Deploying selected projects...')
 
   await pSeries(
     projectsToDeploy.map(project => async () => {
@@ -76,9 +84,3 @@ module.exports = async function deploy() {
 
   TerminalUtils.success('Done')
 }
-
-// TODO
-// - Checkout target release
-// - Build projects.
-// - Locate each one with a deploy to now and then deploy in order.
-// - Done.

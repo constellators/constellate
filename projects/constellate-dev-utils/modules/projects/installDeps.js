@@ -1,4 +1,4 @@
-const ChildProcessUtils = require('constellate-dev-utils/modules/childProcess')
+const ChildProcessUtils = require('../childProcess')
 
 module.exports = function installDeps(project) {
   ChildProcessUtils.execSync('npm', ['install'], { cwd: project.paths.root })
