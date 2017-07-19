@@ -12,8 +12,8 @@ const ProjectUtils = require('constellate-dev-utils/modules/projects')
 const requestNextVersion = require('../utils/requestNextVersion')
 const ChildProcessUtils = require('constellate-dev-utils/modules/childProcess')
 
-module.exports = async function publish() {
-  TerminalUtils.title('Running publish...')
+module.exports = async function release() {
+  TerminalUtils.title('Running release...')
 
   const allProjects = ProjectUtils.getAllProjects()
   const allProjectsArray = R.values(allProjects)
@@ -65,7 +65,7 @@ module.exports = async function publish() {
   const nextVersionTag = `v${nextVersion}`
 
   const toUpdateVersionFor = isFirstPublish
-    ? // We will publish all the ProjectUtils as this is our first publish.
+    ? // We will release all the projects as this is our first release.
       allProjectsArray
     : // Or all projects that have had changes since the last release
       allProjectsArray.filter(ProjectUtils.changedSince(lastVersionTag))
@@ -141,7 +141,7 @@ module.exports = async function publish() {
     process.exit(0)
   }
 
-  TerminalUtils.info('Building projects in preparation for publish...')
+  TerminalUtils.info('Building projects in preparation for release...')
 
   // Build..
   ProjectUtils.linkAllProjects()
@@ -184,7 +184,7 @@ module.exports = async function publish() {
         GitUtils.undoPreviousCommit()
       } catch (rollBackErr) {
         TerminalUtils.error(
-          'We failed to push the new version tag to the remote git target.  Therefore we tried to undo the tag, however an error occurred whilst we tried to do this.  You may need to ensure that your repo is back to its pre-publish state. We apologise and ask that you report this issue so that we can try and prevent it from occuring in the future.',
+          'We failed to push the new version tag to the remote git target.  Therefore we tried to undo the tag, however an error occurred whilst we tried to do this.  You may need to ensure that your repo is back to its pre-release state. We apologise and ask that you report this issue so that we can try and prevent it from occuring in the future.',
           rollBackErr,
         )
       }
@@ -203,7 +203,7 @@ module.exports = async function publish() {
     ),
   )
 
-  TerminalUtils.info('Projects are ready, publishing...')
+  TerminalUtils.info('Projects are versioned, publishing them to NPM repository...')
 
   // 📦 Publish
 

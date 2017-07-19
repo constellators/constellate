@@ -4,7 +4,6 @@
 
 const program = require('commander')
 const TerminalUtils = require('constellate-dev-utils/modules/terminal')
-const GitUtils = require('constellate-dev-utils/modules/git')
 
 const packageJson = require('../../package.json')
 
@@ -15,11 +14,6 @@ const rollbackRepo = require('../utils/rollbackRepo')
 const noop = () => undefined
 
 TerminalUtils.header(`constellate v${packageJson.version || '0.0.0-develop'}`)
-
-// // Ensure the project is a git repo.
-// if (!GitUtils.isInitialized()) {
-//   throw new Error('Constellate requires that your project is initialised as a Git repository.')
-// }
 
 program.version(packageJson.version || '0.0.0-develop')
 
@@ -104,11 +98,13 @@ program.command('link-projects').description('Links project(s) to a project').ac
 )
 
 program
-  .command('publish')
-  .description("Creates and publishes a new version of your application and it's projects")
+  .command('release')
+  .description(
+    'Creates a new release, versioning the app, the changed projects, and published the changed projects to NPM',
+  )
   .action(
     createAction({
-      resolveScript: () => require('../scripts/publish'),
+      resolveScript: () => require('../scripts/release'),
       gracefulExit: rollbackRepo,
     }),
   )
