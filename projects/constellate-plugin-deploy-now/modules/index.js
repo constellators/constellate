@@ -72,7 +72,7 @@ module.exports = function nowDeploy(deployPath, options, project) {
       const args = [
         'deploy',
         '-n',
-        'deploymentName',
+        deploymentName,
         ...envVars,
         '-c',
         nowConfigPath,
