@@ -6,8 +6,11 @@ const GitUtils = require('constellate-dev-utils/modules/git')
 const ProjectUtils = require('constellate-dev-utils/modules/projects')
 const TerminalUtils = require('constellate-dev-utils/modules/terminal')
 
-module.exports = function rollbackRepo() {
-  TerminalUtils.info('Rolling repo back to current...')
+const defaultOptions = { quiet: false }
+
+module.exports = function rollbackRepo(options = defaultOptions) {
+  const { quiet } = Object.assign({}, defaultOptions, options)
+  TerminalUtils[quiet ? 'verbose' : 'info']('Rolling repo back to current...')
   const appConfig = AppUtils.getConfig()
   const targetBranch = R.path(['publishing', 'gitBranchName'], appConfig)
   try {

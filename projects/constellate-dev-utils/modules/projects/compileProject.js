@@ -10,10 +10,7 @@ const executeCompile = (project) => {
 // :: Project -> Promise<BuildResult>
 module.exports = function compileProject(project, options = defaultOptions) {
   const { quiet } = Object.assign({}, defaultOptions, options)
-
-  if (!quiet) {
-    TerminalUtils.info(`Building ${project.name}...`)
-  }
+  TerminalUtils[quiet ? 'verbose' : 'info'](`Building ${project.name}...`)
 
   return executeCompile(project)
     .then(() => {

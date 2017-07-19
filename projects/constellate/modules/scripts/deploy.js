@@ -42,21 +42,23 @@ module.exports = async function deploy() {
   )
 
   TerminalUtils.verbose('Rolling back repo to current and prepping for deployment...')
-  rollbackRepo()
+  rollbackRepo({ quiet: true })
 
   const projectsWithDeployConfig = allProjectsArray.filter(project => project.deployPlugin)
-
   if (projectsWithDeployConfig.length === 0) {
     TerminalUtils.info('You do not have any projects with a deploy configuration.  Exiting...')
     process.exit(0)
   }
 
-  const projectsToDeploy = TerminalUtils.multiSelect('Which projects would you like to deploy?', {
-    choices: projectsWithDeployConfig.map(x => ({
-      value: x.name,
-      text: `${x.name} (${x.version})`,
-    })),
-  })
+  const projectsToDeploy = await TerminalUtils.multiSelect(
+    'Which projects would you like to deploy?',
+    {
+      choices: projectsWithDeployConfig.map(x => ({
+        value: x.name,
+        text: `${x.name} (${x.version})`,
+      })),
+    },
+  )
 
   if (projectsToDeploy.length === 0) {
     TerminalUtils.info('No projects selected. Exiting...')

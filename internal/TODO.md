@@ -25,6 +25,11 @@
 
 ## Features/Chores
 
+ - [ ] Terminal "centerer" https://stackoverflow.com/questions/30335637/get-width-of-terminal-in-node-js
+ - [ ] use why-is-node-running for helpful errors?
+ - [ ] Application template
+ - [ ] Empty project template
+ - [ ] Do clean up post deploy.
  - [ ] Manual reload override for development mode.
  - [ ] Allow for explicit ignoring of a dependency when doing hot development reloads.
  - [ ] Create project command
@@ -67,6 +72,8 @@
  - [ ] auto-add source-map-support to build dependencies, and then re-enable for production builds.
  - [ ] plugin interface for compilers - pre/post compile
  - [ ] plugin interface for compilers - pre/post develop
+ - [X] Nice messages and help for constellate command
+ - [X] Publish command Error resilience.
  - [X] Actually store the reference to the dependencies.
  - [X] Remove scripts/link and scripts/unlink
  - [X] Dependency based reloads.
@@ -113,27 +120,6 @@
  - [X] Check if remote exists
  - [X] webpack-dev-server integration for `webapp` types.
  - [X] Webpack plugin(s) - Use https://github.com/Urthen/case-sensitive-paths-webpack-plugin
-
-## Templates
-
- - [ ] Application template
- - [ ] Empty project
-
-## Test
-
- - [ ] Polyfill compilation to the following targets
-    - [ ] Node
-    - [ ] Browser
-       - [ ] Chrome
-       - [ ] IE 9
-       - [ ] Safari
-
-## UX
-
- - [ ] Nice messages and help for constellate command
- - [ ] Publish command Error resilience.
- - [ ] Terminal "centerer" https://stackoverflow.com/questions/30335637/get-width-of-terminal-in-node-js
- - [ ] use why-is-node-running for helpful errors?
  - [X] Develop command Error resilience.
    - [X] Startup Errors
    - [X] Compile Time Errors
@@ -143,3 +129,12 @@
  - [X] Source map support for transpiled bundles.
  - [X] Rename webpack output to match package name so that build output is easier to interpret.
  - [X] Ensure proper webpack error handling https://webpack.js.org/api/node/#error-handling
+
+## Test
+
+ - [ ] Polyfill compilation to the following targets
+    - [ ] Node
+    - [ ] Browser
+       - [ ] Chrome
+       - [ ] IE 9
+       - [ ] Safari

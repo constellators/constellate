@@ -220,7 +220,7 @@ module.exports = async function publish() {
         ChildProcessUtils.execSync('npm', ['publish'], {
           cwd: project.paths.buildRoot,
         })
-        TerminalUtils.info(`Published ${project.name}`)
+        TerminalUtils.verbose(`Published ${project.name}`)
       } catch (err) {
         TerminalUtils.warning(`Failed to publish ${project.name}`)
         TerminalUtils.verbose(err)
