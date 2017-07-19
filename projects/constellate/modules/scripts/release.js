@@ -58,11 +58,9 @@ module.exports = async function release() {
     }
   }
 
-  // Ask for the next version
-  const nextVersion = await requestNextVersion(lastVersion)
+  // Now determine the projects with changes that need to be released.
 
   const isFirstPublish = lastVersion === '0.0.0'
-  const nextVersionTag = `v${nextVersion}`
 
   const toUpdateVersionFor = isFirstPublish
     ? // We will release all the projects as this is our first release.
@@ -99,9 +97,13 @@ module.exports = async function release() {
   }
 
   if (finalToUpdateVersionFor.length === 0) {
-    TerminalUtils.info('None of your projects need to be published (i.e. no changes). Exiting...')
+    TerminalUtils.info('None of your projects have any changes to be released. Exiting...')
     process.exit(0)
   }
+
+  // Ask for the next version
+  const nextVersion = await requestNextVersion(lastVersion)
+  const nextVersionTag = `v${nextVersion}`
 
   // Let's get a sorted version of finalToUpdateVersionFor by filtering allProjects
   // which will already be in a safe build order.
@@ -132,7 +134,7 @@ module.exports = async function release() {
   TerminalUtils.verbose(`Using versions: ${EOL}${JSON.stringify(versions, null, 2)}`)
 
   const tagAnswer = await TerminalUtils.confirm(
-    `The following projects will be published with the respective new versions. Proceed?${EOL}\t${finalToUpdateVersionFor
+    `The following projects will be released with the respective new versions. Proceed?${EOL}\t${finalToUpdateVersionFor
       .map(({ name }) => `${name} ${previousVersions[name]} -> ${versions[name]}`)
       .join(`${EOL}\t`)}`,
   )

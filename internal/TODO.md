@@ -26,7 +26,6 @@
 ## Features/Chores
 
  - [ ] Add a -p (--purge) flag to install command which causes existing package-lock.json and node_modules to be deleted
- - [ ] Check for project changes before asking for version on publish command, early bailout.
  - [ ] Terminal "centerer" https://stackoverflow.com/questions/30335637/get-width-of-terminal-in-node-js
  - [ ] use why-is-node-running for helpful errors?
  - [ ] Application template
@@ -73,6 +72,7 @@
  - [ ] auto-add source-map-support to build dependencies, and then re-enable for production builds.
  - [ ] plugin interface for compilers - pre/post compile
  - [ ] plugin interface for compilers - pre/post develop
+ - [X] Check for project changes before asking for version on publish command, early bailout.
  - [X] Now deploy path rules aliasing.
  - [X] Do clean up post deploy.
  - [X] Nice messages and help for constellate command
