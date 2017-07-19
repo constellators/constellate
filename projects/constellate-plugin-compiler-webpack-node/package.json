@@ -1,5 +1,5 @@
 {
-	"version": "0.13.7",
+	"version": "0.13.11",
 	"name": "constellate-plugin-compiler-webpack-node",
 	"description": "A Webpack compiler (targetting Node) plugin for Constellate projects.",
 	"main": "modules/index.js",
@@ -27,7 +27,7 @@
 		"url-loader": "0.5.9",
 		"webpack": "3.3.0",
 		"webpack-node-externals": "1.6.0",
-		"constellate-dev-utils": "0.13.7",
-		"constellate-dev-utils-webpack": "0.13.7"
+		"constellate-dev-utils": "0.13.11",
+		"constellate-dev-utils-webpack": "0.13.11"
 	}
 }
