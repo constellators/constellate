@@ -18,6 +18,8 @@ module.exports = async function deploy() {
   const allProjects = ProjectUtils.getAllProjects()
   const allProjectsArray = R.values(allProjects)
 
+  let currentVersions
+
   try {
     // Ask the user which tag to operate against
     const targetTag = await moveToTargetTag({
@@ -30,7 +32,7 @@ module.exports = async function deploy() {
 
     // Get the current versions for each project (will be based within the
     // context of the current checked out version of the repo 👍)
-    const currentVersions = allProjectsArray.reduce(
+    currentVersions = allProjectsArray.reduce(
       (acc, cur) => Object.assign(acc, { [cur.name]: cur.version }),
       {},
     )
