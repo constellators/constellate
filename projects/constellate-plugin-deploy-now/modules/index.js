@@ -99,7 +99,7 @@ module.exports = function nowDeploy(deployPath, options, project) {
       if (options.aliasRules) {
         TerminalUtils.info('Applying alias rules...')
         const aliasRulesPath = tempWrite.sync()
-        writeJsonFile.sync(aliasRulesPath, options.aliasRules)
+        writeJsonFile.sync(aliasRulesPath, { rules: options.aliasRules })
         await ChildProcessUtils.execSync('now', ['alias', alias, '-r', aliasRulesPath])
       }
 
