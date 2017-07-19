@@ -69,7 +69,7 @@ module.exports = async function deploy() {
 
   TerminalUtils.info('Deploying selected projects...')
 
-  const deployRootPath = path.resole(process.cwd(), './deploy')
+  const deployRootPath = path.resolve(process.cwd(), './deploy')
 
   await pSeries(
     projectsToDeploy.map(project => async () => {
