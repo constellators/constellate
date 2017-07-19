@@ -22,6 +22,10 @@ module.exports = function nowDeploy(deployPath, options, project) {
     process.exit(1)
   }
 
+  if (!options.alias) {
+    TerminalUtils.error('You must supply an "alias" name as options to the "now" deploy plugin')
+  }
+
   return {
     deploy: async () => {
       try {
@@ -33,7 +37,7 @@ module.exports = function nowDeploy(deployPath, options, project) {
         throw err
       }
 
-      const alias = options.alias || project.packageName
+      const alias = options.alias
       const envVars = options.passThroughEnvVars
         ? options.passThroughEnvVars.reduce(
             (acc, cur) => [...acc, '-e', `${cur}=${process.env[cur]}`],
@@ -91,6 +95,13 @@ module.exports = function nowDeploy(deployPath, options, project) {
       }
 
       await pRetry(scale, { retries: 5 })
+
+      if (options.aliasRules) {
+        TerminalUtils.info('Applying alias rules...')
+        const aliasRulesPath = tempWrite.sync()
+        writeJsonFile.sync(aliasRulesPath, options.aliasRules)
+        await ChildProcessUtils.execSync('now', ['alias', alias, '-r', aliasRulesPath])
+      }
 
       TerminalUtils.success(`${project.name} has been successfully deployed`)
       TerminalUtils.info(

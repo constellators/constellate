@@ -69,9 +69,11 @@ module.exports = async function deploy() {
 
   TerminalUtils.info('Deploying selected projects...')
 
+  const deployRootPath = path.resole(process.cwd(), './deploy')
+
   await pSeries(
     projectsToDeploy.map(project => async () => {
-      const installRoot = path.resolve(process.cwd(), `./deploy/${project.name}`)
+      const installRoot = path.resolve(deployRootPath, `./${project.name}`)
       fs.ensureDirSync(installRoot)
       const tempPkgJson = { name: `deploy-${project.name}`, private: true }
       const tempPkgJsonPath = path.resolve(installRoot, './package.json')
@@ -85,6 +87,9 @@ module.exports = async function deploy() {
       await project.deployPlugin(deployRoot, project.config.deployOptions || {}, project).deploy()
     }),
   )
+
+  TerminalUtils.verbose('Cleaning deploy dir')
+  fs.removeSync(deployRootPath)
 
   TerminalUtils.success('Done')
 }
