@@ -50,7 +50,7 @@ module.exports = async function deploy() {
     process.exit(0)
   }
 
-  const projectsToDeploy = await TerminalUtils.multiSelect(
+  const namesOfProjectsToDeploy = await TerminalUtils.multiSelect(
     'Which projects would you like to deploy?',
     {
       choices: projectsWithDeployConfig.map(x => ({
@@ -60,10 +60,12 @@ module.exports = async function deploy() {
     },
   )
 
-  if (projectsToDeploy.length === 0) {
+  if (namesOfProjectsToDeploy.length === 0) {
     TerminalUtils.info('No projects selected. Exiting...')
     process.exit(0)
   }
+
+  const projectsToDeploy = namesOfProjectsToDeploy.map(x => allProjects[x])
 
   TerminalUtils.info('Deploying selected projects...')
 
