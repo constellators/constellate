@@ -120,7 +120,14 @@ module.exports = function nowDeploy(deployPath, options, project) {
 
       if (!options.disableRemovePrevious) {
         // Removes previous deployments 👍
-        await ChildProcessUtils.exec('now', ['rm', deploymentName, '--safe'])
+        try {
+          await ChildProcessUtils.exec('now', ['rm', deploymentName, '--safe'])
+        } catch (err) {
+          TerminalUtils.verbose(
+            'Failed to remove previous deployments. There may not be any available.',
+          )
+          TerminalUtils.verbose(err)
+        }
       }
 
       TerminalUtils.success(`${project.name} has been successfully deployed`)

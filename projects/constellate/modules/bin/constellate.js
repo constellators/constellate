@@ -64,7 +64,6 @@ program
 program.command('deploy').description('Deploys the projects').action(
   createAction({
     resolveScript: () => require('../scripts/deploy'),
-    gracefulExit: rollbackRepo,
     errorMsg:
       'Your projects may not have been fully deployed. Please check your expected deployment targets.',
   }),
