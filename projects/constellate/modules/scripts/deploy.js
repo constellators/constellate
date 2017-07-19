@@ -83,7 +83,9 @@ module.exports = async function deploy() {
       ChildProcessUtils.execSync(
         'npm',
         ['install', `${project.packageName}@${currentVersions[project.name]}`],
-        { cwd: installRoot },
+        {
+          cwd: installRoot,
+        },
       )
       const deployRoot = path.resolve(installRoot, `./node_modules/${project.packageName}`)
       await project.deployPlugin(deployRoot, project.config.deployOptions || {}, project).deploy()
