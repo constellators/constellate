@@ -38,7 +38,7 @@ module.exports = function nowDeploy(deployPath, options, project) {
         throw err
       }
 
-      const deploymentName = project.packageName.replace(/[^a-zA-Z0-9-]/g, '')
+      const deploymentName = project.packageName
 
       const alias = options.alias
       const envVars = options.passThroughEnvVars
@@ -85,13 +85,13 @@ module.exports = function nowDeploy(deployPath, options, project) {
       TerminalUtils.verbose(`Target deploy path:${EOL}\t${deployPath}`)
 
       TerminalUtils.info(`Deploying ${project.name} to now....`)
-      const deploymentUrl = ChildProcessUtils.execSync('now', args, { cwd: deployPath })
+      const deploymentUrl = await ChildProcessUtils.exec('now', args, { cwd: deployPath })
       TerminalUtils.verbose(`Now deployment for ${project.name} created at ${deploymentUrl}`)
 
       TerminalUtils.info(`Setting alias for new deployment of ${project.name} to ${alias}....`)
       const setAlias = async () => {
         await new Promise(resolve => setTimeout(resolve, 5000))
-        await ChildProcessUtils.execSync('now', ['alias', 'set', deploymentUrl, alias])
+        await ChildProcessUtils.exec('now', ['alias', 'set', deploymentUrl, alias])
       }
       await pRetry(setAlias, { retries: 12 })
 
@@ -104,7 +104,7 @@ module.exports = function nowDeploy(deployPath, options, project) {
       const setScale = async () => {
         TerminalUtils.verbose('Trying to set scale factor for deployment')
         await new Promise(resolve => setTimeout(resolve, 5000))
-        await ChildProcessUtils.execSync(
+        await ChildProcessUtils.exec(
           'now',
           ['scale', deploymentUrl, minScale, maxScale].filter(x => x != null),
         )
@@ -115,18 +115,15 @@ module.exports = function nowDeploy(deployPath, options, project) {
         TerminalUtils.info('Applying alias rules...')
         const aliasRulesPath = tempWrite.sync()
         writeJsonFile.sync(aliasRulesPath, { rules: options.aliasRules })
-        await ChildProcessUtils.execSync('now', ['alias', alias, '-r', aliasRulesPath])
+        await ChildProcessUtils.exec('now', ['alias', alias, '-r', aliasRulesPath])
       }
 
       if (!options.disableRemovePrevious) {
         // Removes previous deployments 👍
-        await ChildProcessUtils.execSync('now', ['rm', deploymentName, '--safe'])
+        await ChildProcessUtils.exec('now', ['rm', deploymentName, '--safe'])
       }
 
       TerminalUtils.success(`${project.name} has been successfully deployed`)
-      TerminalUtils.info(
-        'We recommend that you remove your previous deployments using a tool like now-purge',
-      )
     },
   }
 }

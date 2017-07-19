@@ -1,7 +1,6 @@
 /* eslint-disable no-console */
 
 const chalk = require('chalk')
-const figures = require('figures')
 const inquirer = require('inquirer')
 
 function verbose(msg) {
@@ -11,7 +10,7 @@ function verbose(msg) {
 }
 
 function error(msg, err) {
-  console.log(chalk.red.bold(`\n${figures.warning} ${msg}`))
+  console.log(chalk.red.bold(msg))
   if (err) {
     if (typeof err === 'object' && typeof err.message !== 'undefined') {
       if (typeof err.stack !== 'undefined') {
@@ -27,7 +26,7 @@ function error(msg, err) {
 }
 
 function warning(msg) {
-  console.log(chalk.yellow(`${figures.warning} ${msg}`))
+  console.log(chalk.yellow(msg))
 }
 
 function title(msg) {
@@ -39,7 +38,7 @@ function info(msg) {
 }
 
 function success(msg) {
-  console.log(chalk.green(`${figures.tick} ${msg}`))
+  console.log(chalk.green(msg))
 }
 
 function header(msg) {
