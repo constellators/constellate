@@ -1,8 +1,8 @@
 {
   "private": true,
   "devDependencies": {
-    "constellate": "0.13.13",
-    "constellate-plugin-compiler-babel": "0.13.13",
+    "constellate": "0.14.0",
+    "constellate-plugin-compiler-babel": "0.14.0",
     "eslint-config-constellate": "0.12.6"
   },
   "eslintConfig": {
