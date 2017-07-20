@@ -129,8 +129,23 @@ module.exports = function nowDeploy(deployPath, options, project) {
       TerminalUtils.info(`Setting up alias for new deployment of ${project.name} to ${alias}....`)
       await ChildProcessUtils.exec('now', ['alias', 'set', deploymentId, alias])
 
+      // We need to do this at this point before attaching the rules as the rules
+      // seem to indicate the deployment as not being aliased :-/
+      if (!options.disableRemovePrevious) {
+        // Removes previous deployments 👍
+        try {
+          TerminalUtils.info(`Removing unaliased deployments for ${project.name}...`)
+          await ChildProcessUtils.exec('now', ['rm', deploymentName, '--safe', '-y'])
+        } catch (err) {
+          TerminalUtils.verbose(
+            'Failed to remove previous deployments. There may not be any available.',
+          )
+          TerminalUtils.verbose(err)
+        }
+      }
+
       if (options.additionalAliasRules) {
-        TerminalUtils.info('Attaching rules to the alias...')
+        TerminalUtils.info('Attaching additional alias rules...')
         const aliasRulesPath = tempWrite.sync()
         writeJsonFile.sync(aliasRulesPath, {
           rules: [
@@ -146,27 +161,11 @@ module.exports = function nowDeploy(deployPath, options, project) {
       const minScale = R.path(['scale', 'min'], options)
       if (minScale) {
         const maxScale = R.path(['scale', 'max'], options)
-        TerminalUtils.info(
-          `Setting the scale factor for new deployment of ${project.name} to ${minScale} ${maxScale ||
-            ''}....`,
-        )
+        TerminalUtils.info(`Setting the scale factor to ${minScale} ${maxScale || ''}....`)
         await ChildProcessUtils.exec(
           'now',
           ['scale', deploymentId, minScale, maxScale].filter(x => x != null),
         )
-      }
-
-      if (!options.disableRemovePrevious) {
-        // Removes previous deployments 👍
-        try {
-          TerminalUtils.info(`Removing unaliased deployments for ${project.name}...`)
-          await ChildProcessUtils.exec('now', ['rm', deploymentName, '--safe', '-y'])
-        } catch (err) {
-          TerminalUtils.verbose(
-            'Failed to remove previous deployments. There may not be any available.',
-          )
-          TerminalUtils.verbose(err)
-        }
       }
 
       TerminalUtils.success(`${project.name} has been successfully deployed`)
