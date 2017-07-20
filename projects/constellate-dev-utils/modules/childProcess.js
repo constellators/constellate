@@ -5,9 +5,12 @@
  */
 
 const execa = require('execa')
+const TerminalUtils = require('./terminal')
 
 // :: (string, ?Array<string>, ?Object) -> Promise<string, Error>
 function exec(command, args, opts) {
+  TerminalUtils.verbose(`exec child process: ${command} ${args.join(' ')}`)
+
   return execa(
     command,
     args,
@@ -25,6 +28,8 @@ function exec(command, args, opts) {
 // :: (string, ?Array<string>, ?Object) -> string
 // throws Error
 function execSync(command, args, opts) {
+  TerminalUtils.verbose(`execSync child process: ${command} ${args.join(' ')}`)
+
   return execa.sync(
     command,
     args,
@@ -39,7 +44,9 @@ function execSync(command, args, opts) {
 }
 
 // :: (string, ?Array<string>, ?Object) -> Promise
-function spawn(command, args, opts) {
+function spawn(command, args = [], opts) {
+  TerminalUtils.verbose(`spawn child process: ${command} ${args.join(' ')}`)
+
   return execa(
     command,
     args,
