@@ -1,5 +1,5 @@
 {
-	"version": "0.13.12",
+	"version": "0.13.13",
 	"name": "constellate-plugin-develop-webpack",
 	"description": "Provides webpack-dev-server support for 'webpack' compiled constellate projects",
 	"main": "modules/index.js",
@@ -8,8 +8,8 @@
 		"p-retry": "1.0.0",
 		"webpack": "3.3.0",
 		"webpack-dev-server": "2.5.1",
-		"constellate-dev-utils": "0.13.12",
-		"constellate-dev-utils-webpack": "0.13.12",
-		"constellate-plugin-compiler-webpack": "0.13.12"
+		"constellate-dev-utils": "0.13.13",
+		"constellate-dev-utils-webpack": "0.13.13",
+		"constellate-plugin-compiler-webpack": "0.13.13"
 	}
 }
