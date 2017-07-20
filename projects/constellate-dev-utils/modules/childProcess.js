@@ -4,13 +4,14 @@
  * ❤️
  */
 
+const R = require('ramda')
 const execa = require('execa')
 const TerminalUtils = require('./terminal')
 
 // :: (string, ?Array<string>, ?Object) -> Promise<string, Error>
-function exec(command, args, opts = {}) {
+function exec(command, args = [], opts = {}) {
   TerminalUtils.verbose(
-    `exec child process: ${command} ${args.join(' ')} (${JSON.stringify(opts, null, 2)})`,
+    `exec child process: ${command} ${args.join(' ')}${opts.cwd ? ` (${opts.cwd})` : ''}`,
   )
 
   return execa(
@@ -29,9 +30,9 @@ function exec(command, args, opts = {}) {
 
 // :: (string, ?Array<string>, ?Object) -> string
 // throws Error
-function execSync(command, args, opts) {
+function execSync(command, args = [], opts = {}) {
   TerminalUtils.verbose(
-    `execSync child process: ${command} ${args.join(' ')} (${JSON.stringify(opts, null, 2)})`,
+    `execSync child process: ${command} ${args.join(' ')}${opts.cwd ? ` (${opts.cwd})` : ''}`,
   )
 
   return execa.sync(
@@ -48,9 +49,9 @@ function execSync(command, args, opts) {
 }
 
 // :: (string, ?Array<string>, ?Object) -> Promise
-function spawn(command, args = [], opts) {
+function spawn(command, args = [], opts = {}) {
   TerminalUtils.verbose(
-    `spawn child process: ${command} ${args.join(' ')} (${JSON.stringify(opts, null, 2)})`,
+    `spawn child process: ${command} ${args.join(' ')}${opts.cwd ? ` (${opts.cwd})` : ''}`,
   )
 
   return execa(

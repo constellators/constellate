@@ -25,6 +25,7 @@
 
 ## Features/Chores
 
+ - [ ] When linking projects ensure the deps are ordered by package name asc.
  - [ ] Add a -p (--purge) flag to install command which causes existing package-lock.json and node_modules to be deleted
  - [ ] Terminal "centerer" https://stackoverflow.com/questions/30335637/get-width-of-terminal-in-node-js
  - [ ] use why-is-node-running for helpful errors?
