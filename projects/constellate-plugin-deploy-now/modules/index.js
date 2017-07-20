@@ -127,8 +127,10 @@ module.exports = function nowDeploy(deployPath, options, project) {
       )
 
       TerminalUtils.info(`Setting up alias for new deployment of ${project.name} to ${alias}....`)
+      await ChildProcessUtils.exec('now', ['alias', 'set', deploymentId, alias])
+
       if (options.additionalAliasRules) {
-        TerminalUtils.info('Creating alias with additional rules...')
+        TerminalUtils.info('Attaching rules to the alias...')
         const aliasRulesPath = tempWrite.sync()
         writeJsonFile.sync(aliasRulesPath, {
           rules: [
@@ -139,8 +141,6 @@ module.exports = function nowDeploy(deployPath, options, project) {
           ],
         })
         await ChildProcessUtils.exec('now', ['alias', alias, '-r', aliasRulesPath])
-      } else {
-        await ChildProcessUtils.exec('now', ['alias', 'set', deploymentId, alias])
       }
 
       const minScale = R.path(['scale', 'min'], options)
