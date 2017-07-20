@@ -1,6 +1,7 @@
 const R = require('ramda')
-const { EOL } = require('os')
-const pRetry = require('p-retry')
+const pWhilst = require('p-whilst')
+const dedent = require('dedent')
+const chalk = require('chalk')
 const deepMerge = require('deepmerge')
 const tempWrite = require('temp-write')
 const writeJsonFile = require('write-json-file')
@@ -81,19 +82,50 @@ module.exports = function nowDeploy(deployPath, options, project) {
         process.env.NOW_TOKEN,
       ]
 
-      TerminalUtils.verbose(`Executing now with args:${EOL}\t[${args}]`)
-      TerminalUtils.verbose(`Target deploy path:${EOL}\t${deployPath}`)
+      TerminalUtils.verbose(`Deploy path: ${deployPath}`)
 
-      TerminalUtils.info(`Deploying ${project.name} to now....`)
-      const deploymentUrl = await ChildProcessUtils.exec('now', args, { cwd: deployPath })
-      TerminalUtils.verbose(`Now deployment for ${project.name} created at ${deploymentUrl}`)
+      const deployResponse = await ChildProcessUtils.exec('now', args, { cwd: deployPath })
+      const deploymentIdRegex = /(https:\/\/.+\.now\.sh)/g
+      if (!deploymentIdRegex.test(deployResponse)) {
+        // Todo error
+        process.exit(1)
+      }
+      const deploymentId = deployResponse.match(deploymentIdRegex)[0]
+      TerminalUtils.info(`Creating deployment (${deploymentId}) for ${project.name}...`)
+
+      // Now we need to wait for the deployment to be ready.
+
+      let ready = false
+
+      setTimeout(() => {
+        if (ready) {
+          return
+        }
+        TerminalUtils.error(
+          dedent(`
+          The deployment process timed out. :( There may be an issue with your deployment or with "now". You could try to manually deploy using the following commands to gain more insight into the issue:
+
+            ${chalk.blue(`cd ${deployPath}`)}
+            ${chalk.blue(`now ${args.join(' ')}`)}
+          `),
+        )
+        process.exit(1)
+      }, (options.deployTimeoutMins || 15) * 60 * 1000)
+
+      await pWhilst(
+        () => !ready,
+        async () => {
+          // we will check the status for the deployment every 5 seconds
+          await new Promise(resolve => setTimeout(resolve, 5 * 1000))
+          const status = ChildProcessUtils.execSync('now', ['ls', deploymentId])
+          if (/READY/.test(status)) {
+            ready = true
+          }
+        },
+      )
 
       TerminalUtils.info(`Setting alias for new deployment of ${project.name} to ${alias}....`)
-      const setAlias = async () => {
-        await new Promise(resolve => setTimeout(resolve, 5000))
-        await ChildProcessUtils.exec('now', ['alias', 'set', deploymentUrl, alias])
-      }
-      await pRetry(setAlias, { retries: 12 })
+      await ChildProcessUtils.exec('now', ['alias', 'set', deploymentId, alias])
 
       const minScale = R.path(['scale', 'min'], options)
       if (minScale) {
@@ -102,15 +134,10 @@ module.exports = function nowDeploy(deployPath, options, project) {
           `Setting the scale factor for new deployment of ${project.name} to ${minScale} ${maxScale ||
             ''}....`,
         )
-        const setScale = async () => {
-          TerminalUtils.verbose('Trying to set scale factor for deployment')
-          await new Promise(resolve => setTimeout(resolve, 5000))
-          await ChildProcessUtils.exec(
-            'now',
-            ['scale', deploymentUrl, minScale, maxScale].filter(x => x != null),
-          )
-        }
-        await pRetry(setScale, { retries: 12 })
+        await ChildProcessUtils.exec(
+          'now',
+          ['scale', deploymentId, minScale, maxScale].filter(x => x != null),
+        )
       }
 
       if (options.aliasRules) {
