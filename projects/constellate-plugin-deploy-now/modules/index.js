@@ -151,7 +151,7 @@ module.exports = function nowDeploy(deployPath, options, project) {
         // Removes previous deployments 👍
         try {
           // TODO: I think this is hanging the proc. Maybe switch to sync execs
-          await ChildProcessUtils.exec('now', ['rm', deploymentName, '--safe'])
+          await ChildProcessUtils.exec('now', ['rm', deploymentName, '--safe', '-y'])
         } catch (err) {
           TerminalUtils.verbose(
             'Failed to remove previous deployments. There may not be any available.',
