@@ -1,5 +1,5 @@
 {
-	"version": "0.13.13",
+	"version": "0.14.0",
 	"name": "constellate-plugin-compiler-babel",
 	"description": "A Babel compiler plugin for Constellate projects.",
 	"main": "modules/index.js",
@@ -26,6 +26,6 @@
 		"pify": "3.0.0",
 		"ramda": "0.24.1",
 		"babel-plugin-inject-source-map-init": "0.12.6",
-		"constellate-dev-utils": "0.13.13"
+		"constellate-dev-utils": "0.14.0"
 	}
 }
