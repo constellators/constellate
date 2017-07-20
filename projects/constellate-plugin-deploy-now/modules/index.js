@@ -120,12 +120,28 @@ module.exports = function nowDeploy(deployPath, options, project) {
           const status = ChildProcessUtils.execSync('now', ['ls', deploymentId])
           if (/READY/.test(status)) {
             ready = true
+          } else {
+            TerminalUtils.info('...')
           }
         },
       )
 
-      TerminalUtils.info(`Setting alias for new deployment of ${project.name} to ${alias}....`)
-      await ChildProcessUtils.exec('now', ['alias', 'set', deploymentId, alias])
+      TerminalUtils.info(`Setting up alias for new deployment of ${project.name} to ${alias}....`)
+      if (options.additionalAliasRules) {
+        TerminalUtils.info('Creating alias with additional rules...')
+        const aliasRulesPath = tempWrite.sync()
+        writeJsonFile.sync(aliasRulesPath, {
+          rules: [
+            ...options.additionalAliasRules,
+            {
+              dest: deploymentId,
+            },
+          ],
+        })
+        await ChildProcessUtils.exec('now', ['alias', alias, '-r', aliasRulesPath])
+      } else {
+        await ChildProcessUtils.exec('now', ['alias', 'set', deploymentId, alias])
+      }
 
       const minScale = R.path(['scale', 'min'], options)
       if (minScale) {
@@ -138,13 +154,6 @@ module.exports = function nowDeploy(deployPath, options, project) {
           'now',
           ['scale', deploymentId, minScale, maxScale].filter(x => x != null),
         )
-      }
-
-      if (options.aliasRules) {
-        TerminalUtils.info('Applying alias rules...')
-        const aliasRulesPath = tempWrite.sync()
-        writeJsonFile.sync(aliasRulesPath, { rules: options.aliasRules })
-        await ChildProcessUtils.exec('now', ['alias', alias, '-r', aliasRulesPath])
       }
 
       if (!options.disableRemovePrevious) {
