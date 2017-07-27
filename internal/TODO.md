@@ -25,21 +25,15 @@
 
 ## Features/Chores
 
- - [ ] When linking projects ensure the deps are ordered by package name asc.
- - [ ] Add a -p (--purge) flag to install command which causes existing package-lock.json and node_modules to be deleted
- - [ ] Terminal "centerer" https://stackoverflow.com/questions/30335637/get-width-of-terminal-in-node-js
- - [ ] use why-is-node-running for helpful errors?
+ - [X] Rename all instances of "compile" -> "build"
  - [ ] Application template
  - [ ] Empty project template
- - [ ] Manual reload override for development mode.
- - [ ] Allow for explicit ignoring of a dependency when doing hot development reloads.
  - [ ] Create project command
  - [ ] Better messages during publish process
  - [ ] Rename ProjectUtils.link/unlink to createSymLinks/removeSymLinks
  - [ ] Rename all dependencies and devDependencies to linked*
  - [ ] Babel plugin reads node version from engines, or it uses current node.
  - [ ] Require package.json files to be declared, and a main for server/bundle types.
- - [ ] Rename all instances of "compile" -> "build"
  - [ ] Consolidate gracefullyShutdown and configureGracefulExit
  - [ ] Allow specifying an exact tag version for doing publishing from
  - [ ] Command hooks + error handling of them!
@@ -52,12 +46,12 @@
  - [ ] Ensure npx
  - [ ] Change config format
        {
-          compiler: {
-            name: 'foo',
-            options: {
+          build: [
+            'foo',
+            {
               ...
-            }
-          }
+            },
+          ],
        }
  - [ ] Finish all inline TODO comments within code.
  - [ ] Support for Node >=6
@@ -73,6 +67,12 @@
  - [ ] auto-add source-map-support to build dependencies, and then re-enable for production builds.
  - [ ] plugin interface for compilers - pre/post compile
  - [ ] plugin interface for compilers - pre/post develop
+ - [ ] Manual reload override for development mode.
+ - [ ] Allow for explicit ignoring of a dependency when doing hot development reloads.
+ - [ ] Terminal "centerer" https://stackoverflow.com/questions/30335637/get-width-of-terminal-in-node-js
+ - [ ] use why-is-node-running for helpful errors?
+ - [X] Add a -p (--purge) flag to install command which causes existing package-lock.json and node_modules to be deleted
+ - [X] When linking projects ensure the deps are ordered by package name asc.
  - [X] Check for project changes before asking for version on publish command, early bailout.
  - [X] Now deploy path rules aliasing.
  - [X] Do clean up post deploy.

@@ -1,6 +1,6 @@
 # Constellate
-build
-.webpackcache
+/build
+/.webpackcache
 
 # Various OS / Runtimes / Node
 .DS_Store

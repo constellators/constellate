@@ -17,7 +17,7 @@ module.exports = function createReleasePackageJson(project, versions) {
     process.exit(1)
   }
 
-  const nodeVersion = R.path(['config', 'compilerOptions', 'nodeVersion'], project)
+  const nodeVersion = R.path(['buildPluginOptions', 'nodeVersion'], project)
 
   const sourcePkgJson = readPkg.sync(project.paths.packageJson, { normalize: false })
 

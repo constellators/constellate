@@ -6,7 +6,7 @@ const getAllProjects = require('./getAllProjects')
 module.exports = function linkProject(project) {
   const allProjects = getAllProjects()
 
-  if (project.config.compiler !== 'none') {
+  if (project.buildPluginDetails.name !== 'none') {
     // We have to copy the package.json file as if we try to publish the
     // built package any symlinked files get ignored by the publish process.
     fs.copySync(project.paths.packageJson, project.paths.buildPackageJson)

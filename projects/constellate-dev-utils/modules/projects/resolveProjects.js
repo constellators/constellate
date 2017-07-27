@@ -9,7 +9,7 @@ const getAllProjects = require('./getAllProjects')
  *         The names of the projects to resolve. If none is specified then
  *         all of them are resolved.
  *
- * @return {Promise} The resolved projects
+ * @return {Promise<Array<Project>>} The resolved projects
  */
 module.exports = function resolveProjects(projectFilters = []) {
   TerminalUtils.verbose(`Resolving projects with filter [${projectFilters.join(', ')}]`)

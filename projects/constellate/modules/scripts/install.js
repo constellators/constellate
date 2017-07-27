@@ -2,18 +2,31 @@ const pSeries = require('p-series')
 const TerminalUtils = require('constellate-dev-utils/modules/terminal')
 const ProjectUtils = require('constellate-dev-utils/modules/projects')
 
-module.exports = async function install() {
+const defaultOptions = {
+  clean: false,
+  hardClean: false,
+  projects: undefined,
+}
+
+module.exports = async function install(options = defaultOptions) {
   TerminalUtils.title('Running install...')
 
+  const { clean, hardClean, projects } = Object.assign({}, defaultOptions, options)
+
   const allProjects = ProjectUtils.getAllProjects()
-  const allProjectsArray = ProjectUtils.getAllProjectsArray()
+
+  const projectsToInstall = projects
+    ? await ProjectUtils.resolveProjects(projects)
+    : ProjectUtils.getAllProjectsArray()
 
   // First clean the projects down
-  ProjectUtils.cleanProjects(allProjectsArray)
+  if (clean || hardClean) {
+    ProjectUtils.cleanProjects(projectsToInstall, { removePackageLock: hardClean })
+  }
 
   // Then run install for each project
   await pSeries(
-    allProjectsArray.map(project => () => {
+    projectsToInstall.map(project => () => {
       const linkedDependencies = project.dependencies.map(x => allProjects[x])
       const linkedDevDependencies = project.devDependencies.map(x => allProjects[x])
       const relinkDeps = () => {

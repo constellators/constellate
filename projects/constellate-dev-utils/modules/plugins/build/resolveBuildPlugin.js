@@ -5,16 +5,16 @@ const chalk = require('chalk')
 const R = require('ramda')
 const FSUtils = require('../../fs')
 
-const compilerPluginCache = {}
+const buildPluginCache = {}
 
 const resolveCustomPlugin = (pluginName) => {
-  const fullPluginName = pluginName.startsWith('constellate-plugin-compiler-')
+  const fullPluginName = pluginName.startsWith('constellate-plugin-build-')
     ? pluginName
-    : `constellate-plugin-compiler-${pluginName}`
-  const simplePluginName = fullPluginName.replace('constellate-plugin-compiler-', '')
+    : `constellate-plugin-build-${pluginName}`
+  const simplePluginName = fullPluginName.replace('constellate-plugin-build-', '')
 
-  if (compilerPluginCache[simplePluginName]) {
-    return compilerPluginCache[simplePluginName]
+  if (buildPluginCache[simplePluginName]) {
+    return buildPluginCache[simplePluginName]
   }
 
   const plugin = FSUtils.resolvePackage(fullPluginName)
@@ -22,20 +22,20 @@ const resolveCustomPlugin = (pluginName) => {
   if (!plugin) {
     throw new Error(
       dedent(`
-        Could not resolve "${pluginName}" compiler. Make sure you have the plugin installed:
+        Could not resolve "${pluginName}" build plugin. Make sure you have the plugin installed:
 
             ${chalk.blue('npm install -D')} ${chalk.green(fullPluginName)}
       `),
     )
   }
 
-  compilerPluginCache[simplePluginName] = plugin
+  buildPluginCache[simplePluginName] = plugin
   return plugin
 }
 
-module.exports = function resolveCompilerPlugin(pluginName) {
+module.exports = function resolveBuildPlugin(pluginName) {
   if (R.isEmpty(pluginName) || R.isNil(pluginName)) {
-    throw new Error('No plugin name was given to resolveCompilerPlugin')
+    throw new Error('No plugin name was given to resolveBuildPlugin')
   }
   if (pluginName === 'none') {
     return require('./none')

@@ -7,17 +7,15 @@ const R = require('ramda')
 const TerminalUtils = require('../terminal')
 const AppUtils = require('../app')
 const ObjectUtils = require('../objects')
-const resolveCompilerPlugin = require('../plugins/compiler/resolveCompilerPlugin')
+const resolveBuildPlugin = require('../plugins/build/resolveBuildPlugin')
 const resolveDevelopPlugin = require('../plugins/develop/resolveDevelopPlugin')
 const resolveDeployPlugin = require('../plugins/deploy/resolveDeployPlugin')
 
 let cache = null
 
 const defaultProjectConfig = {
-  compiler: 'none',
-  compilerOptions: {},
-  develop: 'compile',
-  developOptions: {},
+  build: 'none',
+  develop: 'build',
   nodeVersion: process.versions.node,
   dependencies: [],
 }
@@ -35,6 +33,16 @@ const linkDeps = project => (project.dependencies || []).concat(project.devDepen
 const resolveProjectPath = projectName => relativePath =>
   path.resolve(process.cwd(), `./projects/${projectName}`, relativePath)
 
+const resolvePluginDetails = (config) => {
+  if (Array.isArray(config)) {
+    return {
+      name: config[0],
+      options: config.length > 1 ? config[1] : {},
+    }
+  }
+  return { name: config, options: {} }
+}
+
 // :: string -> Project
 const toProject = (projectName) => {
   const appConfig = AppUtils.getConfig()
@@ -48,8 +56,15 @@ const toProject = (projectName) => {
     R.path(['projects', projectName], appConfig) || {},
   )
 
-  const compilerPlugin = resolveCompilerPlugin(config.compiler)
-  const developPlugin = resolveDevelopPlugin(config.develop)
+  const buildPluginDetails = resolvePluginDetails(config.build)
+  const buildPlugin = resolveBuildPlugin(buildPluginDetails.name)
+
+  const developPluginDetails = resolvePluginDetails(config.develop)
+  const developPlugin = resolveDevelopPlugin(developPluginDetails.name)
+
+  const deployPluginDetails = config.deploy ? resolvePluginDetails(config.deploy) : null
+  const deployPlugin = deployPluginDetails ? resolveDeployPlugin(deployPluginDetails.name) : null
+
   const buildRoot = path.resolve(process.cwd(), `./build/${projectName}`)
   const packageJsonPath = thisProjectPath('./package.json')
   const packageJson = readPkg.sync(packageJsonPath, { normalize: false })
@@ -58,9 +73,12 @@ const toProject = (projectName) => {
     x =>
       Object.assign({}, x, {
         name: projectName,
-        compilerPlugin,
+        buildPlugin,
+        buildPluginDetails,
         developPlugin,
-        deployPlugin: config.deploy ? resolveDeployPlugin(config.deploy) : undefined,
+        developPluginDetails,
+        deployPlugin,
+        deployPluginDetails,
         config,
         packageJson,
         packageName: packageJson.name,
@@ -80,7 +98,7 @@ const toProject = (projectName) => {
         paths: Object.assign(
           {},
           x.paths,
-          config.compiler === 'none'
+          config.buildPluginDetails.name === 'none'
             ? {
               buildRoot: x.paths.root,
               buildPackageJson: x.paths.packageJson,

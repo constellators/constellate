@@ -3,7 +3,7 @@ const getPort = require('get-port')
 const WebpackDevServer = require('webpack-dev-server')
 const TerminalUtils = require('constellate-dev-utils/modules/terminal')
 const extractError = require('constellate-dev-utils-webpack/modules/extractError')
-const generateConfig = require('constellate-plugin-compiler-webpack/modules/generateConfig')
+const generateConfig = require('constellate-plugin-build-webpack/modules/generateConfig')
 
 const devInstanceMap = {}
 

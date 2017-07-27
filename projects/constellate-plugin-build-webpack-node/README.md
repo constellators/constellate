@@ -4,6 +4,6 @@
 
 <hr />
 
-# constellate-plugin-compiler-webpack
+# constellate-plugin-build-webpack-node
 
 See [Constellate](https://github.com/constellators/constellate)

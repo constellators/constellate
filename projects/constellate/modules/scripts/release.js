@@ -148,7 +148,7 @@ module.exports = async function release() {
   // Build..
   ProjectUtils.linkAllProjects()
   await pSeries(
-    allProjectsArray.map(project => () => ProjectUtils.compileProject(project, { quiet: true })),
+    allProjectsArray.map(project => () => ProjectUtils.buildProject(project, { quiet: true })),
   )
 
   // Then update the versions for each project
@@ -201,7 +201,7 @@ module.exports = async function release() {
   ProjectUtils.linkAllProjects()
   await pSeries(
     updatedAllProjectsArray.map(project => () =>
-      ProjectUtils.compileProject(project, { quiet: true }),
+      ProjectUtils.buildProject(project, { quiet: true }),
     ),
   )
 

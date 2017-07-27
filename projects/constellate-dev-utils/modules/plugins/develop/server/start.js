@@ -23,7 +23,7 @@ const killChildProcessFor = (project) => {
 // :: (Project) -> Promise
 module.exports = function start(project) {
   return (
-    ProjectUtils.compileProject(project)
+    ProjectUtils.buildProject(project)
       // Ensure any existing childProcess is killed
       .then(() => killChildProcessFor(project))
       // Fire up the new childProcess

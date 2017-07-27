@@ -35,25 +35,25 @@ Most of the development tooling (bundling, transpiling, hot module reloading) ar
 
 ## Plugins
 
-Constellate allows for a powerful plugin based system that allows you to target 3 seperate aspects of the system: compilation, development, and deployment.  We provide a strong set of Core plugin - some of which need to be explicitly installed in order to maintain a respectable bundle size of the core `constellate` package.
+Constellate allows for a powerful plugin based system that allows you to target 3 seperate aspects of the system: build, develop, and deploy.  We provide a set of Core plugins - some of which need to be explicitly installed so that we keep the core `constellate` package size respectable.
 
 In addition to using one of the core plugins the system allows you to use any custom plugin, developed by your team or others.  Please see the ["Plugin Development"](#plugin-development) docs for more information.
 
-### Compiler Plugins
+### Build Plugins
 
 #### none
 
 > TODO
 
-#### constellate-plugin-compiler-babel
+#### constellate-plugin-build-babel
 
 > TODO
 
-#### constellate-plugin-compiler-webpack
+#### constellate-plugin-build-webpack
 
 > TODO
 
-#### constellate-plugin-compiler-webpack-node
+#### constellate-plugin-build-webpack-node
 
 > TODO
 

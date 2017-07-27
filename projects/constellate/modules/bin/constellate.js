@@ -17,13 +17,17 @@ TerminalUtils.header(`constellate v${packageJson.version || '0.0.0-develop'}`)
 
 program.version(packageJson.version || '0.0.0-develop')
 
+const ArgParsers = {
+  list: val => val.split(','),
+}
+
 const createAction = ({
   defaultEnv = 'production',
   resolveScript,
   gracefulExit = noop,
   errorMsg,
   preScript,
-}) => async (...args) => {
+}) => async (...originalArgs) => {
   try {
     configureGracefulExit(gracefulExit)
     if (!process.env.NODE_ENV) {
@@ -33,7 +37,17 @@ const createAction = ({
     if (preScript) {
       await preScript()
     }
-    const script = resolveScript(args)
+
+    let options
+    let args = []
+    if (args.length === 1) {
+      options = originalArgs[0]
+    } else {
+      args = originalArgs.slice(0, originalArgs.length - 1)
+      options = originalArgs[originalArgs.length - 1]
+    }
+
+    const script = resolveScript(options, args)
     await script()
     process.exit(0)
   } catch (err) {
@@ -55,9 +69,18 @@ program.command('build').description('Builds the projects').action(
 program
   .command('clean')
   .description('Deletes the build output and node_modules files for projects')
+  .option(
+    '-p, --projects <projects>',
+    'Specify the projects to run the install for',
+    ArgParsers.list,
+  )
+  .option(
+    '-h, --hard-clean',
+    'Removes existing node_modules and package-lock.json for each project',
+  )
   .action(
     createAction({
-      resolveScript: () => require('../scripts/clean'),
+      resolveScript: options => () => require('../scripts/clean')(options),
     }),
   )
 
@@ -81,14 +104,27 @@ program.command('develop').description('Runs a development environment for the p
   }),
 )
 
-program.command('install').description('Installs the dependencies for every project').action(
-  createAction({
-    // We should not use "production" as a NODE_ENV because then only our
-    // production dependencies will get installed, i.e. no devDependencies
-    defaultEnv: 'development',
-    resolveScript: () => require('../scripts/install'),
-  }),
-)
+program
+  .command('install')
+  .description('Installs the dependencies for every project')
+  .option(
+    '-p, --projects <projects>',
+    'Specify the projects to run the install for',
+    ArgParsers.list,
+  )
+  .option('-c, --clean', 'Removes existing node_modules for each project')
+  .option(
+    '-h, --hard-clean',
+    'Removes existing node_modules and package-lock.json for each project',
+  )
+  .action(
+    createAction({
+      // We should not use "production" as a NODE_ENV because then only our
+      // production dependencies will get installed, i.e. no devDependencies
+      defaultEnv: 'development',
+      resolveScript: options => () => require('../scripts/install')(options),
+    }),
+  )
 
 program.command('link-projects').description('Links project(s) to a project').action(
   createAction({
@@ -115,18 +151,8 @@ program
   .action(
     createAction({
       defaultEnv: 'test',
-      resolveScript: (args) => {
-        let watch
-        let passThroughArgs = []
-        if (args.length === 1) {
-          const options = args[0]
-          watch = options.watch
-        } else {
-          passThroughArgs = args.slice(0, args.length - 1)
-        }
-        const test = require('../scripts/test')
-        return () => test({ passThroughArgs, watch })
-      },
+      resolveScript: (options, args) => () =>
+        require('../scripts/test')({ passThroughArgs: args, watch: options.watch }),
     }),
   )
 

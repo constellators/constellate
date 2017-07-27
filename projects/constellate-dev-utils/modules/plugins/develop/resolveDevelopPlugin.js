@@ -34,8 +34,8 @@ const resolveCustomPlugin = (pluginName) => {
 
 module.exports = function resolveDevelopPlugin(pluginName) {
   switch (pluginName) {
-    case 'compile':
-      return require('./compile')
+    case 'build':
+      return require('./build')
     case 'server':
       return require('./server')
     case 'script':

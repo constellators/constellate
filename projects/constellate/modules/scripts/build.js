@@ -12,7 +12,7 @@ module.exports = async function build() {
   ProjectUtils.linkAllProjects()
 
   // :: Project -> void -> Promise
-  const queueBuild = project => () => ProjectUtils.compileProject(project)
+  const queueBuild = project => () => ProjectUtils.buildProject(project)
   await pSeries(ProjectUtils.getAllProjectsArray().map(queueBuild))
 
   TerminalUtils.success('Done')

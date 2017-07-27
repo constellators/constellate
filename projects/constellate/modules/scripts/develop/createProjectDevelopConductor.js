@@ -10,7 +10,7 @@ module.exports = function createProjectDevelopConductor(project, watcher) {
       TerminalUtils.verbose(`Starting develop implementation for ${project.name}`)
 
       if (!developPluginCache) {
-        developPluginCache = project.developPlugin(project, project.config.developOptions, watcher)
+        developPluginCache = project.developPlugin(project, project.developPluginOptions, watcher)
       }
 
       return developPluginCache.start().then((developInstance) => {

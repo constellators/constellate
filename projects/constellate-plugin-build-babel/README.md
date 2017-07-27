@@ -4,6 +4,6 @@
 
 <hr />
 
-# constellate-plugin-compiler-babel
+# constellate-plugin-build-babel
 
 See [Constellate](https://github.com/constellators/constellate)

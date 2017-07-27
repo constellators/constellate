@@ -10,11 +10,11 @@ const { removeNil } = require('constellate-dev-utils/modules/arrays')
 const { onlyIf } = require('constellate-dev-utils/modules/logic')
 
 // :: Options -> BabelConfig
-module.exports = function generateConfig(project) {
+module.exports = function generateBabelConfig(project) {
   const env = process.env.BABEL_ENV || process.env.NODE_ENV
 
   const targetNodeVersion =
-    R.path(['config', 'compilerOptions', 'nodeVersion'], project) || process.versions.node
+    R.path(['buildPluginOptions', 'nodeVersion'], project) || process.versions.node
 
   return {
     babelrc: false,
@@ -22,22 +22,23 @@ module.exports = function generateConfig(project) {
     // Handy for sourcemaps generation.
     sourceRoot: project.paths.modules,
 
-    // Source maps will be useful for debugging errors in our node executions.
-    sourceMaps: 'both',
+    // Webpack has our back.
+    sourceMaps: false,
 
-    presets: removeNil([
+    presets: [
       [
         'env',
         {
           targets: {
             node: targetNodeVersion,
           },
+          // Transpilation of es-modules are handled by webpack.
+          modules: false,
         },
       ],
-
       // jsx && flow support
       'react',
-    ]),
+    ],
 
     plugins: removeNil([
       // const { foo, ...others } = object
@@ -46,7 +47,7 @@ module.exports = function generateConfig(project) {
       [
         'transform-object-rest-spread',
         {
-          // For node >= 6 we can rely on native Object.assign, else it will
+          // For a node project we can rely on native Object.assign, else it will
           // need to be polyfilled.
           useBuiltIns: semver.major(targetNodeVersion) >= 6,
         },
@@ -70,6 +71,7 @@ module.exports = function generateConfig(project) {
 
       // Replaces the React.createElement function with one that is
       // more optimized for production.
+      // NOTE: Relies on Symbol being available.
       onlyIf(env === 'production', 'transform-react-inline-elements'),
 
       // Hoists element creation to the top level for subtrees that
@@ -94,10 +96,6 @@ module.exports = function generateConfig(project) {
 
       // Adds component stack to warning messages
       onlyIf(env === 'development' || env === 'test', 'transform-react-jsx-source'),
-
-      // If we are transpiling a node project then we inject some code to
-      // include source maps support on the transpiled code.
-      onlyIf(env === 'development', 'inject-source-map-init'),
     ]),
   }
 }
