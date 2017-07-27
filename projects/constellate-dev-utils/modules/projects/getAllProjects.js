@@ -98,7 +98,7 @@ const toProject = (projectName) => {
         paths: Object.assign(
           {},
           x.paths,
-          config.buildPluginDetails.name === 'none'
+          buildPluginDetails.name === 'none'
             ? {
               buildRoot: x.paths.root,
               buildPackageJson: x.paths.packageJson,
