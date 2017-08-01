@@ -1,8 +1,8 @@
 const start = require('./start')
 
 // :: (Project, DevelopOptions, Watcher) -> DevelopAPI
-module.exports = function webpackDevelop(project, options, watcher) {
+module.exports = function webpackDevelop(project, options) {
   return {
-    start: () => start(project, watcher),
+    start: watcher => start(project, options, watcher),
   }
 }

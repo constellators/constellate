@@ -29,7 +29,7 @@ module.exports = function scriptDevelop(project, options) {
   const pkgJson = readPkg.sync(project.paths.packageJson)
 
   return {
-    start: () =>
+    start: watcher =>
       new Promise((resolve) => {
         if (options.scriptRunOnce && childProcessMap[project.name]) {
           resolve()

@@ -37,9 +37,5 @@ module.exports = function resolveBuildPlugin(pluginName) {
   if (R.isEmpty(pluginName) || R.isNil(pluginName)) {
     throw new Error('No plugin name was given to resolveBuildPlugin')
   }
-  if (pluginName === 'none') {
-    return require('./none')
-  }
-
   return resolveCustomPlugin(pluginName)
 }

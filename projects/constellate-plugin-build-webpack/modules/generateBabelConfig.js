@@ -14,7 +14,7 @@ module.exports = function generateConfig(project) {
     babelrc: false,
 
     // Handy for sourcemaps generation.
-    sourceRoot: project.paths.modules,
+    sourceRoot: project.paths.root,
 
     presets: removeNil([
       [

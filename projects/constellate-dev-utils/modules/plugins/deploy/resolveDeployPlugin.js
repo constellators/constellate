@@ -2,9 +2,11 @@
 
 const dedent = require('dedent')
 const chalk = require('chalk')
+const R = require('ramda')
+
 const FSUtils = require('../../fs')
 
-const developPluginCache = {}
+const deployPluginCache = {}
 
 const resolveCustomPlugin = (pluginName) => {
   const fullPluginName = pluginName.startsWith('constellate-plugin-deploy-')
@@ -12,8 +14,8 @@ const resolveCustomPlugin = (pluginName) => {
     : `constellate-plugin-deploy-${pluginName}`
   const simplePluginName = fullPluginName.replace('constellate-plugin-deploy-', '')
 
-  if (developPluginCache[simplePluginName]) {
-    return developPluginCache[simplePluginName]
+  if (deployPluginCache[simplePluginName]) {
+    return deployPluginCache[simplePluginName]
   }
 
   const plugin = FSUtils.resolvePackage(fullPluginName)
@@ -28,10 +30,13 @@ const resolveCustomPlugin = (pluginName) => {
     )
   }
 
-  developPluginCache[simplePluginName] = plugin
+  deployPluginCache[simplePluginName] = plugin
   return plugin
 }
 
 module.exports = function resolveDeployPlugin(pluginName) {
+  if (R.isEmpty(pluginName) || R.isNil(pluginName)) {
+    throw new Error('No plugin name was given to resolveDeployPlugin')
+  }
   return resolveCustomPlugin(pluginName)
 }

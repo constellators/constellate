@@ -20,7 +20,7 @@ const killDevServerFor = (project) => {
   })
 }
 
-module.exports = function start(project, watcher) {
+module.exports = function start(project, options, watcher) {
   const devInstance = devInstanceMap[project.name]
   if (devInstance) {
     return Promise.resolve(devInstance.api)
@@ -33,7 +33,7 @@ module.exports = function start(project, watcher) {
         let hasResolved = false
         let showNextSuccess = false
 
-        const config = generateConfig(project, { devServerPort: port })
+        const config = generateConfig(project, Object.assign({}, options, { devServerPort: port }))
         const compiler = webpack(config)
 
         const server = new WebpackDevServer(compiler, config.devServer)

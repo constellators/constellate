@@ -21,7 +21,7 @@ const killChildProcessFor = (project) => {
 }
 
 // :: (Project) -> Promise
-module.exports = function start(project) {
+module.exports = function start(project, options, watcher) {
   return (
     ProjectUtils.buildProject(project)
       // Ensure any existing childProcess is killed
@@ -33,8 +33,8 @@ module.exports = function start(project) {
             const childProcess = ChildProcessUtils.spawn(
               // Spawn a node process
               'node',
-              // That runs the build entry file
-              [project.paths.buildModulesEntry],
+              // That runs the main file
+              [project.packageJson.main],
               // Ensure that output supports color etc
               // We use pipe for the error so that we can log a header for ther error.
               {

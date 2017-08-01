@@ -6,8 +6,8 @@
 	"dependencies": {
 		"get-port": "3.1.0",
 		"p-retry": "1.0.0",
-		"webpack": "3.3.0",
-		"webpack-dev-server": "2.5.1",
+		"webpack": "3.4.1",
+		"webpack-dev-server": "2.6.1",
 		"constellate-dev-utils": "0.15.0",
 		"constellate-dev-utils-webpack": "0.15.0",
 		"constellate-plugin-build-webpack": "0.15.0"

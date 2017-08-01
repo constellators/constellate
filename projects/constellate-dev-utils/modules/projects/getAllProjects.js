@@ -14,8 +14,9 @@ const resolveDeployPlugin = require('../plugins/deploy/resolveDeployPlugin')
 let cache = null
 
 const defaultProjectConfig = {
-  build: 'none',
+  build: null,
   develop: 'build',
+  deploy: null,
   nodeVersion: process.versions.node,
   dependencies: [],
 }
@@ -33,16 +34,6 @@ const linkDeps = project => (project.dependencies || []).concat(project.devDepen
 const resolveProjectPath = projectName => relativePath =>
   path.resolve(process.cwd(), `./projects/${projectName}`, relativePath)
 
-const resolvePluginDetails = (config) => {
-  if (Array.isArray(config)) {
-    return {
-      name: config[0],
-      options: config.length > 1 ? config[1] : {},
-    }
-  }
-  return { name: config, options: {} }
-}
-
 // :: string -> Project
 const toProject = (projectName) => {
   const appConfig = AppUtils.getConfig()
@@ -50,72 +41,50 @@ const toProject = (projectName) => {
   const thisProjectPath = resolveProjectPath(projectName)
 
   const config = ObjectUtils.mergeDeep(
-    {},
     defaultProjectConfig,
-    appConfig.projectDefaults || {},
     R.path(['projects', projectName], appConfig) || {},
   )
 
-  const buildPluginDetails = resolvePluginDetails(config.build)
-  const buildPlugin = resolveBuildPlugin(buildPluginDetails.name)
-
-  const developPluginDetails = resolvePluginDetails(config.develop)
-  const developPlugin = resolveDevelopPlugin(developPluginDetails.name)
-
-  const deployPluginDetails = config.deploy ? resolvePluginDetails(config.deploy) : null
-  const deployPlugin = deployPluginDetails ? resolveDeployPlugin(deployPluginDetails.name) : null
-
-  const buildRoot = path.resolve(process.cwd(), `./build/${projectName}`)
   const packageJsonPath = thisProjectPath('./package.json')
   const packageJson = readPkg.sync(packageJsonPath, { normalize: false })
 
-  return R.pipe(
-    x =>
-      Object.assign({}, x, {
-        name: projectName,
-        buildPlugin,
-        buildPluginDetails,
-        developPlugin,
-        developPluginDetails,
-        deployPlugin,
-        deployPluginDetails,
-        config,
-        packageJson,
-        packageName: packageJson.name,
-        version: packageJson.version || '0.0.0',
-        paths: {
-          root: thisProjectPath('./'),
-          packageJson: packageJsonPath,
-          packageLockJson: thisProjectPath('./package-lock.json'),
-          nodeModules: thisProjectPath('./node_modules'),
-          modules: thisProjectPath('./modules'),
-          modulesEntry: thisProjectPath('./modules/index.js'),
-          webpackCache: path.resolve(buildRoot, './.webpackcache'),
-        },
-      }),
-    x =>
-      Object.assign({}, x, {
-        paths: Object.assign(
-          {},
-          x.paths,
-          buildPluginDetails.name === 'none'
-            ? {
-              buildRoot: x.paths.root,
-              buildPackageJson: x.paths.packageJson,
-              buildModules: x.paths.modules,
-              buildModulesEntry: x.paths.modulesEntry,
-              buildNodeModules: x.paths.nodeModules,
-            }
-            : {
-              buildRoot,
-              buildPackageJson: path.resolve(buildRoot, './package.json'),
-              buildModules: path.resolve(buildRoot, './modules'),
-              buildModulesEntry: path.resolve(buildRoot, './modules/index.js'),
-              buildNodeModules: path.resolve(buildRoot, './node_modules'),
-            },
-        ),
-      }),
-  )({})
+  return {
+    name: projectName,
+    config,
+    packageJson,
+    packageName: packageJson.name,
+    version: packageJson.version || '0.0.0',
+    paths: {
+      root: thisProjectPath('./'),
+      packageJson: packageJsonPath,
+      packageLockJson: thisProjectPath('./package-lock.json'),
+      nodeModules: thisProjectPath('./node_modules'),
+      webpackCache: thisProjectPath('./.webpackcache'),
+    },
+  }
+}
+
+const resolvePlugin = (project, type, resolver) => {
+  const pluginDef = project.config[type]
+  if (pluginDef == null) {
+    return null
+  }
+  const config = Array.isArray(pluginDef)
+    ? {
+      name: pluginDef[0],
+      options: pluginDef.length > 1 ? pluginDef[1] : {},
+    }
+    : { name: pluginDef, options: {} }
+  const pluginFactory = resolver(config.name)
+  return pluginFactory(project, config.options)
+}
+
+function getPlugins(project) {
+  return {
+    buildPlugin: resolvePlugin(project, 'build', resolveBuildPlugin),
+    developPlugin: resolvePlugin(project, 'develop', resolveDevelopPlugin),
+    deployPlugin: resolvePlugin(project, 'deploy', resolveDeployPlugin),
+  }
 }
 
 // :: Array<Project> -> Array<Project>
@@ -294,12 +263,19 @@ module.exports = function getAllProjects(skipCache) {
           allDependants: getAllDependants(allProjects, project),
         }),
       )(allProjects),
+    // Attach Plugins
+    allProjects =>
+      R.map(project =>
+        Object.assign(project, {
+          plugins: getPlugins(project),
+        }),
+      )(allProjects),
     // Verbose logging
-    R.map((projectConfig) => {
+    R.map((project) => {
       TerminalUtils.verbose(
-        `Resolved config for ${projectConfig.name}:${EOL}${JSON.stringify(projectConfig, null, 2)}`,
+        `Resolved project ${project.name}:${EOL}${JSON.stringify(project, null, 2)}`,
       )
-      return projectConfig
+      return project
     }),
     // Convert into an object map
     R.reduce((acc, cur) => Object.assign(acc, { [cur.name]: cur }), {}),

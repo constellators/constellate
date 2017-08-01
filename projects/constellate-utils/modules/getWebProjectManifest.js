@@ -17,13 +17,13 @@ const cache = {}
  * @param  {string} projectName The project's name
  * @return {Object}             The manifest
  */
-module.exports = function getWebProjectManifest(projectName) {
+module.exports = function getWebProjectManifest(projectName, basePath = './dist') {
   if (cache[projectName]) {
     return cache[projectName]
   }
 
-  const serverRootPath = path.resolve(process.cwd(), `./node_modules/${projectName}/modules`)
-  const manifestFile = path.resolve(serverRootPath, './webpack-manifest.json')
+  const rootPath = path.resolve(process.cwd(), `./node_modules/${projectName}/${basePath}`)
+  const manifestFile = path.resolve(rootPath, './webpack-manifest.json')
   if (!fs.existsSync(manifestFile)) {
     throw new Error(`No manifest found at ${manifestFile}`)
   }
@@ -38,7 +38,7 @@ module.exports = function getWebProjectManifest(projectName) {
 
   cache[projectName] = {
     serverPaths: {
-      root: serverRootPath,
+      root: rootPath,
     },
     httpPaths: {
       root: rootHttpPath,

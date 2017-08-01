@@ -2,18 +2,19 @@ const TerminalUtils = require('constellate-dev-utils/modules/terminal')
 
 module.exports = function createProjectDevelopConductor(project, watcher) {
   let runningDevelopInstance
-  let developPluginCache
 
   return {
     // :: void -> Promise
     start: () => {
       TerminalUtils.verbose(`Starting develop implementation for ${project.name}`)
 
-      if (!developPluginCache) {
-        developPluginCache = project.developPlugin(project, project.developPluginOptions, watcher)
+      if (!project.plugins.developPlugin) {
+        throw new Error(
+          `Trying to run develop plugin on project without one specified: ${project.name}`,
+        )
       }
 
-      return developPluginCache.start().then((developInstance) => {
+      return project.plugins.developPlugin.start(watcher).then((developInstance) => {
         runningDevelopInstance = developInstance
       })
     },

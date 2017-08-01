@@ -8,7 +8,7 @@ const writeJsonFile = require('write-json-file')
 const TerminalUtils = require('constellate-dev-utils/modules/terminal')
 const ChildProcessUtils = require('constellate-dev-utils/modules/childProcess')
 
-module.exports = function nowDeploy(deployPath, options, project) {
+module.exports = function nowDeploy(project, options) {
   if (process.env.NOW_USERNAME == null) {
     TerminalUtils.error(
       'In order to deploy to "now" you must supply your "now" username via a NOW_USERNAME environment variable.',
@@ -29,7 +29,7 @@ module.exports = function nowDeploy(deployPath, options, project) {
   }
 
   return {
-    deploy: async () => {
+    deploy: async (deployPath) => {
       try {
         ChildProcessUtils.execSync('now', ['-v'])
       } catch (err) {

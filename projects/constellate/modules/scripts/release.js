@@ -220,7 +220,7 @@ module.exports = async function release() {
 
       try {
         ChildProcessUtils.execSync('npm', ['publish'], {
-          cwd: project.paths.buildRoot,
+          cwd: project.paths.root,
         })
         TerminalUtils.verbose(`Published ${project.name}`)
       } catch (err) {
@@ -243,7 +243,7 @@ module.exports = async function release() {
       You can retry publishing them at any time by running the following commands:
 
       \t${failedToPublish
-        .map(p => `${chalk.blue('npm publish')} ${chalk.green(p.paths.buildRoot)}`)
+        .map(p => `${chalk.blue('npm publish')} ${chalk.green(p.paths.root)}`)
         .join(`${EOL}\t`)}
 
       NOTE: If you decide to retry the publishing of them at a later point you

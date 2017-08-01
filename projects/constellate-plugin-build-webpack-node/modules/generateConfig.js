@@ -7,15 +7,18 @@
  */
 
 const webpack = require('webpack')
+const path = require('path')
 const nodeExternals = require('webpack-node-externals')
 const { removeNil } = require('constellate-dev-utils/modules/arrays')
 const { onlyIf } = require('constellate-dev-utils/modules/logic')
-const ProjectUtils = require('constellate-dev-utils/modules/projects')
+
 const generateBabelConfig = require('./generateBabelConfig')
 
-module.exports = function generateConfig(project) {
+module.exports = function generateConfig(project, options) {
   const env = process.env.NODE_ENV
-  const allProjects = ProjectUtils.getAllProjects()
+
+  const entryFilePath = path.resolve(project.paths.root, options.entryFile)
+  const outputDirPath = path.resolve(project.paths.root, options.outputDir)
 
   return {
     // Keep quiet in dev mode.
@@ -30,13 +33,13 @@ module.exports = function generateConfig(project) {
       // the bundled output.
       index: [
         // The application source entry.
-        project.paths.modulesEntry,
+        entryFilePath,
       ],
     },
 
     output: {
       // The dir in which our bundle should be output.
-      path: project.paths.buildModules,
+      path: outputDirPath,
 
       // The filename format for the entry chunk.
       // use a predictable name format.
@@ -135,10 +138,10 @@ module.exports = function generateConfig(project) {
             },
             {
               loader: 'babel-loader',
-              options: generateBabelConfig(project),
+              options: generateBabelConfig(project, options),
             },
           ],
-          include: [project.paths.modules],
+          include: [project.paths.root],
         },
 
         {
@@ -158,7 +161,7 @@ module.exports = function generateConfig(project) {
         {
           test: /\.css$/,
           loaders: ['css-loader/locals'],
-          include: [project.paths.modules, project.paths.nodeModules],
+          include: [project.paths.root],
         },
       ]),
     },

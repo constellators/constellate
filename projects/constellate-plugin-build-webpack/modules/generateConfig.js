@@ -7,6 +7,7 @@
  */
 
 const webpack = require('webpack')
+const path = require('path')
 const AssetsPlugin = require('assets-webpack-plugin')
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
 const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin')
@@ -16,10 +17,13 @@ const { removeNil } = require('constellate-dev-utils/modules/arrays')
 const { onlyIf } = require('constellate-dev-utils/modules/logic')
 const generateBabelConfig = require('./generateBabelConfig')
 
-module.exports = function generateConfig(project, options = {}) {
+module.exports = function generateConfig(project, options) {
   const { devServerPort } = options
 
   const env = process.env.NODE_ENV
+
+  const entryFilePath = path.resolve(project.paths.root, options.entryFile)
+  const outputDirPath = path.resolve(project.paths.root, options.outputDir)
 
   const webpackConfig = {
     // Keep quiet in dev mode.
@@ -32,13 +36,13 @@ module.exports = function generateConfig(project, options = {}) {
       // the bundled output.
       index: [
         // The application source entry.
-        project.paths.modulesEntry,
+        entryFilePath,
       ],
     },
 
     output: {
       // The dir in which our bundle should be output.
-      path: project.paths.buildModules,
+      path: outputDirPath,
 
       // The filename format for the entry chunk.
       // eslint-disable-next-line no-nested-ternary
@@ -98,7 +102,7 @@ module.exports = function generateConfig(project, options = {}) {
       // our webpack bundle.
       new AssetsPlugin({
         filename: 'webpack-manifest.json',
-        path: project.paths.buildModules,
+        path: outputDirPath,
       }),
 
       // Moment.js is an extremely popular library that bundles large locale files
@@ -182,7 +186,7 @@ module.exports = function generateConfig(project, options = {}) {
         () =>
           // eslint-disable-next-line global-require
           new (require('./plugins/InjectHMRCodeForEntryModule.js'))({
-            entryFile: project.paths.modulesEntry,
+            entryFile: entryFilePath,
           }),
       ),
     ]),
@@ -203,7 +207,7 @@ module.exports = function generateConfig(project, options = {}) {
               options: generateBabelConfig(project),
             },
           ],
-          include: [project.paths.modules],
+          include: [project.paths.root],
         },
 
         {
@@ -244,7 +248,7 @@ module.exports = function generateConfig(project, options = {}) {
               },
             },
           ],
-          include: [project.paths.modules, project.paths.nodeModules],
+          include: [project.paths.root],
         })),
 
         // For a production web target we use the ExtractTextPlugin which
@@ -275,7 +279,7 @@ module.exports = function generateConfig(project, options = {}) {
               },
             ],
           }),
-          include: [project.paths.modules, project.paths.nodeModules],
+          include: [project.paths.root],
         })),
       ]),
     },

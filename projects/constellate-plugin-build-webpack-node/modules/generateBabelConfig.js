@@ -10,17 +10,16 @@ const { removeNil } = require('constellate-dev-utils/modules/arrays')
 const { onlyIf } = require('constellate-dev-utils/modules/logic')
 
 // :: Options -> BabelConfig
-module.exports = function generateBabelConfig(project) {
+module.exports = function generateBabelConfig(project, options) {
   const env = process.env.BABEL_ENV || process.env.NODE_ENV
 
-  const targetNodeVersion =
-    R.path(['buildPluginOptions', 'nodeVersion'], project) || process.versions.node
+  const targetNodeVersion = options.nodeVersion || process.versions.node
 
   return {
     babelrc: false,
 
     // Handy for sourcemaps generation.
-    sourceRoot: project.paths.modules,
+    sourceRoot: project.paths.root,
 
     // Webpack has our back.
     sourceMaps: false,

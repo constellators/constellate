@@ -3,7 +3,6 @@
 ## Bugs
 
  - [ ] Show consecutive build errors as may contain new info.
- - [ ] nodeVersion needs to allow partials i.e. 4 instead of 4.x.x
  - [X] constellate-utils publishing one version behind?
  - [X] update pwns modules - we may need to unlink existing prior to running update
  - [X] Hot module reload inject code
@@ -25,7 +24,9 @@
 
 ## Features/Chores
 
- - [X] Rename all instances of "compile" -> "build"
+ - [ ] Replace ObjectUtils.mergeDeep with npm deepmerge package
+ - [ ] Default options being applied to the webpack plugins.
+ - [ ] For the respective develop plugins assert that a "main" exists in the package.json
  - [ ] Application template
  - [ ] Empty project template
  - [ ] Create project command
@@ -44,22 +45,10 @@
    - [ ] prepublish
    - [ ] postpublish
  - [ ] Ensure npx
- - [ ] Change config format
-       {
-          build: [
-            'foo',
-            {
-              ...
-            },
-          ],
-       }
  - [ ] Finish all inline TODO comments within code.
- - [ ] Support for Node >=6
+ - [ ] Enforce Node >=8.2.0 - i.e. bundled with npm@>=5.3.0
  - [ ] Plugin extension API
  - [ ] Validate the constellate configuration (tcomb?)
- - [ ] Copy some base files across always - .npmignore, /README(.md)?/i
- - [ ] Copy across non-JS files when compiling
- - [ ] Allow for additional files to be specified in package.json files
  - [ ] Support NPM tags.
  - [ ] Make the target browserlist configurable.
  - [ ] BrowserList configuration (touch point in babel and webpack config)
@@ -71,6 +60,19 @@
  - [ ] Allow for explicit ignoring of a dependency when doing hot development reloads.
  - [ ] Terminal "centerer" https://stackoverflow.com/questions/30335637/get-width-of-terminal-in-node-js
  - [ ] use why-is-node-running for helpful errors?
+ - [X] Copy some base files across always - .npmignore, /README(.md)?/i
+ - [X] Copy across non-JS files when compiling
+ - [X] Allow for additional files to be specified in package.json files
+ - [X] Change config format
+       {
+          build: [
+            'foo',
+            {
+              ...
+            },
+          ],
+       }
+ - [X] Rename all instances of "compile" -> "build"
  - [X] Add a -p (--purge) flag to install command which causes existing package-lock.json and node_modules to be deleted
  - [X] When linking projects ensure the deps are ordered by package name asc.
  - [X] Check for project changes before asking for version on publish command, early bailout.

@@ -1,3 +1,5 @@
+const R = require('ramda')
+
 const ArrayUtils = require('./arrays')
 
 /**
@@ -17,7 +19,8 @@ function mergeDeep(...args) {
   if (filtered.length === 1) {
     return args[0]
   }
-  return filtered.reduce((acc, cur) => {
+
+  return R.reverse(filtered).reduce((acc, cur) => {
     Object.keys(cur).forEach((key) => {
       if (Array.isArray(acc[key]) && Array.isArray(cur[key])) {
         acc[key] = [...acc[key], ...cur[key]]

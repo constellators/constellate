@@ -1,26 +1,18 @@
-/**
- * Tons of inspiration taken from Facebook's superb Create React App project
- * https://github.com/facebookincubator/create-react-app
- * ❤️
- */
-
-const R = require('ramda')
 const semver = require('semver')
 const { removeNil } = require('constellate-dev-utils/modules/arrays')
 const { onlyIf } = require('constellate-dev-utils/modules/logic')
 
 // :: Options -> BabelConfig
-module.exports = function generateConfig(project) {
+module.exports = function generateConfig(project, options) {
   const env = process.env.BABEL_ENV || process.env.NODE_ENV
 
-  const targetNodeVersion =
-    R.path(['buildPluginOptions', 'nodeVersion'], project) || process.versions.node
+  const targetNodeVersion = options.nodeVersion || process.versions.node
 
   return {
     babelrc: false,
 
     // Handy for sourcemaps generation.
-    sourceRoot: project.paths.modules,
+    sourceRoot: project.paths.root,
 
     // Source maps will be useful for debugging errors in our node executions.
     sourceMaps: 'both',

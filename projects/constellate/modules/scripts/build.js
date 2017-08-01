@@ -5,9 +5,6 @@ const TerminalUtils = require('constellate-dev-utils/modules/terminal')
 module.exports = async function build() {
   TerminalUtils.title('Running build...')
 
-  // First clear down any existing build
-  ProjectUtils.cleanBuild()
-
   // Then ensure all the projects are linked
   ProjectUtils.linkAllProjects()
 

@@ -17,8 +17,6 @@ module.exports = function createReleasePackageJson(project, versions) {
     process.exit(1)
   }
 
-  const nodeVersion = R.path(['buildPluginOptions', 'nodeVersion'], project)
-
   const sourcePkgJson = readPkg.sync(project.paths.packageJson, { normalize: false })
 
   const newPkgJson = Object.assign(
@@ -28,10 +26,6 @@ module.exports = function createReleasePackageJson(project, versions) {
     sourcePkgJson,
     {
       version: versions[project.name],
-      engines: {
-        node: `>=${nodeVersion || semver.major(process.versions.node)}`,
-      },
-      files: ['modules'],
       dependencies: Object.assign(
         {},
         // Add dependency references to our constellate dependencies

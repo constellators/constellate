@@ -96,7 +96,7 @@ module.exports = async function deploy() {
         },
       )
       const deployRoot = path.resolve(installRoot, `./node_modules/${project.packageName}`)
-      await project.deployPlugin(deployRoot, project.deployPluginOptions || {}, project).deploy()
+      await project.plugins.deployPlugin.deploy(deployRoot)
     }),
   )
 

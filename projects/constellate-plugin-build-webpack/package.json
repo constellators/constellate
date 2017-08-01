@@ -31,7 +31,7 @@
 		"read-pkg": "2.0.0",
 		"style-loader": "0.18.2",
 		"url-loader": "0.5.9",
-		"webpack": "3.3.0",
+		"webpack": "3.4.1",
 		"constellate-dev-utils": "0.15.0",
 		"constellate-dev-utils-webpack": "0.15.0"
 	}

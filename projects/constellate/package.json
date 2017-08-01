@@ -14,13 +14,13 @@
 		"chokidar": "1.7.0",
 		"commander": "2.11.0",
 		"dotenv": "4.0.0",
-		"fs-extra": "4.0.0",
+		"fs-extra": "4.0.1",
 		"jest": "20.0.4",
 		"npm-check": "5.4.5",
 		"p-series": "1.0.0",
 		"ramda": "0.24.1",
 		"read-pkg": "2.0.0",
-		"semver": "5.3.0",
+		"semver": "5.4.1",
 		"constellate-dev-utils": "0.15.0"
 	}
 }

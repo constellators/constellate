@@ -4,7 +4,7 @@ const defaultOptions = { quiet: false }
 
 const executeBuild = (project) => {
   TerminalUtils.verbose(`Building ${project.name}`)
-  return project.buildPlugin(project, project.buildPluginOptions).build()
+  return project.plugins.buildPlugin ? project.plugins.buildPlugin.build() : Promise.resolve()
 }
 
 // :: Project -> Promise<BuildResult>

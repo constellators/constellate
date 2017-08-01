@@ -71,13 +71,12 @@ program
   .description('Deletes the build output and node_modules files for projects')
   .option(
     '-p, --projects <projects>',
-    'Specify the projects to run the install for',
+    'Specify the projects to run the install for (defaults to all)',
     ArgParsers.list,
   )
-  .option(
-    '-h, --hard-clean',
-    'Removes existing node_modules and package-lock.json for each project',
-  )
+  .option('-n, --node-modules', 'Removes node_modules for each project')
+  .option('-l, --package-lock', 'Removes package-lock.json for each project')
+  .option('-b, --build', 'Removes build output for each project')
   .action(
     createAction({
       resolveScript: options => () => require('../scripts/clean')(options),

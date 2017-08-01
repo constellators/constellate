@@ -23,10 +23,7 @@ module.exports = async function develop() {
   const allProjects = ProjectUtils.getAllProjects()
   const allProjectsArray = ProjectUtils.getAllProjectsArray()
 
-  // Firstly clean up shop.
-  ProjectUtils.cleanBuild()
-
-  // Then ensure all the projects are linked
+  // Ensure all the projects are linked
   ProjectUtils.linkAllProjects()
 
   // Represents the current project being built

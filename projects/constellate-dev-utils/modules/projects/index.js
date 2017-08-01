@@ -1,8 +1,8 @@
 const addLinkedDependencies = require('./addLinkedDependencies')
 const buildProject = require('./buildProject')
 const changedSince = require('./changedSince')
-const cleanBuild = require('./cleanBuild')
 const cleanProjects = require('./cleanProjects')
+const cleanProject = require('./cleanProject')
 const createReleasePackageJson = require('./createReleasePackageJson')
 const getAllProjects = require('./getAllProjects')
 const getAllProjectsArray = require('./getAllProjectsArray')
@@ -20,8 +20,8 @@ module.exports = {
   addLinkedDependencies,
   buildProject,
   changedSince,
-  cleanBuild,
   cleanProjects,
+  cleanProject,
   createReleasePackageJson,
   getAllProjects,
   getAllProjectsArray,
