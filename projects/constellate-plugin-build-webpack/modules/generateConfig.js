@@ -208,7 +208,7 @@ module.exports = function generateConfig(project, options) {
             },
           ],
           include: [project.paths.root],
-          exclude: [outputDirPath],
+          exclude: [project.paths.nodeModules, outputDirPath],
         },
 
         {
