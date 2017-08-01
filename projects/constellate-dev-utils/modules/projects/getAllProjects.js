@@ -46,6 +46,12 @@ const toProject = (projectName) => {
   )
 
   const packageJsonPath = thisProjectPath('./package.json')
+
+  if (!fs.pathExistsSync(packageJsonPath)) {
+    TerminalUtils.error(`No package.json file found for project ${projectName}`)
+    process.exit(1)
+  }
+
   const packageJson = readPkg.sync(packageJsonPath, { normalize: false })
 
   return {

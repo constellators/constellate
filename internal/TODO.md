@@ -26,17 +26,11 @@
 ## Features/Chores
 
  - [ ] Postfix async functions with "Async"
- - [X] Replace ObjectUtils.mergeDeep with npm deepmerge package
- - [ ] Default options being applied to the webpack plugins.
- - [ ] For the respective develop plugins assert that a "main" exists in the package.json
  - [ ] Application template
  - [ ] Empty project template
  - [ ] Create project command
  - [ ] Better messages during publish process
- - [ ] Rename ProjectUtils.link/unlink to createSymLinks/removeSymLinks
  - [ ] Rename all dependencies and devDependencies to linked*
- - [ ] Babel plugin reads node version from engines, or it uses current node.
- - [ ] Require package.json files to be declared, and a main for server/bundle types.
  - [ ] Consolidate gracefullyShutdown and configureGracefulExit
  - [ ] Allow specifying an exact tag version for doing publishing from
  - [ ] Command hooks + error handling of them!
@@ -46,12 +40,10 @@
    - [X] posttest
    - [ ] prepublish
    - [ ] postpublish
- - [ ] Ensure npx
  - [ ] Finish all inline TODO comments within code.
  - [ ] Enforce Node >=8.2.0 - i.e. bundled with npm@>=5.3.0
  - [ ] Plugin extension API
  - [ ] Validate the constellate configuration (tcomb?)
- - [ ] Support NPM tags.
  - [ ] Make the target browserlist configurable.
  - [ ] BrowserList configuration (touch point in babel and webpack config)
  - [ ] Chokidar events should result in the absolute minimal amount of work being done. e.g. transpile a single file. remove a dir, etc
@@ -60,8 +52,14 @@
  - [ ] plugin interface for compilers - pre/post develop
  - [ ] Manual reload override for development mode.
  - [ ] Allow for explicit ignoring of a dependency when doing hot development reloads.
- - [ ] Terminal "centerer" https://stackoverflow.com/questions/30335637/get-width-of-terminal-in-node-js
+ https://stackoverflow.com/questions/30335637/get-width-of-terminal-in-node-js
  - [ ] use why-is-node-running for helpful errors?
+ - [X] Require package.json files to be declared
+ - [X] Require "main" for "server" develop plugin implementations.
+ - [X] Babel plugin reads node version from config, or it uses current node.
+ - [X] For the respective develop plugins assert that a "main" exists in the package.json
+ - [X] Default options being applied to the webpack plugins.
+ - [X] Replace ObjectUtils.mergeDeep with npm deepmerge package
  - [X] Copy some base files across always - .npmignore, /README(.md)?/i
  - [X] Copy across non-JS files when compiling
  - [X] Allow for additional files to be specified in package.json files
