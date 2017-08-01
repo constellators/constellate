@@ -4,7 +4,6 @@
  * ❤️
  */
 
-const R = require('ramda')
 const execa = require('execa')
 const TerminalUtils = require('./terminal')
 

@@ -22,6 +22,8 @@
 		"babel-preset-react": "6.24.1",
 		"cache-loader": "1.0.3",
 		"case-sensitive-paths-webpack-plugin": "2.1.1",
+		"constellate-dev-utils": "0.16.0",
+		"constellate-dev-utils-webpack": "0.16.0",
 		"css-loader": "0.28.4",
 		"extract-text-webpack-plugin": "3.0.0",
 		"file-loader": "0.11.2",
@@ -31,8 +33,6 @@
 		"read-pkg": "2.0.0",
 		"style-loader": "0.18.2",
 		"url-loader": "0.5.9",
-		"webpack": "3.4.1",
-		"constellate-dev-utils": "0.16.0",
-		"constellate-dev-utils-webpack": "0.16.0"
+		"webpack": "3.4.1"
 	}
 }

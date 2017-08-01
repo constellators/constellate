@@ -5,12 +5,12 @@
 	"main": "modules/index.js",
 	"dependencies": {
 		"chalk": "2.0.1",
+		"constellate-dev-utils": "0.16.0",
 		"dedent": "0.7.0",
 		"deepmerge": "1.5.0",
 		"p-whilst": "1.0.0",
 		"ramda": "0.24.1",
 		"temp-write": "3.3.0",
-		"write-json-file": "2.2.0",
-		"constellate-dev-utils": "0.16.0"
+		"write-json-file": "2.2.0"
 	}
 }

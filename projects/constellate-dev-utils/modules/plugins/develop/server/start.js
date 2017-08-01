@@ -1,3 +1,4 @@
+const path = require('path')
 const TerminalUtils = require('../../../terminal')
 const ChildProcessUtils = require('../../../childProcess')
 const ProjectUtils = require('../../../projects')
@@ -21,7 +22,7 @@ const killChildProcessFor = (project) => {
 }
 
 // :: (Project) -> Promise
-module.exports = function start(project, options, watcher) {
+module.exports = function start(project) {
   return (
     ProjectUtils.buildProject(project)
       // Ensure any existing childProcess is killed
@@ -34,7 +35,7 @@ module.exports = function start(project, options, watcher) {
               // Spawn a node process
               'node',
               // That runs the main file
-              [project.packageJson.main],
+              [path.resolve(project.paths.root, project.packageJson.main)],
               // Ensure that output supports color etc
               // We use pipe for the error so that we can log a header for ther error.
               {

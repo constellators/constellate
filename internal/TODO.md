@@ -26,7 +26,7 @@
 ## Features/Chores
 
  - [ ] Postfix async functions with "Async"
- - [ ] Replace ObjectUtils.mergeDeep with npm deepmerge package
+ - [X] Replace ObjectUtils.mergeDeep with npm deepmerge package
  - [ ] Default options being applied to the webpack plugins.
  - [ ] For the respective develop plugins assert that a "main" exists in the package.json
  - [ ] Application template

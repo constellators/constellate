@@ -29,7 +29,6 @@ module.exports = function getConfig() {
   }
 
   cache = ObjectUtils.mergeDeep(
-    {},
     defaultAppConfig,
     // eslint-disable-next-line global-require,import/no-dynamic-require
     configExists ? require(configPath) : {},
