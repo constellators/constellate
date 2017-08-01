@@ -13,3 +13,5 @@ node_modules
 npm-debug.log
 pids
 Thumbs.db
+
+.simeerc

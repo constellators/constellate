@@ -25,11 +25,17 @@ const ensureParentDirectoryExists = (filePath) => {
 // :: Project, Options -> DevelopAPI
 module.exports = function babelBuildPlugin(project, options) {
   const buildOutputRoot = path.resolve(project.paths.root, options.outputDir || './dist')
+  const patterns = (options.inputs || ['**/*.js', '**/*.jsx', '!__tests__', '!test.js'])
+    .concat(['!node_modules/**/*', `!${path.basename(buildOutputRoot)}/**/*`])
+  const sourceRoot =
+    options.sourceDir != null
+      ? path.resolve(project.paths.root, options.sourceDir)
+      : project.paths.root
 
   // :: string -> Array<string>
   const getJsFilePaths = () =>
-    globby((options.inputs || ['!__tests__', '!test.js', '**/*.jsx?']).concat(['!node_modules']), {
-      cwd: project.paths.root,
+    globby(patterns, {
+      cwd: sourceRoot,
     })
 
   return {
@@ -46,7 +52,7 @@ module.exports = function babelBuildPlugin(project, options) {
             fs.writeFileSync(outFile, result.code, { encoding: 'utf8' })
             fs.writeFileSync(`${outFile}.map`, JSON.stringify(result.map), { encoding: 'utf8' })
           }
-          const module = path.resolve(project.paths.root, filePath)
+          const module = path.resolve(sourceRoot, filePath)
           return transformFile(module, babelConfig).then(writeTranspiledFile)
         }
 
