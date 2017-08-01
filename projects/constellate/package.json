@@ -1,5 +1,5 @@
 {
-	"version": "0.15.0",
+	"version": "0.16.0",
 	"name": "constellate",
 	"description": "The ❤️ of Constellate applications.",
 	"bin": {
@@ -21,6 +21,6 @@
 		"ramda": "0.24.1",
 		"read-pkg": "2.0.0",
 		"semver": "5.4.1",
-		"constellate-dev-utils": "0.15.0"
+		"constellate-dev-utils": "0.16.0"
 	}
 }
