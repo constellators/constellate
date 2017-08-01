@@ -8,7 +8,12 @@ module.exports = function createProjectWatcher(onChange, project) {
     const watcher = chokidar.watch(
       // TODO: Add the paths to the build folders of each of it's dependencies.
       [project.paths.root],
-      { ignoreInitial: true, cwd: project.paths.root, ignorePermissionErrors: true },
+      {
+        ignored: project.plugins.buildPlugin ? project.plugins.buildPlugin.outputDir() : undefined,
+        ignoreInitial: true,
+        cwd: project.paths.root,
+        ignorePermissionErrors: true,
+      },
     )
     watcher
       .on('add', onChange)

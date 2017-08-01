@@ -208,6 +208,7 @@ module.exports = function generateConfig(project, options) {
             },
           ],
           include: [project.paths.root],
+          exclude: [outputDirPath],
         },
 
         {
@@ -249,6 +250,7 @@ module.exports = function generateConfig(project, options) {
             },
           ],
           include: [project.paths.root],
+          exclude: [outputDirPath],
         })),
 
         // For a production web target we use the ExtractTextPlugin which
@@ -280,6 +282,7 @@ module.exports = function generateConfig(project, options) {
             ],
           }),
           include: [project.paths.root],
+          exclude: [outputDirPath],
         })),
       ]),
     },

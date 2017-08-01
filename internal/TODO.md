@@ -3,6 +3,7 @@
 ## Bugs
 
  - [ ] Show consecutive build errors as may contain new info.
+ - [X] Build output folders need to be ignored by the develop mode watcher.
  - [X] constellate-utils publishing one version behind?
  - [X] update pwns modules - we may need to unlink existing prior to running update
  - [X] Hot module reload inject code
@@ -24,6 +25,7 @@
 
 ## Features/Chores
 
+ - [ ] Postfix async functions with "Async"
  - [ ] Replace ObjectUtils.mergeDeep with npm deepmerge package
  - [ ] Default options being applied to the webpack plugins.
  - [ ] For the respective develop plugins assert that a "main" exists in the package.json

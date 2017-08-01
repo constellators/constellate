@@ -142,6 +142,7 @@ module.exports = function generateConfig(project, options) {
             },
           ],
           include: [project.paths.root],
+          exclude: [outputDirPath],
         },
 
         {
@@ -162,6 +163,7 @@ module.exports = function generateConfig(project, options) {
           test: /\.css$/,
           loaders: ['css-loader/locals'],
           include: [project.paths.root],
+          exclude: [outputDirPath],
         },
       ]),
     },

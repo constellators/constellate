@@ -61,5 +61,6 @@ module.exports = function babelBuildPlugin(project, options) {
         }
         resolve()
       }),
+    outputDir: () => buildOutputRoot,
   }
 }

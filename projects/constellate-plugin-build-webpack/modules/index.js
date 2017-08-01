@@ -15,5 +15,6 @@ module.exports = function webpackBuildPlugin(project, options) {
         }
         resolve()
       }),
+    outputDir: () => outputDirPath,
   }
 }
