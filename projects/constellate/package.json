@@ -1,27 +1,28 @@
 {
-	"version": "0.17.0",
-	"name": "constellate",
-	"description": "The ❤️ of Constellate applications.",
-	"bin": {
-		"constellate": "modules/bin/constellate.js"
-	},
-	"repository": "constellators/constellate",
-	"license": "MIT",
-	"bugs": {
-		"url": "https://github.com/constellators/constellate/issues"
-	},
-	"dependencies": {
-		"chokidar": "1.7.0",
-		"commander": "2.11.0",
-		"constellate-dev-utils": "0.17.0",
-		"constellate-utils": "0.17.0",
-		"dotenv": "4.0.0",
-		"fs-extra": "4.0.1",
-		"jest": "20.0.4",
-		"npm-check": "5.4.5",
-		"p-series": "1.0.0",
-		"ramda": "0.24.1",
-		"read-pkg": "2.0.0",
-		"semver": "5.4.1"
-	}
+  "version": "0.17.0",
+  "name": "constellate",
+  "description": "The ❤️ of Constellate applications.",
+  "bin": {
+    "constellate": "modules/bin/constellate.js"
+  },
+  "files": ["modules"],
+  "repository": "constellators/constellate",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/constellators/constellate/issues"
+  },
+  "dependencies": {
+    "chokidar": "1.7.0",
+    "commander": "2.11.0",
+    "constellate-dev-utils": "0.17.0",
+    "constellate-utils": "0.17.0",
+    "dotenv": "4.0.0",
+    "fs-extra": "4.0.1",
+    "jest": "20.0.4",
+    "npm-check": "5.4.5",
+    "p-series": "1.0.0",
+    "ramda": "0.24.1",
+    "read-pkg": "2.0.0",
+    "semver": "5.4.1"
+  }
 }
