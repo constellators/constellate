@@ -1,5 +1,5 @@
 {
-	"version": "0.16.4",
+	"version": "0.17.0",
 	"name": "constellate-plugin-deploy-now",
 	"description": "Allows deployment of constellate projects to Zeit's now",
 	"main": "modules/index.js",
@@ -8,7 +8,7 @@
 	],
 	"dependencies": {
 		"chalk": "2.0.1",
-		"constellate-dev-utils": "0.16.4",
+		"constellate-dev-utils": "0.17.0",
 		"dedent": "0.7.0",
 		"deepmerge": "1.5.0",
 		"p-whilst": "1.0.0",
