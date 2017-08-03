@@ -1,3 +1,7 @@
+//      
+
+                                                     
+
 const fs = require('fs-extra')
 
 const TerminalUtils = require('../terminal')
@@ -8,21 +12,21 @@ const defaultOptions = {
   build: false,
 }
 
-module.exports = async function cleanProject(project, options = {}) {
+module.exports = async function cleanProject(project         , options                = {}) {
   const { nodeModules, packageLock, build } = Object.assign({}, defaultOptions, options)
 
   if (build && project.plugins.buildPlugin != null) {
-    TerminalUtils.verbose(`Removing build output for ${project.name}`)
     await project.plugins.buildPlugin.clean()
+    TerminalUtils.verbose(`Removed build output for ${project.name}`)
   }
 
   if (nodeModules && fs.existsSync(project.paths.nodeModules)) {
-    TerminalUtils.verbose(`Removing node_modules for ${project.name}`)
     fs.removeSync(project.paths.nodeModules)
+    TerminalUtils.verbose(`Removed node_modules for ${project.name}`)
   }
 
   if (packageLock && fs.existsSync(project.paths.packageLockJson)) {
-    TerminalUtils.verbose(`Removing package-lock.json for ${project.name}`)
     fs.removeSync(project.paths.packageLockJson)
+    TerminalUtils.verbose(`Removed package-lock.json for ${project.name}`)
   }
 }

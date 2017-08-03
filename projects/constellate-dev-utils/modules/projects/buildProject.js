@@ -1,4 +1,12 @@
+//      
+
+                                       
+
 const TerminalUtils = require('../terminal')
+
+                
+                  
+ 
 
 const defaultOptions = { quiet: false }
 
@@ -7,17 +15,18 @@ const executeBuild = (project) => {
   return project.plugins.buildPlugin ? project.plugins.buildPlugin.build() : Promise.resolve()
 }
 
-// :: Project -> Promise<BuildResult>
-module.exports = function buildProject(project, options = defaultOptions) {
+module.exports = async function buildProject(
+  project         ,
+  options           = {},
+)                {
   const { quiet } = Object.assign({}, defaultOptions, options)
   TerminalUtils[quiet ? 'verbose' : 'info'](`Building ${project.name}...`)
 
-  return executeBuild(project)
-    .then(() => {
-      TerminalUtils.verbose(`Built ${project.name}`)
-    })
-    .catch((err) => {
-      TerminalUtils.error(`Build failed for ${project.name}`)
-      throw err
-    })
+  try {
+    await executeBuild(project)
+    TerminalUtils.verbose(`Built ${project.name}`)
+  } catch (err) {
+    TerminalUtils.error(`Build failed for ${project.name}`)
+    throw err
+  }
 }

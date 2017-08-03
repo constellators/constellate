@@ -1,16 +1,23 @@
+//      
+
+                                                        
+
 const R = require('ramda')
-const semver = require('semver')
 const readPkg = require('read-pkg')
 const writePkg = require('write-pkg')
 const TerminalUtils = require('../terminal')
 const getAllProjects = require('./getAllProjects')
+const getAllProjectsArray = require('./getAllProjectsArray')
 
-module.exports = function createReleasePackageJson(project, versions) {
+module.exports = function createReleasePackageJson(project         , versions                 ) {
   const allProjects = getAllProjects()
+  const allProjectsArray = getAllProjectsArray()
 
-  const projectHasVersion = p => R.find(R.equals(p.name), Object.keys(versions))
+  const projectsWithVersion = Object.keys(versions)
 
-  if (!versions || !R.allPass([projectHasVersion], R.values(allProjects))) {
+  const projectHasVersion = (p         ) => projectsWithVersion.find(x => x === p.name) != null
+
+  if (!versions || !R.all(projectHasVersion, allProjectsArray)) {
     TerminalUtils.error(
       'When creating a build for publishing all version numbers should be provided for each project',
     )

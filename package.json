@@ -3,8 +3,7 @@
   "devDependencies": {
     "constellate": "0.16.5",
     "constellate-plugin-build-babel": "0.16.4",
-    "eslint-config-constellate": "0.16.4",
-    "flow-bin": "0.52.0"
+    "eslint-config-constellate": "0.16.4"
   },
   "eslintConfig": {
     "root": true,

@@ -1,3 +1,7 @@
+//      
+
+                                          
+
 const { EOL } = require('os')
 const fs = require('fs-extra')
 const path = require('path')
@@ -129,7 +133,7 @@ function orderByDependencies(projects) {
  *
  * @return {Array<Project>} The project meta object
  */
-module.exports = function getAllProjects(skipCache) {
+module.exports = function getAllProjects(skipCache          )             {
   if (!skipCache && cache) {
     return cache
   }

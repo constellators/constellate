@@ -1,7 +1,17 @@
+//      
+
+                                       
+
+                                                        
+
 const loadJsonFile = require('load-json-file')
 const writeJsonFile = require('write-json-file')
 
-module.exports = function addLinkedDependencies(target, sources, type) {
+module.exports = function addLinkedDependencies(
+  target         ,
+  sources                ,
+  type                ,
+) {
   const pkgJson = loadJsonFile.sync(target.paths.packageJson)
 
   if (sources.length === 0) {

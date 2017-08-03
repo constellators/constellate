@@ -1,3 +1,7 @@
+//      
+
+                                       
+
 const semver = require('semver')
 const dedent = require('dedent')
 const GitUtils = require('../git')
@@ -21,14 +25,10 @@ const resolveVersionFor = (project) => {
     return semver.clean(pkgJson.version)
   }
 
-  // if (lastAppVersionTag) {
-  //   return semver.clean(lastAppVersionTag.tag)
-  // }
-
   return '0.0.0'
 }
 
-module.exports = function getLastVersion(project) {
+module.exports = function getLastVersion(project         )         {
   const result = resolveVersionFor(project)
   TerminalUtils.verbose(`Resolved last version for project to be ${result}`)
   return result
