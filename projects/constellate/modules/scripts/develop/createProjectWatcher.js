@@ -1,5 +1,5 @@
 const chokidar = require('chokidar')
-const TerminalUtils = require('constellate-dev-utils/modules/terminal')
+const { TerminalUtils } = require('constellate-dev-utils')
 
 module.exports = function createProjectWatcher(onChange, project) {
   TerminalUtils.verbose(`Creating watcher for ${project.name}.`)

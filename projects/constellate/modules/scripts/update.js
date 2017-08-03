@@ -1,8 +1,6 @@
 const path = require('path')
 const pSeries = require('p-series')
-const ChildProcessUtils = require('constellate-dev-utils/modules/childProcess')
-const TerminalUtils = require('constellate-dev-utils/modules/terminal')
-const ProjectUtils = require('constellate-dev-utils/modules/projects')
+const { TerminalUtils, ChildProcessUtils, ProjectUtils } = require('constellate-dev-utils')
 
 module.exports = async function update() {
   TerminalUtils.title('Running update...')

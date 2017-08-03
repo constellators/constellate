@@ -1,12 +1,5 @@
-/**
- * This is an adapted version of the related function within the amazing
- * Lerna project.
- * https://github.com/lerna/lerna
- * ❤️
- */
-
 const semver = require('semver')
-const TerminalUtils = require('constellate-dev-utils/modules/terminal')
+const { TerminalUtils } = require('constellate-dev-utils')
 
 module.exports = function promptVersion(currentVersion) {
   return new Promise((resolve) => {
@@ -47,7 +40,9 @@ module.exports = function promptVersion(currentVersion) {
             existingId = components[0]
           }
           const defaultVersion = semver.inc(currentVersion, 'prerelease', existingId)
-          const prompt = `(default: ${existingId ? `"${existingId}"` : 'none'}, yielding ${defaultVersion})`
+          const prompt = `(default: ${existingId
+            ? `"${existingId}"`
+            : 'none'}, yielding ${defaultVersion})`
 
           TerminalUtils.input(`Enter a prerelease identifier ${prompt}`, {
             filter: (v) => {

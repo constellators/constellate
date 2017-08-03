@@ -1,16 +1,7 @@
-/**
- * Tons of inspiration taken from @jaredpalmer's amazing Razzle project,
- * and Facebook/@gaearon's superb Create React App project.
- * https://github.com/jaredpalmer/razzle
- * https://github.com/facebookincubator/create-react-app
- * ❤️
- */
-
 const webpack = require('webpack')
 const path = require('path')
 const nodeExternals = require('webpack-node-externals')
-const { removeNil } = require('constellate-dev-utils/modules/arrays')
-const { onlyIf } = require('constellate-dev-utils/modules/logic')
+const { ArrayUtils, LogicUtils } = require('constellate-dev-utils')
 
 const generateBabelConfig = require('./generateBabelConfig')
 
@@ -22,7 +13,7 @@ module.exports = function generateConfig(project, options) {
 
   return {
     // Keep quiet in dev mode.
-    stats: onlyIf(env === 'development', 'none'),
+    stats: LogicUtils.onlyIf(env === 'development', 'none'),
 
     target: 'node',
 
@@ -70,7 +61,7 @@ module.exports = function generateConfig(project, options) {
       nodeExternals({
         // There are however some file types and dependencies that we do wish
         // to processed by webpack:
-        whitelist: removeNil([
+        whitelist: ArrayUtils.removeNil([
           'source-map-support/register',
           /\.(eot|woff|woff2|ttf|otf)$/,
           /\.(svg|png|jpg|jpeg|gif|ico)$/,
@@ -90,7 +81,7 @@ module.exports = function generateConfig(project, options) {
       hints: false,
     },
 
-    plugins: removeNil([
+    plugins: ArrayUtils.removeNil([
       new webpack.EnvironmentPlugin({
         // It is really important to use NODE_ENV=production in order to use
         // optimised versions of some node_modules, such as React.
@@ -108,14 +99,14 @@ module.exports = function generateConfig(project, options) {
 
       // This makes debugging much easier as webpack will add filenames to
       // modules
-      onlyIf(env === 'development', () => new webpack.NamedModulesPlugin()),
+      LogicUtils.onlyIf(env === 'development', () => new webpack.NamedModulesPlugin()),
 
       // This grants us source map support, which combined with our webpack
       // source maps will give us nice stack traces for our node executed
       // bundles.
       // We use the BannerPlugin to make sure all of our chunks will get the
       // source maps support installed.
-      onlyIf(
+      LogicUtils.onlyIf(
         env === 'development',
         new webpack.BannerPlugin({
           banner: 'require("source-map-support").install();',
@@ -126,7 +117,7 @@ module.exports = function generateConfig(project, options) {
     ]),
 
     module: {
-      rules: removeNil([
+      rules: ArrayUtils.removeNil([
         {
           test: /\.js$/,
           use: [

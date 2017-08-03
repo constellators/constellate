@@ -3,12 +3,12 @@
 /* eslint-disable global-require */
 
 const program = require('commander')
-const TerminalUtils = require('constellate-dev-utils/modules/terminal')
+const { TerminalUtils } = require('constellate-dev-utils')
+const { configureGracefulExit } = require('constellate-utils')
 
 const packageJson = require('../../package.json')
 
 const loadEnvVars = require('../utils/loadEnvVars')
-const configureGracefulExit = require('../utils/configureGracefulExit')
 const rollbackRepo = require('../utils/rollbackRepo')
 
 const noop = () => undefined
@@ -29,7 +29,7 @@ const createAction = ({
   preScript,
 }) => async (...originalArgs) => {
   try {
-    configureGracefulExit(gracefulExit)
+    configureGracefulExit({ onExit: gracefulExit })
     if (!process.env.NODE_ENV) {
       process.env.NODE_ENV = defaultEnv
     }

@@ -5,8 +5,7 @@ const chalk = require('chalk')
 const deepMerge = require('deepmerge')
 const tempWrite = require('temp-write')
 const writeJsonFile = require('write-json-file')
-const TerminalUtils = require('constellate-dev-utils/modules/terminal')
-const ChildProcessUtils = require('constellate-dev-utils/modules/childProcess')
+const { TerminalUtils, ChildProcessUtils } = require('constellate-dev-utils')
 
 module.exports = function nowDeploy(project, options) {
   if (process.env.NOW_USERNAME == null) {

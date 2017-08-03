@@ -2,6 +2,7 @@
 
 const dedent = require('dedent')
 const chalk = require('chalk')
+
 const FSUtils = require('../../fs')
 
 const developPluginCache = {}

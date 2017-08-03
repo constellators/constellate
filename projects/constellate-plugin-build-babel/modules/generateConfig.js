@@ -1,6 +1,5 @@
 const semver = require('semver')
-const { removeNil } = require('constellate-dev-utils/modules/arrays')
-const { onlyIf } = require('constellate-dev-utils/modules/logic')
+const { ArrayUtils, LogicUtils } = require('constellate-dev-utils')
 
 // :: Options -> BabelConfig
 module.exports = function generateConfig(project, options) {
@@ -17,7 +16,7 @@ module.exports = function generateConfig(project, options) {
     // Source maps will be useful for debugging errors in our node executions.
     sourceMaps: 'both',
 
-    presets: removeNil([
+    presets: ArrayUtils.removeNil([
       [
         'env',
         {
@@ -31,7 +30,7 @@ module.exports = function generateConfig(project, options) {
       'react',
     ]),
 
-    plugins: removeNil([
+    plugins: ArrayUtils.removeNil([
       // const { foo, ...others } = object
       // object = { foo, ...others }
       // This plugin uses Object.assign directly.
@@ -58,21 +57,21 @@ module.exports = function generateConfig(project, options) {
 
       // Polyfills the runtime needed for async/await and generators.
       // async/await exists in Node 7.6.0 upwards
-      onlyIf(semver.lt(targetNodeVersion, '7.6.0'), 'babel-plugin-transform-runtime'),
+      LogicUtils.onlyIf(semver.lt(targetNodeVersion, '7.6.0'), 'babel-plugin-transform-runtime'),
 
       // Replaces the React.createElement function with one that is
       // more optimized for production.
-      onlyIf(env === 'production', 'transform-react-inline-elements'),
+      LogicUtils.onlyIf(env === 'production', 'transform-react-inline-elements'),
 
       // Hoists element creation to the top level for subtrees that
       // are fully static, which reduces call to React.createElement
       // and the resulting allocations. More importantly, it tells
       // React that the subtree hasn’t changed so React can completely
       // skip it when reconciling.
-      onlyIf(env === 'production', 'transform-react-constant-elements'),
+      LogicUtils.onlyIf(env === 'production', 'transform-react-constant-elements'),
 
       // Removes PropTypes code as it's just dead weight for a production build.
-      onlyIf(env === 'production', 'babel-plugin-transform-react-remove-prop-types'),
+      LogicUtils.onlyIf(env === 'production', 'babel-plugin-transform-react-remove-prop-types'),
 
       // The following two plugins are currently necessary to make React warnings
       // include more valuable information. They are included here because they are
@@ -82,14 +81,14 @@ module.exports = function generateConfig(project, options) {
       // https://github.com/facebookincubator/create-react-app/issues/989
 
       // Adds __self attribute to JSX which React will use for some warnings
-      onlyIf(env === 'development' || env === 'test', 'transform-react-jsx-self'),
+      LogicUtils.onlyIf(env === 'development' || env === 'test', 'transform-react-jsx-self'),
 
       // Adds component stack to warning messages
-      onlyIf(env === 'development' || env === 'test', 'transform-react-jsx-source'),
+      LogicUtils.onlyIf(env === 'development' || env === 'test', 'transform-react-jsx-source'),
 
       // If we are transpiling a node project then we inject some code to
       // include source maps support on the transpiled code.
-      onlyIf(env === 'development', 'inject-source-map-init'),
+      LogicUtils.onlyIf(env === 'development', 'inject-source-map-init'),
     ]),
   }
 }

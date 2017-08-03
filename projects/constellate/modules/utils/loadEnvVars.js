@@ -1,8 +1,7 @@
 const path = require('path')
 const fs = require('fs-extra')
 const dotenv = require('dotenv')
-
-const TerminalUtils = require('constellate-dev-utils/modules/terminal')
+const { TerminalUtils } = require('constellate-dev-utils')
 
 module.exports = function loadEnvVars() {
   // First load anv env specific files

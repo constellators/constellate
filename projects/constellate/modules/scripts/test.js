@@ -2,9 +2,7 @@ const path = require('path')
 const pify = require('pify')
 const fs = pify(require('fs-extra'))
 const R = require('ramda')
-const ChildProcessUtils = require('constellate-dev-utils/modules/childProcess')
-const TerminalUtils = require('constellate-dev-utils/modules/terminal')
-const AppUtils = require('constellate-dev-utils/modules/app')
+const { TerminalUtils, ChildProcessUtils, AppUtils } = require('constellate-dev-utils')
 
 module.exports = async function test({ watch, passThroughArgs }) {
   TerminalUtils.title('Running test...')

@@ -3,6 +3,9 @@
 	"name": "constellate-plugin-build-webpack",
 	"description": "Webpack (web targetting) plugin for Constellate projects.",
 	"main": "modules/index.js",
+	"files": [
+		"modules"
+	],
 	"dependencies": {
 		"assets-webpack-plugin": "3.5.1",
 		"autoprefixer": "7.1.2",

@@ -1,7 +1,7 @@
 const getWebProjectManifest = require('./getWebProjectManifest')
-const gracefullyShutdown = require('./gracefullyShutdown')
+const configureGracefulExit = require('./configureGracefulExit')
 
 module.exports = {
   getWebProjectManifest,
-  gracefullyShutdown,
+  configureGracefulExit,
 }

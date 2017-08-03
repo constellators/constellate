@@ -1,4 +1,4 @@
-const TerminalUtils = require('constellate-dev-utils/modules/terminal')
+const { TerminalUtils } = require('constellate-dev-utils')
 
 module.exports = function createProjectDevelopConductor(project, watcher) {
   let runningDevelopInstance

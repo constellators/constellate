@@ -3,6 +3,9 @@
 	"name": "constellate-plugin-build-webpack-node",
 	"description": "Webpack (node targetting) build plugin for Constellate projects.",
 	"main": "modules/index.js",
+	"files": [
+		"modules"
+	],
 	"dependencies": {
 		"babel-core": "6.25.0",
 		"babel-loader": "7.1.1",

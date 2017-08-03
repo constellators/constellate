@@ -7,6 +7,10 @@
 	"bugs": {
 		"url": "https://github.com/constellators/constellate/issues"
 	},
+	"main": "modules/index.js",
+	"files": [
+		"modules"
+	],
 	"dependencies": {
 		"chalk": "2.0.1",
 		"dedent": "0.7.0",

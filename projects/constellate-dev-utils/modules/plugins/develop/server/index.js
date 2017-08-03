@@ -1,4 +1,5 @@
-const TerminalUtils = require('constellate-dev-utils/modules/terminal')
+const TerminalUtils = require('../../../terminal')
+
 const start = require('./start')
 
 // :: (Project, DevelopOptions, Watcher) -> DevelopAPI

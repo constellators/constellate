@@ -1,10 +1,7 @@
 const R = require('ramda')
 const dedent = require('dedent')
 const chalk = require('chalk')
-const AppUtils = require('constellate-dev-utils/modules/app')
-const GitUtils = require('constellate-dev-utils/modules/git')
-const ProjectUtils = require('constellate-dev-utils/modules/projects')
-const TerminalUtils = require('constellate-dev-utils/modules/terminal')
+const { TerminalUtils, AppUtils, GitUtils, ProjectUtils } = require('constellate-dev-utils')
 
 const defaultOptions = { quiet: false }
 

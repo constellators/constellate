@@ -2,6 +2,10 @@
 	"version": "0.16.3",
 	"name": "constellate-dev-utils-webpack",
 	"description": "Shared utils for Webpack related Constellate core packages",
+	"main": "modules/index.js",
+	"files": [
+		"modules"
+	],
 	"dependencies": {
 		"constellate-dev-utils": "0.16.3"
 	}

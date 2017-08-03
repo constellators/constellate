@@ -1,9 +1,7 @@
 const R = require('ramda')
 const chalk = require('chalk')
 const dedent = require('dedent')
-const TerminalUtils = require('constellate-dev-utils/modules/terminal')
-const GitUtils = require('constellate-dev-utils/modules/git')
-const AppUtils = require('constellate-dev-utils/modules/app')
+const { TerminalUtils, GitUtils, AppUtils } = require('constellate-dev-utils')
 
 module.exports = async function moveToTargetTag({ question }) {
   const appConfig = AppUtils.getConfig()

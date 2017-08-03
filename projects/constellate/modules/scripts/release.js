@@ -5,12 +5,15 @@ const pSeries = require('p-series')
 const dedent = require('dedent')
 const chalk = require('chalk')
 const readPkg = require('read-pkg')
-const TerminalUtils = require('constellate-dev-utils/modules/terminal')
-const GitUtils = require('constellate-dev-utils/modules/git')
-const AppUtils = require('constellate-dev-utils/modules/app')
-const ProjectUtils = require('constellate-dev-utils/modules/projects')
+const {
+  TerminalUtils,
+  GitUtils,
+  AppUtils,
+  ProjectUtils,
+  ChildProcessUtils,
+} = require('constellate-dev-utils')
+
 const requestNextVersion = require('../utils/requestNextVersion')
-const ChildProcessUtils = require('constellate-dev-utils/modules/childProcess')
 
 module.exports = async function release() {
   TerminalUtils.title('Running release...')

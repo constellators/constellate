@@ -25,13 +25,14 @@
 
 ## Features/Chores
 
+ - [ ] Integration tests
+ - [ ] Flow ?
  - [ ] Postfix async functions with "Async"
  - [ ] Application template
  - [ ] Empty project template
  - [ ] Create project command
  - [ ] Better messages during publish process
  - [ ] Rename all dependencies and devDependencies to linked*
- - [ ] Consolidate gracefullyShutdown and configureGracefulExit
  - [ ] Allow specifying an exact tag version for doing publishing from
  - [ ] Command hooks + error handling of them!
    - [X] predevelop
@@ -54,6 +55,7 @@
  - [ ] Allow for explicit ignoring of a dependency when doing hot development reloads.
  https://stackoverflow.com/questions/30335637/get-width-of-terminal-in-node-js
  - [ ] use why-is-node-running for helpful errors?
+ - [X] Consolidate gracefullyShutdown and configureGracefulExit
  - [X] Require package.json files to be declared
  - [X] Require "main" for "server" develop plugin implementations.
  - [X] Babel plugin reads node version from config, or it uses current node.

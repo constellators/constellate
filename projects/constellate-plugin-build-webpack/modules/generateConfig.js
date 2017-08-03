@@ -1,11 +1,3 @@
-/**
- * Tons of inspiration taken from @jaredpalmer's amazing Razzle project,
- * and Facebook/@gaearon's superb Create React App project.
- * https://github.com/jaredpalmer/razzle
- * https://github.com/facebookincubator/create-react-app
- * ❤️
- */
-
 const webpack = require('webpack')
 const path = require('path')
 const AssetsPlugin = require('assets-webpack-plugin')
@@ -13,8 +5,7 @@ const ExtractTextPlugin = require('extract-text-webpack-plugin')
 const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin')
 const WatchMissingNodeModulesPlugin = require('react-dev-utils/WatchMissingNodeModulesPlugin')
 const autoprefixer = require('autoprefixer')
-const { removeNil } = require('constellate-dev-utils/modules/arrays')
-const { onlyIf } = require('constellate-dev-utils/modules/logic')
+const { ArrayUtils, LogicUtils } = require('constellate-dev-utils')
 const generateBabelConfig = require('./generateBabelConfig')
 
 module.exports = function generateConfig(project, options) {
@@ -27,7 +18,7 @@ module.exports = function generateConfig(project, options) {
 
   const webpackConfig = {
     // Keep quiet in dev mode.
-    stats: onlyIf(env === 'development', 'none'),
+    stats: LogicUtils.onlyIf(env === 'development', 'none'),
 
     target: 'web',
 
@@ -89,7 +80,7 @@ module.exports = function generateConfig(project, options) {
       hints: env === 'development' ? false : 'warning',
     },
 
-    plugins: removeNil([
+    plugins: ArrayUtils.removeNil([
       new webpack.EnvironmentPlugin({
         // It is really important to use NODE_ENV=production in order to use
         // optimised versions of some node_modules, such as React.
@@ -114,11 +105,11 @@ module.exports = function generateConfig(project, options) {
 
       // This makes debugging much easier as webpack will add filenames to
       // modules
-      onlyIf(env === 'development', () => new webpack.NamedModulesPlugin()),
+      LogicUtils.onlyIf(env === 'development', () => new webpack.NamedModulesPlugin()),
 
       // For our production web targets we need to make sure we pass the required
       // configuration to ensure that the output is minimized/optimized.
-      onlyIf(
+      LogicUtils.onlyIf(
         env === 'production',
         () =>
           new webpack.optimize.UglifyJsPlugin({
@@ -139,7 +130,7 @@ module.exports = function generateConfig(project, options) {
 
       // For our production web targets we need to make sure we pass the required
       // configuration to ensure that the output is minimized/optimized.
-      onlyIf(
+      LogicUtils.onlyIf(
         env === 'production',
         () =>
           new webpack.LoaderOptionsPlugin({
@@ -150,27 +141,27 @@ module.exports = function generateConfig(project, options) {
       // Watcher doesn't work well if you mistype casing in a path so we use
       // a plugin that prints an error when you attempt to do this.
       // See https://github.com/facebookincubator/create-react-app/issues/240
-      onlyIf(env === 'development', () => new CaseSensitivePathsPlugin()),
+      LogicUtils.onlyIf(env === 'development', () => new CaseSensitivePathsPlugin()),
 
       // If you require a missing module and then `npm install` it, you still have
       // to restart the development server for Webpack to discover it. This plugin
       // makes the discovery automatic so you don't have to restart.
       // See https://github.com/facebookincubator/create-react-app/issues/186
-      onlyIf(
+      LogicUtils.onlyIf(
         env === 'development',
         () => new WatchMissingNodeModulesPlugin(project.paths.nodeModules),
       ),
 
       // We don't want webpack errors to occur during development as it will
       // kill our dev servers.
-      onlyIf(env === 'development', () => new webpack.NoEmitOnErrorsPlugin()),
+      LogicUtils.onlyIf(env === 'development', () => new webpack.NoEmitOnErrorsPlugin()),
 
       // We need this plugin to enable hot reloading of our client.
-      onlyIf(env === 'development', () => new webpack.HotModuleReplacementPlugin()),
+      LogicUtils.onlyIf(env === 'development', () => new webpack.HotModuleReplacementPlugin()),
 
       // For a production build of a web target we need to extract the CSS into
       // CSS files.
-      onlyIf(
+      LogicUtils.onlyIf(
         env === 'production',
         () =>
           new ExtractTextPlugin({
@@ -181,7 +172,7 @@ module.exports = function generateConfig(project, options) {
 
       // This will inject the module.hot.accept code in the entry file for our
       // development build.
-      onlyIf(
+      LogicUtils.onlyIf(
         env === 'development',
         () =>
           // eslint-disable-next-line global-require
@@ -192,7 +183,7 @@ module.exports = function generateConfig(project, options) {
     ]),
 
     module: {
-      rules: removeNil([
+      rules: ArrayUtils.removeNil([
         {
           test: /\.js$/,
           use: [
@@ -225,7 +216,7 @@ module.exports = function generateConfig(project, options) {
 
         // For development web targets we will use the style loader which will
         // allow hot reloading of the CSS.
-        onlyIf(env === 'development', () => ({
+        LogicUtils.onlyIf(env === 'development', () => ({
           test: /\.css$/,
           loader: [
             'style-loader',
@@ -257,7 +248,7 @@ module.exports = function generateConfig(project, options) {
         // will extract our CSS into CSS files.
         // Note: The ExtractTextPlugin needs to be registered within the
         // plugins section too.
-        onlyIf(env === 'production', () => ({
+        LogicUtils.onlyIf(env === 'production', () => ({
           test: /\.css$/,
           loader: ExtractTextPlugin.extract({
             fallback: 'style-loader',

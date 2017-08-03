@@ -1,6 +1,5 @@
 const R = require('ramda')
-const AppUtils = require('constellate-dev-utils/modules/app')
-const TerminalUtils = require('constellate-dev-utils/modules/terminal')
+const { TerminalUtils, AppUtils } = require('constellate-dev-utils')
 
 module.exports = function gracefulShutdownManager(projectDevelopConductors, projectWatchers) {
   let shuttingDown = false

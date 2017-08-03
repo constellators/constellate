@@ -3,6 +3,9 @@
 	"name": "constellate-plugin-develop-webpack",
 	"description": "Provides webpack-dev-server support for 'webpack' built constellate projects",
 	"main": "modules/index.js",
+	"files": [
+		"modules"
+	],
 	"dependencies": {
 		"constellate-dev-utils": "0.16.3",
 		"constellate-dev-utils-webpack": "0.16.3",

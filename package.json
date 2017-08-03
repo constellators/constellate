@@ -1,9 +1,10 @@
 {
   "private": true,
   "devDependencies": {
-    "constellate": "0.16.0",
-    "constellate-plugin-build-babel": "0.16.0",
-    "eslint-config-constellate": "0.16.0"
+    "constellate": "0.16.3",
+    "constellate-plugin-build-babel": "0.16.3",
+    "eslint-config-constellate": "0.16.3",
+    "flow-bin": "0.51.1"
   },
   "eslintConfig": {
     "root": true,

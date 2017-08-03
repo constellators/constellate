@@ -1,6 +1,5 @@
 const pSeries = require('p-series')
-const ProjectUtils = require('constellate-dev-utils/modules/projects')
-const TerminalUtils = require('constellate-dev-utils/modules/terminal')
+const { TerminalUtils, ProjectUtils } = require('constellate-dev-utils')
 
 module.exports = async function build() {
   TerminalUtils.title('Running build...')
