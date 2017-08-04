@@ -1,51 +1,81 @@
+//      
+
+                           
+                         
+                           
+                                                 
+ 
+
+                         
+               
+                       
+ 
+
+                      
+                         
+                    
+                                        
+ 
+
+                     
+                                        
+ 
+
+                          
+               
+                
+ 
+
+                      
+              
+                 
+ 
+
 /* eslint-disable no-console */
 
 const chalk = require('chalk')
 const inquirer = require('inquirer')
 
-function verbose(msg) {
+function verbose(msg        )       {
   if (process.env.DEBUG) {
     console.log(chalk.dim(msg))
   }
 }
 
-function error(msg, err) {
+function error(msg        , err        )       {
   console.log(chalk.red.bold(msg))
-  if (err) {
-    if (typeof err === 'object' && typeof err.message !== 'undefined') {
-      if (typeof err.stack !== 'undefined') {
-        console.log(err.stack.substr(0, err.stack.indexOf(' at ')))
-        verbose(err.stack.substr(err.stack.indexOf(' at ')))
-      } else {
-        console.log(err.message)
-      }
+  if (err != null) {
+    if (typeof err.stack !== 'undefined') {
+      console.log(err.stack.substr(0, err.stack.indexOf(' at ')))
+      verbose(err.stack.substr(err.stack.indexOf(' at ')))
     } else {
-      console.log(err)
+      console.log(err.message)
     }
   }
 }
 
-function warning(msg) {
+function warning(msg        )       {
   console.log(chalk.yellow(msg))
 }
 
-function title(msg) {
+function title(msg        )       {
   console.log(chalk.bold.magenta(msg))
 }
 
-function info(msg) {
+function info(msg        )       {
   console.log(chalk.blue(msg))
 }
 
-function success(msg) {
+function success(msg        )       {
   console.log(chalk.green(msg))
 }
 
-function header(msg) {
+function header(msg        )       {
   console.log(chalk.bold(msg))
 }
 
-function multiSelect(message, { choices, selected, filter, validate } = {}) {
+function multiSelect(message        , options                    )                            {
+  const { choices, selected, validate } = options
   return inquirer
     .prompt([
       {
@@ -54,7 +84,6 @@ function multiSelect(message, { choices, selected, filter, validate } = {}) {
         message,
         choices,
         pageSize: choices.length,
-        filter,
         validate,
         default: selected,
       },
@@ -62,7 +91,8 @@ function multiSelect(message, { choices, selected, filter, validate } = {}) {
     .then(answers => answers.prompt)
 }
 
-function select(message, { choices, filter, validate } = {}) {
+function select(message        , options               )                             {
+  const { choices, validate } = options
   return inquirer
     .prompt([
       {
@@ -71,28 +101,27 @@ function select(message, { choices, filter, validate } = {}) {
         message,
         choices,
         pageSize: choices.length,
-        filter,
         validate,
       },
     ])
     .then(answers => answers.prompt)
 }
 
-function input(message, { filter, validate } = {}) {
+function input(message        , options                = {})                             {
+  const { validate } = options
   return inquirer
     .prompt([
       {
         type: 'input',
         name: 'input',
         message,
-        filter,
         validate,
       },
     ])
     .then(answers => answers.input)
 }
 
-function confirm(message) {
+function confirm(message        )                         {
   return inquirer
     .prompt([
       {

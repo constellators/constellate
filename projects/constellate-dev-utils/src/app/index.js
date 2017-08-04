@@ -1,3 +1,5 @@
+// @flow
+
 const getConfig = require('./getConfig')
 const getLastVersionTag = require('./getLastVersionTag')
 const getLastXVersionTags = require('./getLastXVersionTags')

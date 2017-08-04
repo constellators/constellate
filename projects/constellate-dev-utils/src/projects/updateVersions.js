@@ -1,10 +1,13 @@
-const R = require('ramda')
+// @flow
+
+import type { Project, ProjectVersions } from '../types'
+
 const fs = require('fs-extra')
 const loadJsonFile = require('load-json-file')
 const writeJsonFile = require('write-json-file')
 const getAllProjectsArray = require('./getAllProjectsArray')
 
-module.exports = function updateVersions(project, versions) {
+module.exports = function updateVersions(project: Project, versions: ProjectVersions): void {
   const allProjectsArray = getAllProjectsArray()
 
   const updateJsonFile = (file) => {
@@ -18,7 +21,7 @@ module.exports = function updateVersions(project, versions) {
             {},
             pkgJson[type],
             Object.keys(pkgJson[type]).reduce((acc, cur) => {
-              const match = allProjectsArray.find(R.propEq('packageName', cur))
+              const match = allProjectsArray.find(x => x.packageName === cur)
               if (match && versions[match.name]) {
                 return Object.assign(acc, { [cur]: versions[match.name] })
               }

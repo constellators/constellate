@@ -1,9 +1,13 @@
+// @flow
+
+import type { Project } from '../types'
+
 const fs = require('fs-extra')
 const path = require('path')
 const TerminalUtils = require('../terminal')
 const getAllProjects = require('./getAllProjects')
 
-module.exports = function linkProject(project) {
+module.exports = function linkProject(project: Project): void {
   const allProjects = getAllProjects()
 
   // Sym link each of the project's dependencies into the node_modules directory

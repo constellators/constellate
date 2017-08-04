@@ -1,9 +1,13 @@
+// @flow
+
+import type { Project } from '../types'
+
 const fs = require('fs-extra')
 const path = require('path')
 const TerminalUtils = require('../terminal')
 const getAllProjects = require('./getAllProjects')
 
-module.exports = function unlinkProject(project) {
+module.exports = function unlinkProject(project: Project): void {
   const allProjects = getAllProjects()
 
   // Sym link our the build root for each of the project's dependencies into the

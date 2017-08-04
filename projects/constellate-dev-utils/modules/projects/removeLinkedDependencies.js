@@ -1,14 +1,15 @@
-const loadJsonFile = require('load-json-file')
+//      
+
+                                       
+
 const writeJsonFile = require('write-json-file')
 
-module.exports = function removeLinkedDependencies(project, deps) {
-  const pkgJson = loadJsonFile.sync(project.paths.packageJson)
-
+module.exports = function removeLinkedDependencies(project         , deps                )       {
   const cleanDeps = type =>
     Object.assign(
       {},
       // existing deps
-      pkgJson[type] ? pkgJson[type] : {},
+      project.packageJson[type] ? project.packageJson[type] : {},
       // remove linked deps
       deps.reduce(
         (acc, cur) =>
@@ -19,9 +20,9 @@ module.exports = function removeLinkedDependencies(project, deps) {
       ),
     )
 
-  const newPkgJson = Object.assign({}, pkgJson, {
-    dependencies: pkgJson.dependencies ? cleanDeps('dependencies') : undefined,
-    devDependencies: pkgJson.devDependencies ? cleanDeps('devDependencies') : undefined,
+  const newPkgJson = Object.assign({}, project.packageJson, {
+    dependencies: project.packageJson.dependencies ? cleanDeps('dependencies') : undefined,
+    devDependencies: project.packageJson.devDependencies ? cleanDeps('devDependencies') : undefined,
   })
 
   writeJsonFile.sync(project.paths.packageJson, newPkgJson)

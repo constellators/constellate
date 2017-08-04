@@ -1,3 +1,5 @@
+// @flow
+
 const addLinkedDependencies = require('./addLinkedDependencies')
 const buildProject = require('./buildProject')
 const changedSince = require('./changedSince')

@@ -1,3 +1,5 @@
+// @flow
+
 const R = require('ramda')
 
 /**
@@ -7,11 +9,11 @@ const R = require('ramda')
  *
  * @return {Array} The filtered array.
  */
-function removeNil(as) {
+function removeNil<T>(as: Array<T>): Array<T> {
   return as.filter(a => a != null)
 }
 
-function removeEmpty(as) {
+function removeEmpty(as: Array<string>): Array<string> {
   return as.filter(a => R.not(R.isEmpty(a)))
 }
 

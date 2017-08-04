@@ -1,7 +1,9 @@
-const getAllProjects = require('./getAllProjects')
+// @flow
+
+const getAllProjectsArray = require('./getAllProjectsArray')
 const linkProject = require('./linkProject')
 
-module.exports = function linkAllProjects() {
-  const projects = getAllProjects()
-  Object.keys(projects).forEach(name => linkProject(projects[name]))
+module.exports = function linkAllProjects(): void {
+  const projects = getAllProjectsArray()
+  projects.forEach(linkProject)
 }

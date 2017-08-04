@@ -25,7 +25,7 @@
 
 ## Features/Chores
 
- - [ ] constellate-plugin-build-flow
+ - [ ] Replace linking etc with yarn workspaces. sigh. lol.
  - [ ] Integration tests
  - [ ] Flow ?
  - [ ] Postfix async functions with "Async"
@@ -56,6 +56,7 @@
  - [ ] Allow for explicit ignoring of a dependency when doing hot development reloads.
  https://stackoverflow.com/questions/30335637/get-width-of-terminal-in-node-js
  - [ ] use why-is-node-running for helpful errors?
+ - [X] constellate-plugin-build-flow
  - [X] Consolidate gracefullyShutdown and configureGracefulExit
  - [X] Require package.json files to be declared
  - [X] Require "main" for "server" develop plugin implementations.
