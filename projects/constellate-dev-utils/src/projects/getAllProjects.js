@@ -148,7 +148,7 @@ module.exports = function getAllProjects(skipCache: ?boolean): ProjectMap {
     // only include directories
     .filter(fsPath => fs.lstatSync(path.join(projectsRoot, fsPath)).isDirectory())
     // only include projects containing a package.json
-    .filter(projectDir => fs.pathExistsSync(path.resolve(projectDir, './package.json')))
+    .filter(projectDir => fs.pathExistsSync(path.join(projectsRoot, projectDir, './package.json')))
     // convert into a Project
     .map(toProject)
 
