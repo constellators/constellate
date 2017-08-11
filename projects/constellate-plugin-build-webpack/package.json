@@ -1,5 +1,5 @@
 {
-	"version": "0.17.4",
+	"version": "0.17.5",
 	"name": "constellate-plugin-build-webpack",
 	"description": "Webpack (web targetting) plugin for Constellate projects.",
 	"main": "modules/index.js",
@@ -25,8 +25,8 @@
 		"babel-preset-react": "6.24.1",
 		"cache-loader": "1.0.3",
 		"case-sensitive-paths-webpack-plugin": "2.1.1",
-		"constellate-dev-utils": "0.17.4",
-		"constellate-dev-utils-webpack": "0.17.4",
+		"constellate-dev-utils": "0.17.5",
+		"constellate-dev-utils-webpack": "0.17.5",
 		"css-loader": "0.28.4",
 		"extract-text-webpack-plugin": "3.0.0",
 		"file-loader": "0.11.2",
