@@ -1,5 +1,5 @@
 {
-	"version": "0.17.5",
+	"version": "0.17.6",
 	"name": "constellate-plugin-build-webpack-node",
 	"description": "Webpack (node targetting) build plugin for Constellate projects.",
 	"main": "modules/index.js",
@@ -22,8 +22,8 @@
 		"babel-preset-env": "1.6.0",
 		"babel-preset-react": "6.24.1",
 		"cache-loader": "1.0.3",
-		"constellate-dev-utils": "0.17.5",
-		"constellate-dev-utils-webpack": "0.17.5",
+		"constellate-dev-utils": "0.17.6",
+		"constellate-dev-utils-webpack": "0.17.6",
 		"css-loader": "0.28.4",
 		"file-loader": "0.11.2",
 		"ramda": "0.24.1",
