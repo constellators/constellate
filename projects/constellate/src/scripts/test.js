@@ -24,11 +24,15 @@ module.exports = async function test({ watch, passThroughArgs }) {
 
   const args = watch ? ['--watch'] : passThroughArgs
 
-  ChildProcessUtils.execSync(jestPath, args, {
-    cwd: process.cwd(),
-    stdio: 'inherit',
-    env: process.env,
-  })
+  try {
+    ChildProcessUtils.execSync(jestPath, args, {
+      cwd: process.cwd(),
+      stdio: 'inherit',
+      env: process.env,
+    })
+  } catch (err) {
+    console.error(err)
+  }
 
   if (postTestHook) {
     TerminalUtils.info('Running the post test hook')
