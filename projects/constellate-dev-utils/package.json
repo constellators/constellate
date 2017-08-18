@@ -13,14 +13,14 @@
 		"types"
 	],
 	"dependencies": {
-		"chalk": "2.0.1",
+		"chalk": "2.1.0",
 		"dedent": "0.7.0",
-		"deepmerge": "1.5.0",
-		"execa": "0.7.0",
+		"deepmerge": "1.5.1",
+		"execa": "0.8.0",
 		"figures": "2.0.0",
 		"fs-extra": "4.0.1",
 		"globby": "6.1.0",
-		"inquirer": "3.2.1",
+		"inquirer": "3.2.2",
 		"load-json-file": "2.0.0",
 		"p-series": "1.0.0",
 		"ramda": "0.24.1",
@@ -31,6 +31,6 @@
 		"write-pkg": "3.1.0"
 	},
 	"devDependencies": {
-		"flow-bin": "0.52.0"
+		"flow-bin": "0.53.1"
 	}
 }
