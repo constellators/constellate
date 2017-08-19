@@ -25,7 +25,7 @@ module.exports = async function test({ watch, passThroughArgs }) {
 
   const args = (watch ? ['--watch'] : passThroughArgs) || []
   const forceExitIfNotWatch = args.find(x => x === '--watch') != null ? '' : '--forceExit'
-  const cmd = `${jestPath} ${args.join(' ')} ${forceExitIfNotWatch}`
+  const cmd = `${jestPath} ${forceExitIfNotWatch} --no-cache ${args.join(' ')}`
   TerminalUtils.verbose(`Executing jest with args: [${args.join(', ')}]`)
 
   try {

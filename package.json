@@ -12,5 +12,8 @@
     "rules": {
       "no-console": 0
     }
+  },
+  "scripts": {
+    "test": "constellate test"
   }
 }
