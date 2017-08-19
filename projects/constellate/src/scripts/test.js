@@ -24,8 +24,10 @@ module.exports = async function test({ watch, passThroughArgs }) {
 
   const args = watch ? ['--watch'] : passThroughArgs
 
+  TerminalUtils.verbose(`Executing jest with args: [${args.join(', ')}]`)
+
   try {
-    ChildProcessUtils.execSync(jestPath, args, {
+    await ChildProcessUtils.spawn(jestPath, args, {
       cwd: process.cwd(),
       stdio: 'inherit',
       env: process.env,
