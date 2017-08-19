@@ -34,7 +34,7 @@ module.exports = async function test({ watch, passThroughArgs }) {
       env: process.env,
     })
   } catch (err) {
-    TerminalUtils.verbose(console.error(err))
+    TerminalUtils.verbose(err)
   }
 
   if (postTestHook) {
