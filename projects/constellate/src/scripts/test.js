@@ -2,7 +2,8 @@ const path = require('path')
 const pify = require('pify')
 const fs = pify(require('fs-extra'))
 const R = require('ramda')
-const { TerminalUtils, ChildProcessUtils, AppUtils } = require('constellate-dev-utils')
+const execa = require('execa')
+const { TerminalUtils, AppUtils } = require('constellate-dev-utils')
 
 module.exports = async function test({ watch, passThroughArgs }) {
   TerminalUtils.title('Running test...')
@@ -23,11 +24,11 @@ module.exports = async function test({ watch, passThroughArgs }) {
   }
 
   const args = watch ? ['--watch'] : passThroughArgs
-
+  const cmd = `${jestPath} ${args.join(' ')}`
   TerminalUtils.verbose(`Executing jest with args: [${args.join(', ')}]`)
 
   try {
-    await ChildProcessUtils.spawn(jestPath, args, {
+    await execa.shell(cmd, {
       cwd: process.cwd(),
       stdio: 'inherit',
       env: process.env,

@@ -25,6 +25,7 @@
 
 ## Features/Chores
 
+ - [ ] Move the dotenv loader into constellate-utils
  - [ ] Replace linking etc with yarn workspaces. sigh. lol.
  - [ ] Integration tests
  - [ ] Flow ?
