@@ -3,7 +3,7 @@ const pify = require('pify')
 const fs = pify(require('fs-extra'))
 const R = require('ramda')
 const execa = require('execa')
-const { TerminalUtils, AppUtils } = require('constellate-dev-utils')
+const { TerminalUtils, AppUtils, ChildProcessUtils } = require('constellate-dev-utils')
 
 module.exports = async function test({ watch, passThroughArgs }) {
   TerminalUtils.title('Running test...')
@@ -28,7 +28,7 @@ module.exports = async function test({ watch, passThroughArgs }) {
   TerminalUtils.verbose(`Executing jest with args: [${args.join(', ')}]`)
 
   try {
-    await execa.shell(cmd, {
+    await ChildProcessUtils.execSync(cmd, {
       cwd: process.cwd(),
       stdio: 'inherit',
       env: process.env,
