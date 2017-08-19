@@ -23,7 +23,7 @@ module.exports = async function test({ watch, passThroughArgs }) {
     await preTestHook()
   }
 
-  const args = watch ? ['--watch'] : passThroughArgs
+  const args = (watch ? ['--watch'] : passThroughArgs) || []
   const cmd = `${jestPath} ${args.join(' ')}`
   TerminalUtils.verbose(`Executing jest with args: [${args.join(', ')}]`)
 
