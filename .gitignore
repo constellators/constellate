@@ -10,8 +10,16 @@
 *.seed
 logs
 node_modules
+projects/**/node_modules
 npm-debug.log
 pids
 Thumbs.db
+.vscode
 
 .simeerc
+
+# Transpiled Projects (damn you vscode for forcing me to be so explict here)
+# Helps with vscode gitignore plugin too
+projects/constellate/modules
+projects/constellate-dev-utils/modules
+projects/constellate-utils/modules

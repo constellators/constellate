@@ -25,10 +25,8 @@
 
 ## Features/Chores
 
- - [ ] Move the dotenv loader into constellate-utils
  - [ ] Replace linking etc with yarn workspaces. sigh. lol.
  - [ ] Integration tests
- - [ ] Flow ?
  - [ ] Postfix async functions with "Async"
  - [ ] Application template
  - [ ] Empty project template
@@ -57,6 +55,8 @@
  - [ ] Allow for explicit ignoring of a dependency when doing hot development reloads.
  https://stackoverflow.com/questions/30335637/get-width-of-terminal-in-node-js
  - [ ] use why-is-node-running for helpful errors?
+ - [X] Flow
+ - [X] Move the dotenv loader into constellate-utils
  - [X] constellate-plugin-build-flow
  - [X] Consolidate gracefullyShutdown and configureGracefulExit
  - [X] Require package.json files to be declared

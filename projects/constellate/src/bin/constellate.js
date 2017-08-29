@@ -4,12 +4,10 @@
 
 const program = require('commander')
 const { TerminalUtils } = require('constellate-dev-utils')
-const { configureGracefulExit } = require('constellate-utils')
+const { configureGracefulExit, loadEnvVars } = require('constellate-utils')
 
-const packageJson = require('../../package.json')
-
-const loadEnvVars = require('../utils/loadEnvVars')
 const rollbackRepo = require('../utils/rollbackRepo')
+const packageJson = require('../../package.json')
 
 const noop = () => undefined
 
@@ -89,22 +87,24 @@ program
 program.command('deploy').description('Deploys the projects').action(
   createAction({
     resolveScript: () => require('../scripts/deploy'),
-    errorMsg:
-      'Your projects may not have been fully deployed. Please check your expected deployment targets.',
+    errorMsg: 'Your projects may not have been fully deployed. Please check your expected deployment targets.',
   }),
 )
 
-program.command('develop').description('Runs a development environment for the projects').action(
-  createAction({
-    defaultEnv: 'development',
-    preScript: () => {
-      TerminalUtils.title('Kickstarting development hyperengine...')
-      console.log(`\n${require('../utils/getCarlSaganQuote')()}\n`)
-      return new Promise(resolve => setTimeout(resolve, 3000))
-    },
-    resolveScript: () => require('../scripts/develop'),
-  }),
-)
+program
+  .command('develop')
+  .description('Runs a development environment for the projects')
+  .action(
+    createAction({
+      defaultEnv: 'development',
+      preScript: () => {
+        TerminalUtils.title('Kickstarting development hyperengine...')
+        console.log(`\n${require('../utils/getCarlSaganQuote')()}\n`)
+        return new Promise(resolve => setTimeout(resolve, 3000))
+      },
+      resolveScript: () => require('../scripts/develop'),
+    }),
+  )
 
 program
   .command('install')
@@ -128,11 +128,14 @@ program
     }),
   )
 
-program.command('link-projects').description('Links project(s) to a project').action(
-  createAction({
-    resolveScript: () => require('../scripts/linkProjects'),
-  }),
-)
+program
+  .command('link-projects')
+  .description('Links project(s) to a project')
+  .action(
+    createAction({
+      resolveScript: () => require('../scripts/linkProjects'),
+    }),
+  )
 
 program
   .command('release')
@@ -154,13 +157,18 @@ program
     createAction({
       defaultEnv: 'test',
       resolveScript: (options, args) => () =>
-        require('../scripts/test')({ passThroughArgs: args, watch: options.watch }),
+        require('../scripts/test')({
+          passThroughArgs: args,
+          watch: options.watch,
+        }),
     }),
   )
 
 program
   .command('update')
-  .description('Runs an interactive dependency update process for every project')
+  .description(
+    'Runs an interactive dependency update process for every project',
+  )
   .action(
     createAction({
       // We should not use "production" as a NODE_ENV because then only our
