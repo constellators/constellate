@@ -149,15 +149,18 @@ program
     }),
   )
 
-program.command('test').description('Runs the tests').action(
-  createAction({
-    defaultEnv: 'test',
-    resolveScript: () => () =>
-      require('../scripts/test')({
-        passThroughArgs: process.argv.slice(3),
-      }),
-  }),
-)
+program
+  .command('test [...passThroughArgs]')
+  .description('Runs the tests')
+  .action(
+    createAction({
+      defaultEnv: 'test',
+      resolveScript: (options, args) => () =>
+        require('../scripts/test')({
+          passThroughArgs: args,
+        }),
+    }),
+  )
 
 program.command('exec').description('Executed a provided command').action(
   createAction({
