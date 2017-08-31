@@ -1,5 +1,5 @@
 {
-	"version": "0.17.25",
+	"version": "0.17.28",
 	"name": "constellate-plugin-develop-webpack",
 	"description": "Provides webpack-dev-server support for 'webpack' built constellate projects",
 	"main": "modules/index.js",
@@ -7,9 +7,9 @@
 		"modules"
 	],
 	"dependencies": {
-		"constellate-dev-utils": "0.17.25",
-		"constellate-dev-utils-webpack": "0.17.25",
-		"constellate-plugin-build-webpack": "0.17.25",
+		"constellate-dev-utils": "0.17.28",
+		"constellate-dev-utils-webpack": "0.17.28",
+		"constellate-plugin-build-webpack": "0.17.28",
 		"get-port": "3.2.0",
 		"p-retry": "1.0.0",
 		"webpack": "3.5.5",
