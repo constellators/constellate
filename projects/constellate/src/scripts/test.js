@@ -33,13 +33,16 @@ module.exports = async function test({ passThroughArgs = [] }) {
   TerminalUtils.verbose(`Executing jest with args: [${args.join(', ')}]`)
 
   try {
-    await execa(jestPath, args, {
+    execa.sync(jestPath, args, {
       cwd: process.cwd(),
       stdio: 'inherit',
       env: process.env,
     })
   } catch (err) {
-    console.log(err.stderr || err)
+    if (err.stderr) {
+      console.log(err.stderr)
+    }
+    TerminalUtils.verbose(err)
   }
 
   if (postTestHook) {
