@@ -149,29 +149,16 @@ program
     }),
   )
 
-/*
-program
-  .command('test [...passThroughArgs]')
-  .description('Runs the tests')
-  .action(
-    createAction({
-      defaultEnv: 'test',
-      resolveScript: (options, args) => () =>
-        require('../scripts/test')({
-          passThroughArgs: args,
-        }),
-    }),
-  )
+program.command('jest [args...]').description('Executes jest').action(() => {
+  throw new Error('This action has a special handler below')
+})
 
-program.command('exec').description('Executed a provided command').action(
-  createAction({
-    resolveScript: () => () =>
-      require('../scripts/exec')({
-        passThroughArgs: process.argv.slice(3),
-      }),
-  }),
-)
-*/
+program
+  .command('exec <cmd> [args...]')
+  .description('Executed a provided command')
+  .action(() => {
+    throw new Error('This action has a special handler below')
+  })
 
 program
   .command('update')
@@ -199,10 +186,12 @@ if (!process.argv.slice(2).length) {
 
 const [cmd, ...args] = process.argv.slice(2)
 
-if (cmd === 'test' || cmd === 'exec') {
-  if (args.find(x => x === '--help' || x === '-h')) {
-    // TODO: Print help.
-  }
+if (
+  // We have a special handler for the below two commands
+  (cmd === 'jest' || cmd === 'exec') &&
+  // And we don't run these special handlers if a help option was provided.
+  args.find(x => x === '--help' || x === '-h') == null
+) {
   const execScript = async (scriptThunk) => {
     loadEnvVars()
     await scriptThunk()
