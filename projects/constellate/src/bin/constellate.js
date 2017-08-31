@@ -192,7 +192,10 @@ if (
   // And we don't run these special handlers if a help option was provided.
   args.find(x => x === '--help' || x === '-h') == null
 ) {
-  const execScript = async (scriptThunk) => {
+  const execScript = async (scriptThunk, defaultEnv) => {
+    if (!process.env.NODE_ENV) {
+      process.env.NODE_ENV = defaultEnv
+    }
     loadEnvVars()
     await scriptThunk()
     process.exit(0)
@@ -200,18 +203,22 @@ if (
 
   switch (cmd) {
     case 'jest': {
-      execScript(() =>
-        require('../scripts/test')({
-          passThroughArgs: args,
-        }),
+      execScript(
+        () =>
+          require('../scripts/test')({
+            passThroughArgs: args,
+          }),
+        'test',
       )
       break
     }
     case 'exec': {
-      execScript(() =>
-        require('../scripts/exec')({
-          passThroughArgs: args,
-        }),
+      execScript(
+        () =>
+          require('../scripts/exec')({
+            passThroughArgs: args,
+          }),
+        'development',
       )
       break
     }
