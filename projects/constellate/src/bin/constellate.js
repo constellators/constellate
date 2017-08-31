@@ -199,7 +199,7 @@ if (
   }
 
   switch (cmd) {
-    case 'test': {
+    case 'jest': {
       execScript(() =>
         require('../scripts/test')({
           passThroughArgs: args,
@@ -216,7 +216,7 @@ if (
       break
     }
     default: {
-      throw new Error('unkown')
+      throw new Error('Unknown custom action being handled')
     }
   }
 } else {
