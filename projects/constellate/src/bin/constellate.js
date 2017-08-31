@@ -154,7 +154,7 @@ program.command('test').description('Runs the tests').action(
     defaultEnv: 'test',
     resolveScript: () => () =>
       require('../scripts/test')({
-        passThroughArgs: process.argv.slice(2),
+        passThroughArgs: process.argv.slice(3),
       }),
   }),
 )
@@ -163,7 +163,7 @@ program.command('exec').description('Executed a provided command').action(
   createAction({
     resolveScript: () => () =>
       require('../scripts/exec')({
-        passThroughArgs: process.argv.slice(2),
+        passThroughArgs: process.argv.slice(3),
       }),
   }),
 )
