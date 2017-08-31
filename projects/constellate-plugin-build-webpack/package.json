@@ -1,5 +1,5 @@
 {
-	"version": "0.17.19",
+	"version": "0.17.20",
 	"name": "constellate-plugin-build-webpack",
 	"description": "Webpack (web targetting) plugin for Constellate projects.",
 	"main": "modules/index.js",
