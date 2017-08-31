@@ -27,7 +27,7 @@ module.exports = async function test({ passThroughArgs = [] }) {
 
   const args = [
     '--no-cache',
-    passThroughArgs.find(x => x === '--watch') != null ? '' : '--forceExit',
+    // passThroughArgs.find(x => x === '--watch') != null ? '' : '--forceExit',
   ].concat(passThroughArgs)
 
   TerminalUtils.verbose(`Executing jest with args: [${args.join(', ')}]`)
