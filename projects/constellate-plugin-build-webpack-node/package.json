@@ -24,7 +24,7 @@
 		"cache-loader": "1.0.3",
 		"constellate-dev-utils": "0.17.19",
 		"constellate-dev-utils-webpack": "0.17.19",
-		"css-loader": "0.28.5",
+		"css-loader": "0.28.7",
 		"file-loader": "0.11.2",
 		"ramda": "0.24.1",
 		"read-pkg": "2.0.0",

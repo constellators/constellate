@@ -27,7 +27,7 @@
 		"case-sensitive-paths-webpack-plugin": "2.1.1",
 		"constellate-dev-utils": "0.17.19",
 		"constellate-dev-utils-webpack": "0.17.19",
-		"css-loader": "0.28.5",
+		"css-loader": "0.28.7",
 		"extract-text-webpack-plugin": "3.0.0",
 		"file-loader": "0.11.2",
 		"postcss-loader": "2.0.6",
