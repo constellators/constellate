@@ -5,7 +5,7 @@ const R = require('ramda')
 const execa = require('execa')
 const { TerminalUtils, AppUtils } = require('constellate-dev-utils')
 
-module.exports = async function test({ passThroughArgs }) {
+module.exports = async function test({ passThroughArgs = [] }) {
   TerminalUtils.title('Running test...')
 
   const jestPath = path.resolve(process.cwd(), './node_modules/.bin/jest')
@@ -25,22 +25,21 @@ module.exports = async function test({ passThroughArgs }) {
     await preTestHook()
   }
 
-  const args = passThroughArgs || []
-  const forceExitIfNotWatch = args.find(x => x === '--watch') != null
-    ? ''
-    : '--forceExit'
-  const cmd = `${jestPath} ${forceExitIfNotWatch} --no-cache ${args.join(' ')}`
+  const args = [
+    '--no-cache',
+    passThroughArgs.find(x => x === '--watch') != null ? '' : '--forceExit',
+  ].concat(passThroughArgs)
+
   TerminalUtils.verbose(`Executing jest with args: [${args.join(', ')}]`)
 
   try {
-    await execa.shell(cmd, {
+    await execa(jestPath, args, {
       cwd: process.cwd(),
       stdio: 'inherit',
       env: process.env,
     })
   } catch (err) {
-    console.log('💩')
-    console.log(err)
+    console.log(err.stderr)
   }
 
   if (postTestHook) {

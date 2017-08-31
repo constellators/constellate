@@ -16,17 +16,18 @@ module.exports = async function exec({ passThroughArgs }) {
   }
 
   const [cmd, ...args] = passThroughArgs
-  const fullCmd = passThroughArgs.join(' ')
+  // const fullCmd = passThroughArgs.join(' ')
   TerminalUtils.verbose(`Executing ${cmd} with args: [${args.join(', ')}]`)
 
   try {
-    await execa.shell(fullCmd, {
+    const result = await execa(cmd, args, {
       cwd: process.cwd(),
       stdio: 'inherit',
       env: process.env,
     })
+    console.log(result)
   } catch (err) {
-    console.log(err)
+    console.log(err.stderr)
   }
 
   const postExecHook = R.path(['commands', 'exec', 'post'], appConfig)
