@@ -149,6 +149,7 @@ program
     }),
   )
 
+/*
 program
   .command('test [...passThroughArgs]')
   .description('Runs the tests')
@@ -170,6 +171,7 @@ program.command('exec').description('Executed a provided command').action(
       }),
   }),
 )
+*/
 
 program
   .command('update')
@@ -195,7 +197,42 @@ if (!process.argv.slice(2).length) {
   showHelp()
 }
 
-program.parse(process.argv)
+const [cmd, args] = process.argv.slice(2)
+
+if (cmd === 'test' || cmd === 'exec') {
+  if (args.find(x => x === '--help' || x === '-h')) {
+    // TODO: Print help.
+  }
+  const execScript = async (scriptThunk) => {
+    loadEnvVars()
+    await scriptThunk()
+    process.exit(0)
+  }
+
+  switch (cmd) {
+    case 'test': {
+      execScript(() =>
+        require('../scripts/test')({
+          passThroughArgs: args,
+        }),
+      )
+      break
+    }
+    case 'exec': {
+      execScript(() =>
+        require('../scripts/exec')({
+          passThroughArgs: args,
+        }),
+      )
+      break
+    }
+    default: {
+      throw new Error('unkown')
+    }
+  }
+} else {
+  program.parse(process.argv)
+}
 
 // Prevent node process from exiting. (until CTRL + C or process.exit is called)
 // We do this to allow our scripts to respont to process exit events and do
