@@ -149,20 +149,24 @@ program
     }),
   )
 
-program
-  .command('test')
-  .description('Runs the tests')
-  .option('-w, --watch', 'Runs in watch mode')
-  .action(
-    createAction({
-      defaultEnv: 'test',
-      resolveScript: (options, args) => () =>
-        require('../scripts/test')({
-          passThroughArgs: args,
-          watch: options.watch,
-        }),
-    }),
-  )
+program.command('test').description('Runs the tests').action(
+  createAction({
+    defaultEnv: 'test',
+    resolveScript: () => () =>
+      require('../scripts/test')({
+        passThroughArgs: process.argv.slice(2),
+      }),
+  }),
+)
+
+program.command('exec').description('Executed a provided command').action(
+  createAction({
+    resolveScript: () => () =>
+      require('../scripts/exec')({
+        passThroughArgs: process.argv.slice(2),
+      }),
+  }),
+)
 
 program
   .command('update')

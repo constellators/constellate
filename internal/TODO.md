@@ -25,6 +25,7 @@
 
 ## Features/Chores
 
+ - [ ] Better help on constellate bin
  - [ ] Replace linking etc with yarn workspaces. sigh. lol.
  - [ ] Integration tests
  - [ ] Postfix async functions with "Async"

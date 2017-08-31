@@ -10,7 +10,6 @@
 *.seed
 logs
 node_modules
-projects/**/node_modules
 npm-debug.log
 pids
 Thumbs.db

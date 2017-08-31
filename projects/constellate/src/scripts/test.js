@@ -5,13 +5,15 @@ const R = require('ramda')
 const execa = require('execa')
 const { TerminalUtils, AppUtils } = require('constellate-dev-utils')
 
-module.exports = async function test({ watch, passThroughArgs }) {
+module.exports = async function test({ passThroughArgs }) {
   TerminalUtils.title('Running test...')
 
   const jestPath = path.resolve(process.cwd(), './node_modules/.bin/jest')
   const jestExists = await fs.pathExists(jestPath)
   if (!jestExists) {
-    throw new Error('Could not find Jest. You may need to reinstall your dependencies.')
+    throw new Error(
+      'Could not find Jest. You may need to reinstall your dependencies.',
+    )
   }
 
   const appConfig = AppUtils.getConfig()
@@ -23,8 +25,10 @@ module.exports = async function test({ watch, passThroughArgs }) {
     await preTestHook()
   }
 
-  const args = (watch ? ['--watch'] : passThroughArgs) || []
-  const forceExitIfNotWatch = args.find(x => x === '--watch') != null ? '' : '--forceExit'
+  const args = passThroughArgs || []
+  const forceExitIfNotWatch = args.find(x => x === '--watch') != null
+    ? ''
+    : '--forceExit'
   const cmd = `${jestPath} ${forceExitIfNotWatch} --no-cache ${args.join(' ')}`
   TerminalUtils.verbose(`Executing jest with args: [${args.join(', ')}]`)
 
