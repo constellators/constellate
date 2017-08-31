@@ -26,7 +26,7 @@ module.exports = async function exec({ passThroughArgs }) {
       env: process.env,
     })
   } catch (err) {
-    TerminalUtils.verbose(err)
+    console.log(err)
   }
 
   const postExecHook = R.path(['commands', 'exec', 'post'], appConfig)
