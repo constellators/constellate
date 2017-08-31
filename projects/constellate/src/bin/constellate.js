@@ -197,7 +197,7 @@ if (!process.argv.slice(2).length) {
   showHelp()
 }
 
-const [cmd, args] = process.argv.slice(2)
+const [cmd, ...args] = process.argv.slice(2)
 
 if (cmd === 'test' || cmd === 'exec') {
   if (args.find(x => x === '--help' || x === '-h')) {
