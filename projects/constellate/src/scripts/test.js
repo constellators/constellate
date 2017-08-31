@@ -39,7 +39,8 @@ module.exports = async function test({ passThroughArgs }) {
       env: process.env,
     })
   } catch (err) {
-    console.log(err.message)
+    console.log('💩')
+    console.log(err)
   }
 
   if (postTestHook) {
