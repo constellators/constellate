@@ -1,5 +1,5 @@
 {
-	"version": "0.17.25",
+	"version": "0.17.35",
 	"name": "eslint-config-constellate",
 	"description": "The ESLint configuration for Constellate applications.",
 	"main": "modules/index.js",
