@@ -20,12 +20,11 @@ module.exports = async function exec({ passThroughArgs }) {
   TerminalUtils.verbose(`Executing ${cmd} with args: [${args.join(', ')}]`)
 
   try {
-    const result = await execa(cmd, args, {
+    await execa(cmd, args, {
       cwd: process.cwd(),
       stdio: 'inherit',
       env: process.env,
     })
-    console.log(result)
   } catch (err) {
     if (err.stderr) {
       console.log(err.stderr)
