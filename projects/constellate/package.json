@@ -19,7 +19,7 @@
 		"constellate-dev-utils": "0.17.36",
 		"constellate-utils": "0.17.25",
 		"dotenv": "4.0.0",
-		"fs-extra": "4.0.1",
+		"fs-extra": "4.0.2",
 		"jest": "21.0.2",
 		"npm-check": "5.4.5",
 		"p-series": "1.0.0",
