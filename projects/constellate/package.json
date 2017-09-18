@@ -1,5 +1,5 @@
 {
-	"version": "0.17.37",
+	"version": "0.17.38",
 	"name": "constellate",
 	"description": "The ❤️ of Constellate applications.",
 	"bin": {
@@ -16,8 +16,8 @@
 	"dependencies": {
 		"chokidar": "1.7.0",
 		"commander": "2.11.0",
-		"constellate-dev-utils": "0.17.37",
-		"constellate-utils": "0.17.37",
+		"constellate-dev-utils": "0.17.38",
+		"constellate-utils": "0.17.38",
 		"dotenv": "4.0.0",
 		"fs-extra": "4.0.2",
 		"jest": "21.1.0",
