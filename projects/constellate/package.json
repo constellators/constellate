@@ -20,7 +20,7 @@
 		"constellate-utils": "0.17.37",
 		"dotenv": "4.0.0",
 		"fs-extra": "4.0.2",
-		"jest": "21.0.2",
+		"jest": "21.1.0",
 		"npm-check": "5.4.5",
 		"p-series": "1.0.0",
 		"ramda": "0.24.1",
