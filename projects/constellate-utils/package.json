@@ -9,7 +9,7 @@
 		"modules"
 	],
 	"dependencies": {
-		"deepmerge": "1.5.1",
+		"deepmerge": "1.5.2",
 		"fs-extra": "4.0.2"
 	}
 }

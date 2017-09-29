@@ -15,7 +15,7 @@
 	"dependencies": {
 		"chalk": "2.1.0",
 		"dedent": "0.7.0",
-		"deepmerge": "1.5.1",
+		"deepmerge": "1.5.2",
 		"execa": "0.8.0",
 		"figures": "2.0.0",
 		"fs-extra": "4.0.2",
@@ -26,11 +26,11 @@
 		"ramda": "0.24.1",
 		"read-pkg": "2.0.0",
 		"semver": "5.4.1",
-		"toposort": "1.0.3",
+		"toposort": "1.0.4",
 		"write-json-file": "2.2.0",
 		"write-pkg": "3.1.0"
 	},
 	"devDependencies": {
-		"flow-bin": "0.54.1"
+		"flow-bin": "0.56.0"
 	}
 }
