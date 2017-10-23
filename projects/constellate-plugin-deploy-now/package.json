@@ -7,13 +7,13 @@
 		"modules"
 	],
 	"dependencies": {
-		"chalk": "2.1.0",
+		"chalk": "2.2.0",
 		"constellate-dev-utils": "0.17.39",
 		"dedent": "0.7.0",
-		"deepmerge": "1.5.2",
+		"deepmerge": "2.0.0",
 		"p-whilst": "1.0.0",
-		"ramda": "0.24.1",
+		"ramda": "0.25.0",
 		"temp-write": "3.3.0",
-		"write-json-file": "2.2.0"
+		"write-json-file": "2.3.0"
 	}
 }

@@ -7,10 +7,10 @@
 		"modules"
 	],
 	"dependencies": {
-		"flow-remove-types": "1.2.1",
+		"flow-remove-types": "1.2.3",
 		"fs-extra": "4.0.2",
 		"globby": "6.1.0",
 		"p-limit": "1.1.0",
-		"ramda": "0.24.1"
+		"ramda": "0.25.0"
 	}
 }

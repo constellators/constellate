@@ -12,7 +12,7 @@
 		"constellate-plugin-build-webpack": "0.17.39",
 		"get-port": "3.2.0",
 		"p-retry": "1.0.0",
-		"webpack": "3.6.0",
-		"webpack-dev-server": "2.9.1"
+		"webpack": "3.8.1",
+		"webpack-dev-server": "2.9.3"
 	}
 }
