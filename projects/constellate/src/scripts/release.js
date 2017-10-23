@@ -15,7 +15,10 @@ const {
 
 const requestNextVersion = require('../utils/requestNextVersion')
 
-module.exports = async function release(options) {
+module.exports = async function release(options = {}) {
+  TerminalUtils.verbose(
+    `Running release with options: ${JSON.stringify(options, null, 2)}`,
+  )
   TerminalUtils.title('Running release...')
 
   const allProjects = ProjectUtils.getAllProjects()
@@ -190,6 +193,8 @@ module.exports = async function release(options) {
   })
 
   if (!options.noPersist) {
+    TerminalUtils.verbose('Tagging project for github release')
+
     try {
       GitUtils.stageAllChanges()
       GitUtils.commit(nextVersionTag)
@@ -227,6 +232,8 @@ module.exports = async function release(options) {
         process.exit(1)
       }
     }
+  } else {
+    TerminalUtils.verbose('Skipping tagging of project for github release')
   }
 
   TerminalUtils.info(
