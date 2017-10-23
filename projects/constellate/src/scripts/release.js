@@ -15,7 +15,7 @@ const {
 
 const requestNextVersion = require('../utils/requestNextVersion')
 
-module.exports = async function release() {
+module.exports = async function release(options) {
   TerminalUtils.title('Running release...')
 
   const allProjects = ProjectUtils.getAllProjects()
@@ -23,11 +23,26 @@ module.exports = async function release() {
   const appConfig = AppUtils.getConfig()
   const targetBranch = R.path(['publishing', 'gitBranchName'], appConfig)
   const targetRemote = R.path(['publishing', 'gitRemoteName'], appConfig)
-  const enableRemotePush = R.path(['publishing', 'enableGitRemotePush'], appConfig)
+  const enableRemotePush = R.path(
+    ['publishing', 'enableGitRemotePush'],
+    appConfig,
+  )
+
+  const rebuildProjects = async () => {
+    const updatedAllProjectsArray = ProjectUtils.getAllProjectsArray(true)
+    ProjectUtils.linkAllProjects()
+    await pSeries(
+      updatedAllProjectsArray.map(project => () =>
+        ProjectUtils.buildProject(project, { quiet: true }),
+      ),
+    )
+  }
 
   // Ensure there are no uncommitted changes
   if (GitUtils.uncommittedChanges().length > 0) {
-    throw new Error('You have uncommitted changes. Please commit your changes and then try again.')
+    throw new Error(
+      'You have uncommitted changes. Please commit your changes and then try again.',
+    )
   }
 
   // Ensure on correct branch
@@ -46,7 +61,7 @@ module.exports = async function release() {
   const lastVersion = lastVersionTag ? semver.clean(lastVersionTag) : '0.0.0'
   TerminalUtils.verbose(`Previous tag version is ${lastVersion}`)
 
-  if (enableRemotePush) {
+  if (!options.noPersist && enableRemotePush) {
     // Does the target remote exist?
     const remoteExists = GitUtils.doesRemoteExist(targetRemote)
     if (!remoteExists) {
@@ -73,10 +88,12 @@ module.exports = async function release() {
 
   let finalToUpdateVersionFor
 
-  const updatingVersionForAll = R.equals(
-    toUpdateVersionFor.map(R.prop('name')),
-    allProjectsArray.map(R.prop('name')),
-  )
+  const updatingVersionForAll =
+    options.force ||
+    R.equals(
+      toUpdateVersionFor.map(R.prop('name')),
+      allProjectsArray.map(R.prop('name')),
+    )
 
   if (!updatingVersionForAll) {
     // We need to make sure that the projects we are tagging have all
@@ -89,18 +106,23 @@ module.exports = async function release() {
       R.concat(toUpdateVersionFor),
     )(toUpdateVersionFor)
 
-    finalToUpdateVersionFor = allProjectsToUpdateVersionFor.reduce((acc, cur) => {
-      if (R.find(R.equals(cur), acc)) {
-        return acc
-      }
-      return [...acc, cur]
-    }, toUpdateVersionFor)
+    finalToUpdateVersionFor = allProjectsToUpdateVersionFor.reduce(
+      (acc, cur) => {
+        if (R.find(R.equals(cur), acc)) {
+          return acc
+        }
+        return [...acc, cur]
+      },
+      toUpdateVersionFor,
+    )
   } else {
     finalToUpdateVersionFor = toUpdateVersionFor
   }
 
   if (finalToUpdateVersionFor.length === 0) {
-    TerminalUtils.info('None of your projects have any changes to be released. Exiting...')
+    TerminalUtils.info(
+      'None of your projects have any changes to be released. Exiting...',
+    )
     process.exit(0)
   }
 
@@ -115,7 +137,9 @@ module.exports = async function release() {
   )
 
   TerminalUtils.verbose(
-    `Updating versions for [${finalToUpdateVersionFor.map(R.prop('name')).join(', ')}]`,
+    `Updating versions for [${finalToUpdateVersionFor
+      .map(R.prop('name'))
+      .join(', ')}]`,
   )
 
   // Get the current versions for each project
@@ -134,11 +158,15 @@ module.exports = async function release() {
     ),
   )
 
-  TerminalUtils.verbose(`Using versions: ${EOL}${JSON.stringify(versions, null, 2)}`)
+  TerminalUtils.verbose(
+    `Using versions: ${EOL}${JSON.stringify(versions, null, 2)}`,
+  )
 
   const tagAnswer = await TerminalUtils.confirm(
     `The following projects will be released with the respective new versions. Proceed?${EOL}\t${finalToUpdateVersionFor
-      .map(({ name }) => `${name} ${previousVersions[name]} -> ${versions[name]}`)
+      .map(
+        ({ name }) => `${name} ${previousVersions[name]} -> ${versions[name]}`,
+      )
       .join(`${EOL}\t`)}`,
   )
 
@@ -151,73 +179,77 @@ module.exports = async function release() {
   // Build..
   ProjectUtils.linkAllProjects()
   await pSeries(
-    allProjectsArray.map(project => () => ProjectUtils.buildProject(project, { quiet: true })),
-  )
-
-  // Then update the versions for each project
-  finalToUpdateVersionFor.forEach((project) => {
-    ProjectUtils.updateVersions(project, versions)
-  })
-
-  try {
-    GitUtils.stageAllChanges()
-    GitUtils.commit(nextVersionTag)
-  } catch (err) {
-    // Revert the version changes.
-    finalToUpdateVersionFor.forEach(project =>
-      ProjectUtils.updateVersions(project, previousVersions),
-    )
-    throw err
-  }
-
-  // Then tag the repo...
-  try {
-    GitUtils.addAnnotatedTag(nextVersionTag)
-  } catch (err) {
-    GitUtils.undoPreviousCommit()
-    throw err
-  }
-
-  // Then push to the remote git repo (if enabled)
-  if (enableRemotePush) {
-    try {
-      GitUtils.pushWithTags(targetRemote, [nextVersionTag])
-    } catch (err) {
-      TerminalUtils.error('Failed to push to remote git repo', err)
-      try {
-        GitUtils.removeTag(nextVersionTag)
-        GitUtils.undoPreviousCommit()
-      } catch (rollBackErr) {
-        TerminalUtils.error(
-          'We failed to push the new version tag to the remote git target.  Therefore we tried to undo the tag, however an error occurred whilst we tried to do this.  You may need to ensure that your repo is back to its pre-release state. We apologise and ask that you report this issue so that we can try and prevent it from occuring in the future.',
-          rollBackErr,
-        )
-      }
-      process.exit(1)
-    }
-  }
-
-  TerminalUtils.info('Updating versions for each project and their linked dependencies...')
-
-  // Rebuild to ensure new versions are being referenced
-  const updatedAllProjectsArray = ProjectUtils.getAllProjectsArray(true)
-  ProjectUtils.linkAllProjects()
-  await pSeries(
-    updatedAllProjectsArray.map(project => () =>
+    allProjectsArray.map(project => () =>
       ProjectUtils.buildProject(project, { quiet: true }),
     ),
   )
 
-  TerminalUtils.info('Projects are versioned, publishing them to NPM repository...')
+  // Then update the versions for each project
+  finalToUpdateVersionFor.forEach(project => {
+    ProjectUtils.updateVersions(project, versions)
+  })
+
+  if (!options.noPersist) {
+    try {
+      GitUtils.stageAllChanges()
+      GitUtils.commit(nextVersionTag)
+    } catch (err) {
+      // Revert the version changes.
+      finalToUpdateVersionFor.forEach(project =>
+        ProjectUtils.updateVersions(project, previousVersions),
+      )
+      throw err
+    }
+
+    // Then tag the repo...
+    try {
+      GitUtils.addAnnotatedTag(nextVersionTag)
+    } catch (err) {
+      GitUtils.undoPreviousCommit()
+      throw err
+    }
+
+    // Then push to the remote git repo (if enabled)
+    if (enableRemotePush) {
+      try {
+        GitUtils.pushWithTags(targetRemote, [nextVersionTag])
+      } catch (err) {
+        TerminalUtils.error('Failed to push to remote git repo', err)
+        try {
+          GitUtils.removeTag(nextVersionTag)
+          GitUtils.undoPreviousCommit()
+        } catch (rollBackErr) {
+          TerminalUtils.error(
+            'We failed to push the new version tag to the remote git target.  Therefore we tried to undo the tag, however an error occurred whilst we tried to do this.  You may need to ensure that your repo is back to its pre-release state. We apologise and ask that you report this issue so that we can try and prevent it from occuring in the future.',
+            rollBackErr,
+          )
+        }
+        process.exit(1)
+      }
+    }
+  }
+
+  TerminalUtils.info(
+    'Updating versions for each project and their linked dependencies...',
+  )
+
+  // Rebuild to ensure new versions are being referenced
+  await rebuildProjects()
+
+  TerminalUtils.info(
+    'Projects are versioned, publishing them to NPM repository...',
+  )
 
   // 📦 Publish
 
   const failedToPublish = []
 
-  finalToUpdateVersionFor.forEach((project) => {
+  finalToUpdateVersionFor.forEach(project => {
     const pkgJson = readPkg.sync(project.paths.packageJson)
     if (pkgJson.private) {
-      TerminalUtils.warning(`Can't publish ${project.name} as it is marked as private`)
+      TerminalUtils.warning(
+        `Can't publish ${project.name} as it is marked as private`,
+      )
     } else {
       TerminalUtils.info(`Publishing ${project.name}...`)
 
@@ -255,6 +287,13 @@ module.exports = async function release() {
       \t${chalk.blue('npx constellate build')}
     `),
     )
+  }
+
+  if (options.noPersist) {
+    // As this release isn't being persisted we must roll back all the file
+    // changes and then rebuild the projects.
+    GitUtils.clearAllChanges()
+    await rebuildProjects()
   }
 
   TerminalUtils.success('Done')

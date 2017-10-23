@@ -61,11 +61,14 @@ const createAction = ({
   }
 }
 
-program.command('build').description('Builds the projects').action(
-  createAction({
-    resolveScript: () => require('../scripts/build'),
-  }),
-)
+program
+  .command('build')
+  .description('Builds the projects')
+  .action(
+    createAction({
+      resolveScript: () => require('../scripts/build'),
+    }),
+  )
 
 program
   .command('clean')
@@ -84,12 +87,16 @@ program
     }),
   )
 
-program.command('deploy').description('Deploys the projects').action(
-  createAction({
-    resolveScript: () => require('../scripts/deploy'),
-    errorMsg: 'Your projects may not have been fully deployed. Please check your expected deployment targets.',
-  }),
-)
+program
+  .command('deploy')
+  .description('Deploys the projects')
+  .action(
+    createAction({
+      resolveScript: () => require('../scripts/deploy'),
+      errorMsg:
+        'Your projects may not have been fully deployed. Please check your expected deployment targets.',
+    }),
+  )
 
 program
   .command('develop')
@@ -142,16 +149,27 @@ program
   .description(
     'Creates a new release, versioning the app, the changed projects, and published the changed projects to NPM',
   )
+  .option(
+    '-n, --no-persist',
+    'Does not persist the version changes to the git repository. This is useful to create test releases.',
+  )
+  .option(
+    '-f, --force',
+    "Forces all projects to be released even if they don't have any changes.",
+  )
   .action(
     createAction({
-      resolveScript: () => require('../scripts/release'),
+      resolveScript: options => () => require('../scripts/release')(options),
       gracefulExit: rollbackRepo,
     }),
   )
 
-program.command('jest [args...]').description('Executes jest').action(() => {
-  throw new Error('This action has a special handler below')
-})
+program
+  .command('jest [args...]')
+  .description('Executes jest')
+  .action(() => {
+    throw new Error('This action has a special handler below')
+  })
 
 program
   .command('exec <cmd> [args...]')
@@ -234,9 +252,9 @@ if (
 // We do this to allow our scripts to respont to process exit events and do
 // cleaning up etc.
 const preventScriptExit = () => {
-  (function wait() {
+  ;(function wait() {
     // eslint-disable-next-line no-constant-condition
     if (true) setTimeout(wait, 1000)
-  }())
+  })()
 }
 preventScriptExit()

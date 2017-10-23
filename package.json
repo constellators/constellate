@@ -4,10 +4,10 @@
     "test": "constellate test"
   },
   "devDependencies": {
-    "constellate": "0.17.39",
-    "constellate-plugin-build-babel": "0.17.39",
-    "constellate-plugin-build-flow": "0.17.38",
-    "eslint-config-constellate": "0.17.39"
+    "constellate": "0.18.0",
+    "constellate-plugin-build-babel": "0.18.0",
+    "constellate-plugin-build-flow": "0.18.0",
+    "eslint-config-constellate": "0.18.0"
   },
   "eslintConfig": {
     "root": true,
