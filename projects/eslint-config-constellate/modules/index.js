@@ -1,7 +1,7 @@
 module.exports = {
   root: true,
   parser: 'babel-eslint',
-  extends: 'airbnb',
+  extends: ['airbnb', 'prettier'],
   plugins: ['flowtype'],
   env: {
     browser: true,
@@ -15,11 +15,7 @@ module.exports = {
   rules: {
     // Buggy with some APIs
     'array-callback-return': 0,
-    // Go hipster!
-    semi: [2, 'never'],
-    // It really is not confusing.
-    'no-confusing-arrow': 0,
-    // With prettier this is not too bad anymore
+    // If using prettier this is not too bad anymore
     'no-nested-ternary': 0,
     // This rule is annoying
     'react/forbid-prop-types': 0,

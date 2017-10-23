@@ -1,5 +1,8 @@
 {
   "private": true,
+  "scripts": {
+    "test": "constellate test"
+  },
   "devDependencies": {
     "constellate": "0.17.39",
     "constellate-plugin-build-babel": "0.17.39",
@@ -13,7 +16,9 @@
       "no-console": 0
     }
   },
-  "scripts": {
-    "test": "constellate test"
+  "prettier": {
+    "semi": false,
+    "singleQuote": true,
+    "trailingComma": "all"
   }
 }
