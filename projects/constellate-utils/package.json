@@ -1,5 +1,5 @@
 {
-	"version": "0.19.1-core",
+	"version": "0.19.2",
 	"name": "constellate-utils",
 	"description": "Helpful utilities for Constellate projects.",
 	"repository": "https://github.com/constellators/constellate-utils",
