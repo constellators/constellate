@@ -80,20 +80,20 @@ module.exports = async function release(options) {
 
   const isFirstPublish = lastVersion === '0.0.0'
 
-  const toUpdateVersionFor = isFirstPublish
-    ? // We will release all the projects as this is our first release.
-      allProjectsArray
-    : // Or all projects that have had changes since the last release
-      allProjectsArray.filter(ProjectUtils.changedSince(lastVersionTag))
+  const toUpdateVersionFor =
+    isFirstPublish || options.force
+      ? // We will release all the projects as this is our first release.
+        // OR if the force option was provided
+        allProjectsArray
+      : // Else we filter to the projects that have had changes since the last release
+        allProjectsArray.filter(ProjectUtils.changedSince(lastVersionTag))
 
   let finalToUpdateVersionFor
 
-  const updatingVersionForAll =
-    options.force ||
-    R.equals(
-      toUpdateVersionFor.map(R.prop('name')),
-      allProjectsArray.map(R.prop('name')),
-    )
+  const updatingVersionForAll = R.equals(
+    toUpdateVersionFor.map(R.prop('name')),
+    allProjectsArray.map(R.prop('name')),
+  )
 
   if (!updatingVersionForAll) {
     // We need to make sure that the projects we are tagging have all
