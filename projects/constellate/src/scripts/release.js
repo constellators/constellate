@@ -17,7 +17,11 @@ const requestNextVersion = require('../utils/requestNextVersion')
 
 module.exports = async function release(options = {}) {
   TerminalUtils.verbose(
-    `Running release with options: ${JSON.stringify(options, null, 2)}`,
+    `Running release with options: ${JSON.stringify(
+      R.pick(['noPersist', 'force'], options),
+      null,
+      2,
+    )}`,
   )
   TerminalUtils.title('Running release...')
 
