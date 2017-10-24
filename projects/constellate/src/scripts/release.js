@@ -187,22 +187,11 @@ module.exports = async function release(options: Options = defaultOptions) {
   )
 
   const tagAnswer = await TerminalUtils.confirm(
-    `The following projects will be released with the respective new versions. Proceed?${EOL}\t${finalToUpdateVersionFor.map(
-      ({ name }) => `
-    $ {
-      name
-    }
-    $ {
-      previousVersions[name]
-    } - > $ {
-      versions[name]
-    }
-    `,
-    ).join(`
-    $ {
-      EOL
-    }\
-    t `)}`,
+    `The following projects will be released with the respective new versions. Proceed?${EOL}\t${finalToUpdateVersionFor
+      .map(
+        ({ name }) => `${name} ${previousVersions[name]} -> ${versions[name]}`,
+      )
+      .join(`${EOL}\t`)}`,
   )
 
   if (!tagAnswer) {
