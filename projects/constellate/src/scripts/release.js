@@ -1,4 +1,8 @@
-const { EOL } = require('os')
+// @flow
+
+const {
+  EOL
+} = require('os')
 const R = require('ramda')
 const semver = require('semver')
 const pSeries = require('p-series')
@@ -12,13 +16,23 @@ const {
   ProjectUtils,
   ChildProcessUtils,
 } = require('constellate-dev-utils')
-
 const requestNextVersion = require('../utils/requestNextVersion')
 
-module.exports = async function release(options = {}) {
+type Options = { |
+  persist ? : boolean,
+  force ? : boolean,
+  |
+}
+
+const defaultOptions: Options = {
+  persist: true,
+  force: false,
+}
+
+module.exports = async function release(options: Options = defaultOptions) {
   TerminalUtils.verbose(
     `Running release with options: ${JSON.stringify(
-      R.pick(['noPersist', 'force'], options),
+      R.pick(['persist', 'force'], options),
       null,
       2,
     )}`,
@@ -35,12 +49,14 @@ module.exports = async function release(options = {}) {
     appConfig,
   )
 
-  const rebuildProjects = async () => {
+  const rebuildProjects = async() => {
     const updatedAllProjectsArray = ProjectUtils.getAllProjectsArray(true)
     ProjectUtils.linkAllProjects()
     await pSeries(
       updatedAllProjectsArray.map(project => () =>
-        ProjectUtils.buildProject(project, { quiet: true }),
+        ProjectUtils.buildProject(project, {
+          quiet: true
+        }),
       ),
     )
   }
@@ -68,7 +84,7 @@ module.exports = async function release(options = {}) {
   const lastVersion = lastVersionTag ? semver.clean(lastVersionTag) : '0.0.0'
   TerminalUtils.verbose(`Previous tag version is ${lastVersion}`)
 
-  if (!options.noPersist && enableRemotePush) {
+  if (options.persist && enableRemotePush) {
     // Does the target remote exist?
     const remoteExists = GitUtils.doesRemoteExist(targetRemote)
     if (!remoteExists) {
@@ -88,12 +104,10 @@ module.exports = async function release(options = {}) {
   const isFirstPublish = lastVersion === '0.0.0'
 
   const toUpdateVersionFor =
-    isFirstPublish || options.force
-      ? // We will release all the projects as this is our first release.
-        // OR if the force option was provided
-        allProjectsArray
-      : // Else we filter to the projects that have had changes since the last release
-        allProjectsArray.filter(ProjectUtils.changedSince(lastVersionTag))
+    isFirstPublish || options.force ? // We will release all the projects as this is our first release.
+    // OR if the force option was provided
+    allProjectsArray : // Else we filter to the projects that have had changes since the last release
+    allProjectsArray.filter(ProjectUtils.changedSince(lastVersionTag))
 
   let finalToUpdateVersionFor
 
@@ -151,17 +165,18 @@ module.exports = async function release(options = {}) {
 
   // Get the current versions for each project
   const previousVersions = allProjectsArray.reduce(
-    (acc, cur) => Object.assign(acc, { [cur.name]: cur.version }),
-    {},
+    (acc, cur) => Object.assign(acc, {
+      [cur.name]: cur.version
+    }), {},
   )
 
   // Prep the next version numbers for each project
-  const versions = Object.assign(
-    {},
+  const versions = Object.assign({},
     previousVersions,
     finalToUpdateVersionFor.reduce(
-      (acc, cur) => Object.assign(acc, { [cur.name]: nextVersion }),
-      {},
+      (acc, cur) => Object.assign(acc, {
+        [cur.name]: nextVersion
+      }), {},
     ),
   )
 
@@ -172,9 +187,22 @@ module.exports = async function release(options = {}) {
   const tagAnswer = await TerminalUtils.confirm(
     `The following projects will be released with the respective new versions. Proceed?${EOL}\t${finalToUpdateVersionFor
       .map(
-        ({ name }) => `${name} ${previousVersions[name]} -> ${versions[name]}`,
+        ({ name }) => `
+    $ {
+      name
+    }
+    $ {
+      previousVersions[name]
+    } - > $ {
+      versions[name]
+    }
+    `,
       )
-      .join(`${EOL}\t`)}`,
+      .join(`
+    $ {
+      EOL
+    }\
+    t `)}`,
   )
 
   if (!tagAnswer) {
@@ -187,7 +215,9 @@ module.exports = async function release(options = {}) {
   ProjectUtils.linkAllProjects()
   await pSeries(
     allProjectsArray.map(project => () =>
-      ProjectUtils.buildProject(project, { quiet: true }),
+      ProjectUtils.buildProject(project, {
+        quiet: true
+      }),
     ),
   )
 
@@ -196,7 +226,7 @@ module.exports = async function release(options = {}) {
     ProjectUtils.updateVersions(project, versions)
   })
 
-  if (!options.noPersist) {
+  if (options.persist) {
     TerminalUtils.verbose('Tagging project for github release')
 
     try {
@@ -300,7 +330,7 @@ module.exports = async function release(options = {}) {
     )
   }
 
-  if (options.noPersist) {
+  if (!options.persist) {
     // As this release isn't being persisted we must roll back all the file
     // changes and then rebuild the projects.
     GitUtils.clearAllChanges()
