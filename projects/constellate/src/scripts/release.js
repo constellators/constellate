@@ -1,8 +1,6 @@
 // @flow
 
-const {
-  EOL
-} = require('os')
+const { EOL } = require('os')
 const R = require('ramda')
 const semver = require('semver')
 const pSeries = require('p-series')
@@ -18,11 +16,10 @@ const {
 } = require('constellate-dev-utils')
 const requestNextVersion = require('../utils/requestNextVersion')
 
-type Options = { |
-  persist ? : boolean,
-  force ? : boolean,
-  |
-}
+type Options = {|
+  persist?: boolean,
+  force?: boolean,
+|}
 
 const defaultOptions: Options = {
   persist: true,
@@ -49,13 +46,13 @@ module.exports = async function release(options: Options = defaultOptions) {
     appConfig,
   )
 
-  const rebuildProjects = async() => {
+  const rebuildProjects = async () => {
     const updatedAllProjectsArray = ProjectUtils.getAllProjectsArray(true)
     ProjectUtils.linkAllProjects()
     await pSeries(
       updatedAllProjectsArray.map(project => () =>
         ProjectUtils.buildProject(project, {
-          quiet: true
+          quiet: true,
         }),
       ),
     )
@@ -104,10 +101,10 @@ module.exports = async function release(options: Options = defaultOptions) {
   const isFirstPublish = lastVersion === '0.0.0'
 
   const toUpdateVersionFor =
-    isFirstPublish || options.force ? // We will release all the projects as this is our first release.
-    // OR if the force option was provided
-    allProjectsArray : // Else we filter to the projects that have had changes since the last release
-    allProjectsArray.filter(ProjectUtils.changedSince(lastVersionTag))
+    isFirstPublish || options.force // We will release all the projects as this is our first release.
+      ? // OR if the force option was provided
+        allProjectsArray // Else we filter to the projects that have had changes since the last release
+      : allProjectsArray.filter(ProjectUtils.changedSince(lastVersionTag))
 
   let finalToUpdateVersionFor
 
@@ -165,18 +162,23 @@ module.exports = async function release(options: Options = defaultOptions) {
 
   // Get the current versions for each project
   const previousVersions = allProjectsArray.reduce(
-    (acc, cur) => Object.assign(acc, {
-      [cur.name]: cur.version
-    }), {},
+    (acc, cur) =>
+      Object.assign(acc, {
+        [cur.name]: cur.version,
+      }),
+    {},
   )
 
   // Prep the next version numbers for each project
-  const versions = Object.assign({},
+  const versions = Object.assign(
+    {},
     previousVersions,
     finalToUpdateVersionFor.reduce(
-      (acc, cur) => Object.assign(acc, {
-        [cur.name]: nextVersion
-      }), {},
+      (acc, cur) =>
+        Object.assign(acc, {
+          [cur.name]: nextVersion,
+        }),
+      {},
     ),
   )
 
@@ -185,9 +187,8 @@ module.exports = async function release(options: Options = defaultOptions) {
   )
 
   const tagAnswer = await TerminalUtils.confirm(
-    `The following projects will be released with the respective new versions. Proceed?${EOL}\t${finalToUpdateVersionFor
-      .map(
-        ({ name }) => `
+    `The following projects will be released with the respective new versions. Proceed?${EOL}\t${finalToUpdateVersionFor.map(
+      ({ name }) => `
     $ {
       name
     }
@@ -197,8 +198,7 @@ module.exports = async function release(options: Options = defaultOptions) {
       versions[name]
     }
     `,
-      )
-      .join(`
+    ).join(`
     $ {
       EOL
     }\
@@ -216,7 +216,7 @@ module.exports = async function release(options: Options = defaultOptions) {
   await pSeries(
     allProjectsArray.map(project => () =>
       ProjectUtils.buildProject(project, {
-        quiet: true
+        quiet: true,
       }),
     ),
   )
