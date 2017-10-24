@@ -4,7 +4,7 @@
     "test": "constellate test"
   },
   "devDependencies": {
-    "constellate": "0.19.5",
+    "constellate": "0.19.6",
     "constellate-plugin-build-babel": "0.19.5",
     "constellate-plugin-build-flow": "0.19.5",
     "eslint-config-constellate": "0.19.5"
