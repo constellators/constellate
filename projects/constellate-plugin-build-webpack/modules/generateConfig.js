@@ -66,6 +66,10 @@ module.exports = function generateConfig(project, options) {
       extensions: ['.js', '.json', '.jsx'],
     },
 
+    resolveLoader: {
+      modules: ['node_modules', '../../node_modules'],
+    },
+
     // Source map settings.
     devtool:
       env === 'development'
@@ -201,13 +205,13 @@ module.exports = function generateConfig(project, options) {
           test: /\.js$/,
           use: [
             {
-              loader: require.resolve('cache-loader'),
+              loader: 'cache-loader',
               options: {
                 cacheDirectory: project.paths.webpackCache,
               },
             },
             {
-              loader: require.resolve('babel-loader'),
+              loader: 'babel-loader',
               options: generateBabelConfig(project),
             },
           ],
@@ -217,7 +221,7 @@ module.exports = function generateConfig(project, options) {
 
         {
           test: /\.(jpg|jpeg|png|gif|ico|eot|svg|ttf|woff|woff2|otf|mp4|mp3|ogg|swf|webp)$/,
-          loader: require.resolve('url-loader'),
+          loader: 'url-loader',
           options: {
             // We only emit files when building a web bundle, node bundles only
             // need the file paths.
@@ -232,9 +236,9 @@ module.exports = function generateConfig(project, options) {
         LogicUtils.onlyIf(env === 'development', () => ({
           test: /\.css$/,
           loader: [
-            require.resolve('style-loader'),
+            'style-loader',
             {
-              loader: require.resolve('css-loader'),
+              loader: 'css-loader',
               options: {
                 importLoaders: 1,
                 // Include sourcemaps for dev experience++.
@@ -242,7 +246,7 @@ module.exports = function generateConfig(project, options) {
               },
             },
             {
-              loader: require.resolve('postcss-loader'),
+              loader: 'postcss-loader',
               options: {
                 ident: 'postcss',
                 plugins: () => [
@@ -269,16 +273,16 @@ module.exports = function generateConfig(project, options) {
         LogicUtils.onlyIf(env === 'production', () => ({
           test: /\.css$/,
           loader: ExtractTextPlugin.extract({
-            fallback: require.resolve('style-loader'),
+            fallback: 'style-loader',
             use: [
               {
-                loader: require.resolve('css-loader'),
+                loader: 'css-loader',
                 options: {
                   importLoaders: 1,
                 },
               },
               {
-                loader: require.resolve('postcss-loader'),
+                loader: 'postcss-loader',
                 options: {
                   ident: 'postcss',
                   plugins: () => [
