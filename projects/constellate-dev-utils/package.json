@@ -20,7 +20,7 @@
 		"figures": "2.0.0",
 		"fs-extra": "5.0.0",
 		"globby": "8.0.1",
-		"inquirer": "3.3.0",
+		"inquirer": "5.1.0",
 		"load-json-file": "4.0.0",
 		"p-series": "1.0.0",
 		"ramda": "0.25.0",

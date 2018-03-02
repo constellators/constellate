@@ -1,15 +1,17 @@
 {
   "private": true,
-  "workspaces": ["projects/*"],
+  "workspaces": [
+    "projects/*"
+  ],
   "scripts": {
     "test": "constellate test",
     "update": "yarn upgrade-interactive --latest --exact"
   },
   "devDependencies": {
-    "constellate": "0.19.8-core2",
-    "constellate-plugin-build-babel": "0.19.8-core2",
-    "constellate-plugin-build-flow": "0.19.8-core2",
-    "eslint-config-constellate": "0.19.8-core2"
+    "constellate": "0.21.1-0-core",
+    "constellate-plugin-build-babel": "0.21.1-0-core",
+    "constellate-plugin-build-flow": "0.21.1-0-core",
+    "eslint-config-constellate": "0.21.1-0-core"
   },
   "eslintConfig": {
     "root": true,
