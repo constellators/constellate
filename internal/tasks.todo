@@ -1,76 +1,74 @@
-# Constellate Roadmap / Todo
+Constellate Roadmap / Todo:
 
-## Bugs
+Bugs:
+  ☐ Repo rollback on release errors sucks at the moment.
+  ☐ Show consecutive build errors as may contain new info.
+  ✔ Build output folders need to be ignored by the develop mode watcher. @done (2018-3-2 15:20:28)
+  ✔ constellate-utils publishing one version behind? @done (2018-3-2 15:20:29)
+  ✔ update pwns modules - we may need to unlink existing prior to running update @done (2018-3-2 15:20:30)
+  ✔ Hot module reload inject code @done (2018-3-2 15:20:31)
+  ✔ Develop process CMD + C doesn't seem to execute the "stop" for each process @done (2018-3-2 15:20:32)
+  ✔ Dependency chain publishing not working. e.g. update and publish constellate-dev-utils @done (2018-3-2 15:20:34)
+  ✔ Need to rework the versioning/publishing process. We will have to update the source package.json files directly in order to ensure correct publishing chain reactions. @done (2018-3-2 15:20:35)
+  ✔ When a project is published, all their dependants need to be published too. @done (2018-3-2 15:20:36)
+  ✔ Develop fails when having not previously built the projects and your are building a web client that depends on another constellate project. Mouthful. @done (2018-3-2 15:20:37)
 
- - [ ] Repo rollback on release errors sucks at the moment.
- - [ ] Show consecutive build errors as may contain new info.
- - [X] Build output folders need to be ignored by the develop mode watcher.
- - [X] constellate-utils publishing one version behind?
- - [X] update pwns modules - we may need to unlink existing prior to running update
- - [X] Hot module reload inject code
- - [X] Develop process CMD + C doesn't seem to execute the "stop" for each process
- - [X] Dependency chain publishing not working. e.g. update and publish constellate-dev-utils
- - [X] Need to rework the versioning/publishing process. We will have to update the source package.json files directly in order to ensure correct publishing chain reactions.
- - [X] When a project is published, all their dependants need to be published too.
- - [X] Develop fails when having not previously built the projects and your are building a web client that depends on another constellate project. Mouthful.
+Docs:
+  ☐ Intro
+  ☐ Video overview
+  ☐ Blog post
+  ☐ constellate.js
+  ☐ Develop tips and tricks
+  ☐ SIGTERM/SIGINT effective usage
+  ☐ Usage of process.stdin.read() to stop process exiting (even though it has child processes)
 
-## Docs
+Features/Chores:
 
- - [ ] Intro
- - [ ] Video overview
- - [ ] Blog post
- - [ ] constellate.js
- - [ ] Develop tips and tricks
- - [ ] SIGTERM/SIGINT effective usage
- - [ ] Usage of process.stdin.read() to stop process exiting (even though it has child processes)
-
-## Features/Chores
-
- - [ ] Better help on constellate bin
- - [ ] Replace linking etc with yarn workspaces. sigh. lol.
- - [ ] Integration tests
- - [ ] Postfix async functions with "Async"
- - [ ] Application template
- - [ ] Empty project template
- - [ ] Create project command
- - [ ] Better messages during publish process
- - [ ] Rename all dependencies and devDependencies to linked*
- - [ ] Allow specifying an exact tag version for doing publishing from
- - [ ] Command hooks + error handling of them!
-   - [X] predevelop
-   - [X] postdevelop
-   - [X] pretest
-   - [X] posttest
-   - [ ] prepublish
-   - [ ] postpublish
- - [ ] Finish all inline TODO comments within code.
- - [ ] Enforce Node >=8.2.0 - i.e. bundled with npm@>=5.3.0
- - [ ] Plugin extension API
- - [ ] Validate the constellate configuration (tcomb?)
- - [ ] Make the target browserlist configurable.
- - [ ] BrowserList configuration (touch point in babel and webpack config)
- - [ ] Chokidar events should result in the absolute minimal amount of work being done. e.g. transpile a single file. remove a dir, etc
- - [ ] auto-add source-map-support to build dependencies, and then re-enable for production builds.
- - [ ] plugin interface for compilers - pre/post compile
- - [ ] plugin interface for compilers - pre/post develop
- - [ ] Manual reload override for development mode.
- - [ ] Allow for explicit ignoring of a dependency when doing hot development reloads.
+  ☐ Better help on constellate bin
+  ✔ Replace linking etc with yarn workspaces. sigh. lol. @done (2018-3-2 15:14:35)
+  ☐ Integration tests
+  ☐ Postfix async functions with "Async"
+  ☐ Application template
+  ☐ Empty project template
+  ☐ Create project command
+  ☐ Better messages during publish process
+  ☐ Rename all dependencies and devDependencies to linked*
+  ☐ Allow specifying an exact tag version for doing publishing from
+  ☐ Command hooks + error handling of them!
+   ✔ predevelop @done (2018-3-2 15:15:11)
+   ✔ postdevelop @done (2018-3-2 15:15:11)
+   ✔ pretest @done (2018-3-2 15:15:10)
+   ✔ posttest @done (2018-3-2 15:15:10)
+   ☐ prepublish
+   ☐ postpublish
+  ☐ Finish all inline TODO comments within code.
+  ☐ Enforce Node >=8.2.0 - i.e. bundled with npm@>=5.3.0
+  ☐ Plugin extension API
+  ☐ Validate the constellate configuration (tcomb?)
+  ☐ Make the target browserlist configurable.
+  ☐ BrowserList configuration (touch point in babel and webpack config)
+  ☐ Chokidar events should result in the absolute minimal amount of work being done. e.g. transpile a single file. remove a dir, etc
+  ☐ auto-add source-map-support to build dependencies, and then re-enable for production builds.
+  ☐ plugin interface for compilers - pre/post compile
+  ☐ plugin interface for compilers - pre/post develop
+  ☐ Manual reload override for development mode.
+  ☐ Allow for explicit ignoring of a dependency when doing hot development reloads.
  https://stackoverflow.com/questions/30335637/get-width-of-terminal-in-node-js
- - [ ] use why-is-node-running for helpful errors?
- - [X] Flow
- - [X] Move the dotenv loader into constellate-utils
- - [X] constellate-plugin-build-flow
- - [X] Consolidate gracefullyShutdown and configureGracefulExit
- - [X] Require package.json files to be declared
- - [X] Require "main" for "server" develop plugin implementations.
- - [X] Babel plugin reads node version from config, or it uses current node.
- - [X] For the respective develop plugins assert that a "main" exists in the package.json
- - [X] Default options being applied to the webpack plugins.
- - [X] Replace ObjectUtils.mergeDeep with npm deepmerge package
- - [X] Copy some base files across always - .npmignore, /README(.md)?/i
- - [X] Copy across non-JS files when compiling
- - [X] Allow for additional files to be specified in package.json files
- - [X] Change config format
+  ☐ use why-is-node-running for helpful errors?
+  ✔ Flow @done (2018-3-2 15:16:05)
+  ✔ Move the dotenv loader into constellate-utils @done (2018-3-2 15:16:07)
+  ✔ constellate-plugin-build-flow @done (2018-3-2 15:16:09)
+  ✔ Consolidate gracefullyShutdown and configureGracefulExit @done (2018-3-2 15:16:11)
+  ✔ Require package.json files to be declared @done (2018-3-2 15:16:17)
+  ✔ Require "main" for "server" develop plugin implementations. @done (2018-3-2 15:16:19)
+  ✔ Babel plugin reads node version from config, or it uses current node. @done (2018-3-2 15:16:22)
+  ✔ For the respective develop plugins assert that a "main" exists in the package.json @done (2018-3-2 15:16:25)
+  ✔ Default options being applied to the webpack plugins. @done (2018-3-2 15:16:27)
+  ✔ Replace ObjectUtils.mergeDeep with npm deepmerge package @done (2018-3-2 15:16:30)
+  ✔ Copy some base files across always - .npmignore, /README(.md)?/i @done (2018-3-2 15:16:32)
+  ✔ Copy across non-JS files when compiling @done (2018-3-2 15:16:34)
+  ✔ Allow for additional files to be specified in package.json files @done (2018-3-2 15:16:36)
+  ✔ Change config format @done (2018-3-2 15:16:38)
        {
           build: [
             'foo',
@@ -79,25 +77,25 @@
             },
           ],
        }
- - [X] Rename all instances of "compile" -> "build"
- - [X] Add a -p (--purge) flag to install command which causes existing package-lock.json and node_modules to be deleted
- - [X] When linking projects ensure the deps are ordered by package name asc.
- - [X] Check for project changes before asking for version on publish command, early bailout.
- - [X] Now deploy path rules aliasing.
- - [X] Do clean up post deploy.
- - [X] Nice messages and help for constellate command
- - [X] Publish command Error resilience.
- - [X] Actually store the reference to the dependencies.
- - [X] Remove scripts/link and scripts/unlink
- - [X] Dependency based reloads.
- - [X] Deploy command
- - [X] Install
- - [X] Update
- - [X] Clean
- - [X] Build
- - [X] Develop
- - [X] Publish
- - [X] NEW WORKFLOW
+  ✔ Rename all instances of "compile" -> "build" @done (2018-3-2 15:16:52)
+  ✔ Add a -p (--purge) flag to install command which causes existing package-lock.json and node_modules to be deleted @done (2018-3-2 15:16:55)
+  ✔ When linking projects ensure the deps are ordered by package name asc. @done (2018-3-2 15:16:57)
+  ✔ Check for project changes before asking for version on publish command, early bailout. @done (2018-3-2 15:16:59)
+  ✔ Now deploy path rules aliasing. @done (2018-3-2 15:17:02)
+  ✔ Do clean up post deploy. @done (2018-3-2 15:17:03)
+  ✔ Nice messages and help for constellate command @done (2018-3-2 15:17:09)
+  ✔ Publish command Error resilience. @done (2018-3-2 15:17:10)
+  ✔ Actually store the reference to the dependencies. @done (2018-3-2 15:17:11)
+  ✔ Remove scripts/link and scripts/unlink @done (2018-3-2 15:17:12)
+  ✔ Dependency based reloads. @done (2018-3-2 15:17:13)
+  ✔ Deploy command @done (2018-3-2 15:17:14)
+  ✔ Install @done (2018-3-2 15:17:15)
+  ✔ Update @done (2018-3-2 15:17:16)
+  ✔ Clean @done (2018-3-2 15:17:17)
+  ✔ Build @done (2018-3-2 15:17:19)
+  ✔ Develop @done (2018-3-2 15:17:20)
+  ✔ Publish @done (2018-3-2 15:17:21)
+  ✔ NEW WORKFLOW @done (2018-3-2 15:17:24)
     -> create-project foo
     -> create-project bar
     -> linkprojects
@@ -110,44 +108,44 @@
     -> develop
     -> publish
     -> deploy
- - [X] replace cross-spawn with execa
- - [X] move constellate-utils into it's own repo
- - [X] Change this constellate repo back over to node 8 and update eslint config accordingly.
- - [X] Move constellate configuration into `constellate.js` files.
- - [X] refactor utils from constellate -> constellate-dev-utils
- - [X] Update to Webpack v3
- - [X] Rename release to tag
- - [X] Rename bootstrap command to install
- - [X] add script compiler plugin
- - [X] need a devDependencies and softDependencies
- - [X] allow a "script" compiler type, with compilerOptions allowing you to target a script
- - [X] Use config.releaseBranch to control the branch that is used for release generation (defaults to master)
- - [X] Support a 'none' compiler. This is complicated as the NPM publishing process falls over if you symlink a folder. Therefore file copy/paste is the only easy way thusfar.
- - [X] plugin interface for compilers - pre/post publish
- - [X] Plugin architecture for compilers
- - [X] refactor everything into plugins!!
- - [X] develop servers resolved from plugins should resolve into an known API, e.g. { kill: () => Promise }
- - [X] When publish show the projects to publish and ask to confirm?
- - [X] Check if remote has changes to pull
- - [X] Make the target node version configurable.
- - [X] Check if remote exists
- - [X] webpack-dev-server integration for `webapp` types.
- - [X] Webpack plugin(s) - Use https://github.com/Urthen/case-sensitive-paths-webpack-plugin
- - [X] Develop command Error resilience.
-   - [X] Startup Errors
-   - [X] Compile Time Errors
-   - [X] Runtime Errors
- - [X] Add "unhandled promise" error handler to script root.
- - [X] Terminal feedback.
- - [X] Source map support for transpiled bundles.
- - [X] Rename webpack output to match package name so that build output is easier to interpret.
- - [X] Ensure proper webpack error handling https://webpack.js.org/api/node/#error-handling
+  ✔ replace cross-spawn with execa @done (2018-3-2 15:17:41)
+  ✔ move constellate-utils into it's own repo @done (2018-3-2 15:17:42)
+  ✔ Change this constellate repo back over to node 8 and update eslint config accordingly. @done (2018-3-2 15:17:42)
+  ✔ Move constellate configuration into `constellate.js` files. @done (2018-3-2 15:17:43)
+  ✔ refactor utils from constellate -> constellate-dev-utils @done (2018-3-2 15:17:44)
+  ✔ Update to Webpack v3 @done (2018-3-2 15:17:46)
+  ✔ Rename release to tag @done (2018-3-2 15:17:47)
+  ✔ Rename bootstrap command to install @done (2018-3-2 15:17:48)
+  ✔ add script compiler plugin @done (2018-3-2 15:17:49)
+  ✔ need a devDependencies and softDependencies @done (2018-3-2 15:17:50)
+  ✔ allow a "script" compiler type, with compilerOptions allowing you to target a script @done (2018-3-2 15:17:51)
+  ✔ Use config.releaseBranch to control the branch that is used for release generation (defaults to master) @done (2018-3-2 15:17:52)
+  ✔ Support a 'none' compiler. This is complicated as the NPM publishing process falls over if you symlink a folder. Therefore file copy/paste is the only easy way thusfar. @done (2018-3-2 15:17:53)
+  ✔ plugin interface for compilers - pre/post publish @done (2018-3-2 15:17:55)
+  ✔ Plugin architecture for compilers @done (2018-3-2 15:17:56)
+  ✔ refactor everything into plugins!! @done (2018-3-2 15:17:57)
+  ✔ develop servers resolved from plugins should resolve into an known API, e.g. { kill: () => Promise } @done (2018-3-2 15:17:58)
+  ✔ When publish show the projects to publish and ask to confirm? @done (2018-3-2 15:18:00)
+  ✔ Check if remote has changes to pull @done (2018-3-2 15:18:02)
+  ✔ Make the target node version configurable. @done (2018-3-2 15:18:03)
+  ✔ Check if remote exists @done (2018-3-2 15:18:04)
+  ✔ webpack-dev-server integration for `webapp` types. @done (2018-3-2 15:18:05)
+  ✔ Webpack plugin(s) - Use https://github.com/Urthen/case-sensitive-paths-webpack-plugin @done (2018-3-2 15:18:07)
+  ✔ Develop command Error resilience. @done (2018-3-2 15:18:08)
+   ✔ Startup Errors @done (2018-3-2 15:18:20)
+   ✔ Compile Time Errors @done (2018-3-2 15:18:21)
+   ✔ Runtime Errors @done (2018-3-2 15:18:22)
+  ✔ Add "unhandled promise" error handler to script root. @done (2018-3-2 15:18:35)
+  ✔ Terminal feedback. @done (2018-3-2 15:18:36)
+  ✔ Source map support for transpiled bundles. @done (2018-3-2 15:18:37)
+  ✔ Rename webpack output to match package name so that build output is easier to interpret. @done (2018-3-2 15:18:39)
+  ✔ Ensure proper webpack error handling https://webpack.js.org/api/node/#error-handling @done (2018-3-2 15:18:40)
 
-## Test
+Test:
 
- - [ ] Polyfill compilation to the following targets
-    - [ ] Node
-    - [ ] Browser
-       - [ ] Chrome
-       - [ ] IE 9
-       - [ ] Safari
+  ☐ Polyfill compilation to the following targets
+    ☐ Node
+    ☐ Browser
+       ☐ Chrome
+       ☐ IE 9
+       ☐ Safari
