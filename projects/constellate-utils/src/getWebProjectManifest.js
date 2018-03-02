@@ -17,28 +17,35 @@ const cache = {}
  * @param  {string} projectName The project's name
  * @return {Object}             The manifest
  */
-module.exports = function getWebProjectManifest(projectName, basePath = './dist') {
+module.exports = function getWebProjectManifest(
+  projectName,
+  basePath = './dist',
+) {
   if (cache[projectName]) {
     return cache[projectName]
   }
-
-  const rootPath = path.resolve(process.cwd(), `./node_modules/${projectName}/${basePath}`)
-  const manifestFile = path.resolve(rootPath, './webpack-manifest.json')
+  const packagePath = require.resolve(projectName)
+  const distPath = path.resolve(process.cwd(), `${packagePath}/${basePath}`)
+  const manifestFile = path.resolve(distPath, './webpack-manifest.json')
   if (!fs.existsSync(manifestFile)) {
     throw new Error(`No manifest found at ${manifestFile}`)
   }
   // eslint-disable-next-line global-require,import/no-dynamic-require
   const manifest = requireFn(manifestFile)
   if (!manifest.index) {
-    throw new Error(`Invalid constellate web project manifest found at ${manifestFile}`)
+    throw new Error(
+      `Invalid constellate web project manifest found at ${manifestFile}`,
+    )
   }
 
-  const jsParts = manifest.index.js.substr(manifest.index.js.indexOf('/constellate/')).split('/')
+  const jsParts = manifest.index.js
+    .substr(manifest.index.js.indexOf('/constellate/'))
+    .split('/')
   const rootHttpPath = jsParts.slice(0, jsParts.length - 1).join('/')
 
   cache[projectName] = {
     serverPaths: {
-      root: rootPath,
+      root: distPath,
     },
     httpPaths: {
       root: rootHttpPath,
