@@ -63,7 +63,7 @@ const createAction = ({
 
 program
   .command('build')
-  .description('Builds the projects')
+  .description('Executes the configured build plugin for each project')
   .action(
     createAction({
       resolveScript: () => require('../scripts/build'),
@@ -72,14 +72,15 @@ program
 
 program
   .command('clean')
-  .description('Deletes the build output and node_modules files for projects')
+  .description(
+    'Deletes the build output for projects, with additional option to delete node_modules dirs',
+  )
   .option(
     '-p, --projects <projects>',
-    'Specify the projects to run the install for (defaults to all)',
+    'Specify the projects to run the clean for (defaults to all)',
     ArgParsers.list,
   )
   .option('-n, --node-modules', 'Removes node_modules for each project')
-  .option('-l, --package-lock', 'Removes package-lock.json for each project')
   .option('-b, --build', 'Removes build output for each project')
   .action(
     createAction({
@@ -89,7 +90,7 @@ program
 
 program
   .command('deploy')
-  .description('Deploys the projects')
+  .description('Executes the configured deploy plugin for all projects')
   .action(
     createAction({
       resolveScript: () => require('../scripts/deploy'),
@@ -115,17 +116,7 @@ program
 
 program
   .command('install')
-  .description('Installs the dependencies for every project')
-  .option(
-    '-p, --projects <projects>',
-    'Specify the projects to run the install for',
-    ArgParsers.list,
-  )
-  .option('-c, --clean', 'Removes existing node_modules for each project')
-  .option(
-    '-h, --hard-clean',
-    'Removes existing node_modules and package-lock.json for each project',
-  )
+  .description('Runs yarn install')
   .action(
     createAction({
       // We should not use "production" as a NODE_ENV because then only our
@@ -137,7 +128,9 @@ program
 
 program
   .command('link-projects')
-  .description('Links project(s) to a project')
+  .description(
+    'Allows you to link projects to another project as dependencies, updating the package.json file respectively.',
+  )
   .action(
     createAction({
       resolveScript: () => require('../scripts/linkProjects'),
@@ -147,7 +140,7 @@ program
 program
   .command('release')
   .description(
-    'Creates a new release, versioning the app, the changed projects, and published the changed projects to NPM',
+    'Creates a new release, versioning the app, the changed projects, and publishing the projects to NPM',
   )
   .option(
     '-n, --no-persist',
@@ -168,20 +161,20 @@ program
   .command('jest [args...]')
   .description('Executes jest')
   .action(() => {
-    throw new Error('This action has a special handler below')
+    throw new Error('This action has a special handler')
   })
 
 program
   .command('exec <cmd> [args...]')
   .description('Executed a provided command')
   .action(() => {
-    throw new Error('This action has a special handler below')
+    throw new Error('This action has a special handler')
   })
 
 program
   .command('update')
   .description(
-    'Runs an interactive dependency update process for every project',
+    'Executes the yarn upgrade-interactive command (with --latest and --exact enabled)',
   )
   .action(
     createAction({

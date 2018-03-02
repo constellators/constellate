@@ -2,7 +2,6 @@
 
 export type CleanOptions = {
   nodeModules?: boolean,
-  packageLock?: boolean,
   build?: boolean,
 }
 

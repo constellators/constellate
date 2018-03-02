@@ -6,7 +6,6 @@ const { TerminalUtils, ProjectUtils } = require('constellate-dev-utils')
 module.exports = async function build() {
   TerminalUtils.title('Running build...')
 
-  // :: Project -> void -> Promise
   const queueBuild = project => () => ProjectUtils.buildProject(project)
   await pSeries(ProjectUtils.getAllProjectsArray().map(queueBuild))
 
