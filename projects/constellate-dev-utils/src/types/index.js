@@ -14,6 +14,8 @@ export type ProjectWatcher = {|
 |}
 
 export type ProjectPaths = {|
+  appRoot: string,
+  appRootNodeModules: string,
   root: string,
   packageJson: string,
   packageLockJson: string,

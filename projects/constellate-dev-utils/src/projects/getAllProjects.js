@@ -32,14 +32,15 @@ const allDeps = project =>
     .concat(project.softDependencies || [])
 
 // :: Project -> Array<string>
-const linkDeps = project => (project.dependencies || []).concat(project.devDependencies || [])
+const linkDeps = project =>
+  (project.dependencies || []).concat(project.devDependencies || [])
 
 // :: string -> string -> string
 const resolveProjectPath = projectName => relativePath =>
   path.resolve(process.cwd(), `./projects/${projectName}`, relativePath)
 
 // :: string -> Project
-const toProject = (projectName) => {
+const toProject = projectName => {
   const appConfig = AppUtils.getConfig()
 
   const thisProjectPath = resolveProjectPath(projectName)
@@ -65,6 +66,8 @@ const toProject = (projectName) => {
     packageName: packageJson.name,
     version: packageJson.version || '0.0.0',
     paths: {
+      appRoot: process.cwd(),
+      appRootNodeModules: path.resolve(process.cwd(), './node_modules'),
       root: thisProjectPath('./'),
       packageJson: packageJsonPath,
       packageLockJson: thisProjectPath('./package-lock.json'),
@@ -81,9 +84,9 @@ const resolvePlugin = (project, type, resolver) => {
   }
   const config = Array.isArray(pluginDef)
     ? {
-      name: pluginDef[0],
-      options: pluginDef.length > 1 ? pluginDef[1] : {},
-    }
+        name: pluginDef[0],
+        options: pluginDef.length > 1 ? pluginDef[1] : {},
+      }
     : { name: pluginDef, options: {} }
   const pluginFactory = resolver(config.name)
   return pluginFactory(project, config.options)
@@ -100,7 +103,9 @@ function getPlugins(project) {
 // :: Array<Project> -> Array<Project>
 function orderByDependencies(projects) {
   const packageDependencyGraph = project =>
-    R.pipe(allDeps, R.map(dependencyName => [dependencyName, project.name]))(project)
+    R.pipe(allDeps, R.map(dependencyName => [dependencyName, project.name]))(
+      project,
+    )
 
   // :: Array<Project> -> Array<Array<string, string>>
   const dependencyGraph = R.chain(packageDependencyGraph)
@@ -109,12 +114,15 @@ function orderByDependencies(projects) {
   const hasNoDependencies = ({ dependencies }) => dependencies.length === 0
 
   // :: Array<Project>
-  const projectsWithNoDependencies = R.pipe(R.filter(hasNoDependencies), R.map(R.prop('name')))(
-    projects,
-  )
+  const projectsWithNoDependencies = R.pipe(
+    R.filter(hasNoDependencies),
+    R.map(R.prop('name')),
+  )(projects)
 
   // :: string -> Project
-  const findProjectByName = R.map(name => R.find(R.propEq('name', name), projects))
+  const findProjectByName = R.map(name =>
+    R.find(R.propEq('name', name), projects),
+  )
 
   return R.pipe(
     dependencyGraph,
@@ -146,9 +154,13 @@ module.exports = function getAllProjects(skipCache: ?boolean): ProjectMap {
   const projects = fs
     .readdirSync(projectsRoot)
     // only include directories
-    .filter(fsPath => fs.lstatSync(path.join(projectsRoot, fsPath)).isDirectory())
+    .filter(fsPath =>
+      fs.lstatSync(path.join(projectsRoot, fsPath)).isDirectory(),
+    )
     // only include projects containing a package.json
-    .filter(projectDir => fs.pathExistsSync(path.join(projectsRoot, projectDir, './package.json')))
+    .filter(projectDir =>
+      fs.pathExistsSync(path.join(projectsRoot, projectDir, './package.json')),
+    )
     // convert into a Project
     .map(toProject)
 
@@ -158,7 +170,9 @@ module.exports = function getAllProjects(skipCache: ?boolean): ProjectMap {
       const dependency = R.find(R.propEq('name', dependencyName), projects)
       if (!dependency) {
         TerminalUtils.warning(
-          `Could not find ${dependencyName} referenced as soft dependency for ${project.name}`,
+          `Could not find ${dependencyName} referenced as soft dependency for ${
+            project.name
+          }`,
         )
         return acc
       }
@@ -179,11 +193,15 @@ module.exports = function getAllProjects(skipCache: ?boolean): ProjectMap {
 
   // :: -> Array<string>
   const getDependants = (allProjects, project) =>
-    allProjects.filter(x => R.contains(project.name, allDeps(x))).map(R.prop('name'))
+    allProjects
+      .filter(x => R.contains(project.name, allDeps(x)))
+      .map(R.prop('name'))
 
   // :: -> Array<string>
   const getLinkedDependants = (allProjects, project) =>
-    allProjects.filter(x => R.contains(project.name, linkDeps(x))).map(R.prop('name'))
+    allProjects
+      .filter(x => R.contains(project.name, linkDeps(x)))
+      .map(R.prop('name'))
 
   // TODO: getAllDependants and getAllLinkedDependants can be generalised.
 
@@ -192,7 +210,7 @@ module.exports = function getAllProjects(skipCache: ?boolean): ProjectMap {
     const findProject = name => R.find(R.propEq('name', name), allProjects)
 
     // :: String -> Array<String>
-    const resolveDependants = (dependantName) => {
+    const resolveDependants = dependantName => {
       const dependant = findProject(dependantName)
       return [
         dependant.name,
@@ -205,7 +223,9 @@ module.exports = function getAllProjects(skipCache: ?boolean): ProjectMap {
 
     // Let's get a sorted version of allDependants by filtering allProjects
     // which will already be in a safe build order.
-    return allProjects.filter(x => !!R.find(R.equals(x.name), allDependants)).map(R.prop('name'))
+    return allProjects
+      .filter(x => !!R.find(R.equals(x.name), allDependants))
+      .map(R.prop('name'))
   }
 
   // :: -> Array<string>
@@ -213,7 +233,7 @@ module.exports = function getAllProjects(skipCache: ?boolean): ProjectMap {
     const findProject = name => R.find(R.propEq('name', name), allProjects)
 
     // :: String -> Array<String>
-    const resolveLinkedDependants = (dependantName) => {
+    const resolveLinkedDependants = dependantName => {
       const dependant = findProject(dependantName)
       return [
         dependant.name,
@@ -222,7 +242,10 @@ module.exports = function getAllProjects(skipCache: ?boolean): ProjectMap {
       ]
     }
 
-    const allLinkedDependants = R.chain(resolveLinkedDependants, project.linkedDependants)
+    const allLinkedDependants = R.chain(
+      resolveLinkedDependants,
+      project.linkedDependants,
+    )
 
     // Let's get a sorted version of allDependants by filtering allProjects
     // which will already be in a safe build order.
@@ -234,9 +257,17 @@ module.exports = function getAllProjects(skipCache: ?boolean): ProjectMap {
   cache = R.pipe(
     // The projects this project directly depends on.
     allProjects =>
-      R.map((project) => {
-        const dependencies = getDependencies(allProjects, project, 'dependencies')
-        const devDependencies = getDependencies(allProjects, project, 'devDependencies')
+      R.map(project => {
+        const dependencies = getDependencies(
+          allProjects,
+          project,
+          'dependencies',
+        )
+        const devDependencies = getDependencies(
+          allProjects,
+          project,
+          'devDependencies',
+        )
         const softDependencies = getSoftDependencies(project)
         return Object.assign({}, project, {
           dependencies,
@@ -283,9 +314,13 @@ module.exports = function getAllProjects(skipCache: ?boolean): ProjectMap {
         }),
       )(allProjects),
     // Verbose logging
-    R.map((project) => {
+    R.map(project => {
       TerminalUtils.verbose(
-        `Resolved project ${project.name}:${EOL}${JSON.stringify(project, null, 2)}`,
+        `Resolved project ${project.name}:${EOL}${JSON.stringify(
+          project,
+          null,
+          2,
+        )}`,
       )
       return project
     }),
@@ -294,7 +329,9 @@ module.exports = function getAllProjects(skipCache: ?boolean): ProjectMap {
   )(projects)
 
   TerminalUtils.verbose(
-    `Project build order: \n\t- ${R.values(cache).map(R.prop('name')).join(`${EOL}\t- `)}`,
+    `Project build order: \n\t- ${R.values(cache)
+      .map(R.prop('name'))
+      .join(`${EOL}\t- `)}`,
   )
 
   return cache

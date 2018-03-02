@@ -3,7 +3,6 @@ const path = require('path')
 const AssetsPlugin = require('assets-webpack-plugin')
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
 const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin')
-const WatchMissingNodeModulesPlugin = require('react-dev-utils/WatchMissingNodeModulesPlugin')
 const autoprefixer = require('autoprefixer')
 const { ArrayUtils, LogicUtils } = require('constellate-dev-utils')
 const generateBabelConfig = require('./generateBabelConfig')
@@ -64,10 +63,7 @@ module.exports = function generateConfig(project, options) {
 
     resolve: {
       extensions: ['.js', '.json', '.jsx'],
-    },
-
-    resolveLoader: {
-      modules: ['node_modules', '../../node_modules'],
+      modules: ['node_modules', project.paths.appRootNodeModules],
     },
 
     // Source map settings.
@@ -143,6 +139,7 @@ module.exports = function generateConfig(project, options) {
         () =>
           new webpack.LoaderOptionsPlugin({
             minimize: true,
+            debug: process.env.DEBUG === 'true',
           }),
       ),
 
@@ -154,6 +151,8 @@ module.exports = function generateConfig(project, options) {
         () => new CaseSensitivePathsPlugin(),
       ),
 
+      // TODO: Look at how this would work with yarn workspaces
+      /*
       // If you require a missing module and then `npm install` it, you still have
       // to restart the development server for Webpack to discover it. This plugin
       // makes the discovery automatic so you don't have to restart.
@@ -162,6 +161,7 @@ module.exports = function generateConfig(project, options) {
         env === 'development',
         () => new WatchMissingNodeModulesPlugin(project.paths.nodeModules),
       ),
+      */
 
       // We don't want webpack errors to occur during development as it will
       // kill our dev servers.
@@ -262,7 +262,7 @@ module.exports = function generateConfig(project, options) {
               },
             },
           ],
-          include: [project.paths.root],
+          include: [project.paths.root, project.paths.appRootNodeModules],
           exclude: [outputDirPath],
         })),
 
@@ -299,7 +299,7 @@ module.exports = function generateConfig(project, options) {
               },
             ],
           }),
-          include: [project.paths.root],
+          include: [project.paths.root, project.paths.appRootNodeModules],
           exclude: [outputDirPath],
         })),
       ]),

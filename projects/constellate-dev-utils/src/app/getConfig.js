@@ -32,11 +32,15 @@ module.exports = function getConfig() {
 
   cache = ObjectUtils.mergeDeep(
     defaultAppConfig,
-    // eslint-disable-next-line global-require,import/no-dynamic-require
-    configExists ? require(configPath) : {},
+    configExists
+      ? // $FlowFixMe
+        require(configPath) // eslint-disable-line global-require,import/no-dynamic-require
+      : {},
   )
 
-  TerminalUtils.verbose(`Using app config:${EOL}${JSON.stringify(cache, null, 2)}`)
+  TerminalUtils.verbose(
+    `Using app config:${EOL}${JSON.stringify(cache, null, 2)}`,
+  )
 
   return cache
 }
