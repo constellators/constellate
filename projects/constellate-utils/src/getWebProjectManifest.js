@@ -25,10 +25,21 @@ module.exports = function getWebProjectManifest(
     return cache[projectName]
   }
   const packagePath = require.resolve(projectName)
-  const distPath = path.resolve(process.cwd(), `${packagePath}/${basePath}`)
-  const manifestFile = path.resolve(distPath, './webpack-manifest.json')
+  let distPath = path.resolve(
+    process.cwd(),
+    `./node_modules/${packagePath}/${basePath}`,
+  )
+  let manifestFile = path.resolve(distPath, `./webpack-manifest.json`)
   if (!fs.existsSync(manifestFile)) {
-    throw new Error(`No manifest found at ${manifestFile}`)
+    // constellate app root path
+    distPath = path.resolve(
+      process.cwd(),
+      `../../node_modules/${packagePath}/${basePath}`,
+    )
+    manifestFile = path.resolve(distPath, `./webpack-manifest.json`)
+    if (!fs.existsSync(manifestFile)) {
+      throw new Error(`No manifest found at ${manifestFile}`)
+    }
   }
   // eslint-disable-next-line global-require,import/no-dynamic-require
   const manifest = requireFn(manifestFile)
