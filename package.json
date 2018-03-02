@@ -2,7 +2,8 @@
   "private": true,
   "workspaces": ["projects/*"],
   "scripts": {
-    "test": "constellate test"
+    "test": "constellate test",
+    "update": "yarn upgrade-interactive --latest --exact"
   },
   "devDependencies": {
     "constellate": "0.19.8-core2",
