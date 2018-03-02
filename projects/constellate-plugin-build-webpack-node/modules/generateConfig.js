@@ -5,6 +5,20 @@ const { ArrayUtils, LogicUtils } = require('constellate-dev-utils')
 
 const generateBabelConfig = require('./generateBabelConfig')
 
+const createNodeExternalsConfig = modulesDir =>
+  nodeExternals({
+    // There are however some file types and dependencies that we do wish
+    // to processed by webpack:
+    whitelist: ArrayUtils.removeNil([
+      'source-map-support/register',
+      /\.(eot|woff|woff2|ttf|otf)$/,
+      /\.(svg|png|jpg|jpeg|gif|ico)$/,
+      /\.(mp4|mp3|ogg|swf|webp)$/,
+      /\.(css|scss|sass|sss|less)$/,
+    ]),
+    modulesDir,
+  })
+
 module.exports = function generateConfig(project, options) {
   const env = process.env.NODE_ENV
 
@@ -37,7 +51,8 @@ module.exports = function generateConfig(project, options) {
       filename: '[name].js',
 
       // The name format for any additional chunks produced for the bundle.
-      chunkFilename: env === 'development' ? '[name]-[hash].js' : '[name]-[chunkhash].js',
+      chunkFilename:
+        env === 'development' ? '[name]-[hash].js' : '[name]-[chunkhash].js',
 
       publicPath: `/constellate/${project.name}/`,
 
@@ -49,6 +64,7 @@ module.exports = function generateConfig(project, options) {
 
     resolve: {
       extensions: ['.js', '.json', '.jsx'],
+      modules: ['node_modules', project.paths.appRootNodeModules],
     },
 
     // Ensure that webpack polyfills the following node features
@@ -58,18 +74,8 @@ module.exports = function generateConfig(project, options) {
     // our node bundle. This is important as not all deps will be supported by
     // the bundling process. Instead they will be resolved at run time.
     externals: [
-      nodeExternals({
-        // There are however some file types and dependencies that we do wish
-        // to processed by webpack:
-        whitelist: ArrayUtils.removeNil([
-          'source-map-support/register',
-          /\.(eot|woff|woff2|ttf|otf)$/,
-          /\.(svg|png|jpg|jpeg|gif|ico)$/,
-          /\.(mp4|mp3|ogg|swf|webp)$/,
-          /\.(css|scss|sass|sss|less)$/,
-        ]),
-        modulesDir: project.paths.nodeModules,
-      }),
+      createNodeExternalsConfig(project.paths.nodeModules),
+      createNodeExternalsConfig(project.paths.appRootNodeModules),
     ],
 
     // Produces an external source map (lives next to bundle output files).
@@ -99,7 +105,10 @@ module.exports = function generateConfig(project, options) {
 
       // This makes debugging much easier as webpack will add filenames to
       // modules
-      LogicUtils.onlyIf(env === 'development', () => new webpack.NamedModulesPlugin()),
+      LogicUtils.onlyIf(
+        env === 'development',
+        () => new webpack.NamedModulesPlugin(),
+      ),
 
       // This grants us source map support, which combined with our webpack
       // source maps will give us nice stack traces for our node executed
