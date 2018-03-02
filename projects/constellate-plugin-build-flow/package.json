@@ -1,5 +1,5 @@
 {
-	"version": "0.20.0",
+	"version": "0.20.5",
 	"name": "constellate-plugin-build-flow",
 	"description": "Flow build plugin for Constellate projects.",
 	"main": "modules/index.js",
