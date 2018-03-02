@@ -45,12 +45,7 @@ function verbose(msg: string): void {
 function error(msg: string, err?: Error): void {
   console.log(chalk.red.bold(msg))
   if (err != null) {
-    if (typeof err.stack !== 'undefined') {
-      console.log(err.stack.substr(0, err.stack.indexOf(' at ')))
-      verbose(err.stack.substr(err.stack.indexOf(' at ')))
-    } else {
-      console.log(err.message)
-    }
+    console.log(err.message)
   }
 }
 
@@ -74,7 +69,10 @@ function header(msg: string): void {
   console.log(chalk.bold(msg))
 }
 
-function multiSelect(message: string, options: MultiSelectOptions): Promise<MultiValueAnswer> {
+function multiSelect(
+  message: string,
+  options: MultiSelectOptions,
+): Promise<MultiValueAnswer> {
   const { choices, selected, validate } = options
   return inquirer
     .prompt([
@@ -91,7 +89,10 @@ function multiSelect(message: string, options: MultiSelectOptions): Promise<Mult
     .then(answers => answers.prompt)
 }
 
-function select(message: string, options: SelectOptions): Promise<SingleValueAnswer> {
+function select(
+  message: string,
+  options: SelectOptions,
+): Promise<SingleValueAnswer> {
   const { choices, validate } = options
   return inquirer
     .prompt([
@@ -107,7 +108,10 @@ function select(message: string, options: SelectOptions): Promise<SingleValueAns
     .then(answers => answers.prompt)
 }
 
-function input(message: string, options?: InputOptions = {}): Promise<SingleValueAnswer> {
+function input(
+  message: string,
+  options?: InputOptions = {},
+): Promise<SingleValueAnswer> {
   const { validate } = options
   return inquirer
     .prompt([
@@ -129,7 +133,10 @@ function confirm(message: string): Promise<ConfirmAnswer> {
         name: 'confirm',
         message,
         default: 2, // default to help in order to avoid clicking straight through
-        choices: [{ key: 'y', name: 'Yes', value: true }, { key: 'n', name: 'No', value: false }],
+        choices: [
+          { key: 'y', name: 'Yes', value: true },
+          { key: 'n', name: 'No', value: false },
+        ],
       },
     ])
     .then(answers => answers.confirm)

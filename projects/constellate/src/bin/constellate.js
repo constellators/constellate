@@ -53,9 +53,6 @@ const createAction = ({
     process.exit(0)
   } catch (err) {
     TerminalUtils.error('Argh! An unexpected error has occurred', err)
-    if (process.env.DEBUG) {
-      console.log(err)
-    }
     if (errorMsg) {
       TerminalUtils.error(errorMsg)
     }

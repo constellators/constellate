@@ -3,7 +3,7 @@ const path = require('path')
 const fs = require('fs-extra')
 
 function resolvePackage(resolvedPackageName) {
-  const packagePath = path.resolve(process.cwd(), `./node_modules/${resolvedPackageName}`)
+  const packagePath = require.resolve(resolvedPackageName)
   TerminalUtils.verbose(`Trying to resolve package ${packagePath}`)
   let resolvedPackage
   try {
@@ -12,7 +12,9 @@ function resolvePackage(resolvedPackageName) {
   } catch (err) {
     TerminalUtils.verbose(`Failed to resolve package ${packagePath}`)
     TerminalUtils.verbose(err)
-    TerminalUtils.verbose(`Trying to resolve package ${packagePath} as a symlink`)
+    TerminalUtils.verbose(
+      `Trying to resolve package ${packagePath} as a symlink`,
+    )
     // EEK! Could be a symlink?
     try {
       fs.lstatSync(packagePath)
@@ -21,7 +23,9 @@ function resolvePackage(resolvedPackageName) {
       resolvedPackage = require(symLinkPath)
     } catch (symErr) {
       // DO nothing
-      TerminalUtils.verbose(`Failed to resolve package ${packagePath} as a symlink`)
+      TerminalUtils.verbose(
+        `Failed to resolve package ${packagePath} as a symlink`,
+      )
       TerminalUtils.verbose(symErr)
     }
   }
