@@ -48,7 +48,6 @@ module.exports = async function release(options: Options = defaultOptions) {
 
   const rebuildProjects = async () => {
     const updatedAllProjectsArray = ProjectUtils.getAllProjectsArray(true)
-    ProjectUtils.linkAllProjects()
     await pSeries(
       updatedAllProjectsArray.map(project => () =>
         ProjectUtils.buildProject(project, {
@@ -201,7 +200,6 @@ module.exports = async function release(options: Options = defaultOptions) {
   TerminalUtils.info('Building projects in preparation for release...')
 
   // Build..
-  ProjectUtils.linkAllProjects()
   await pSeries(
     allProjectsArray.map(project => () =>
       ProjectUtils.buildProject(project, {

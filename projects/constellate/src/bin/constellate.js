@@ -5,8 +5,6 @@
 const program = require('commander')
 const { TerminalUtils } = require('constellate-dev-utils')
 const { configureGracefulExit, loadEnvVars } = require('constellate-utils')
-
-const rollbackRepo = require('../utils/rollbackRepo')
 const packageJson = require('../../package.json')
 
 const noop = () => undefined
@@ -153,7 +151,6 @@ program
   .action(
     createAction({
       resolveScript: options => () => require('../scripts/release')(options),
-      gracefulExit: rollbackRepo,
     }),
   )
 

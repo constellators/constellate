@@ -5,7 +5,10 @@ module.exports = async function linkProjects() {
   TerminalUtils.title('Running linking process...')
 
   const allProjects = ProjectUtils.getAllProjects()
-  const allProjectsArray = R.sortBy(R.prop('name'), ProjectUtils.getAllProjectsArray())
+  const allProjectsArray = R.sortBy(
+    R.prop('name'),
+    ProjectUtils.getAllProjectsArray(),
+  )
 
   if (allProjectsArray.length < 2) {
     throw new Error('You need at least 2 projects in order to create a link')
@@ -26,10 +29,12 @@ module.exports = async function linkProjects() {
   const projectsToLink = await TerminalUtils.multiSelect(
     `Which project do you want to add as linked dependencies on ${projectToLinkTo}?`,
     {
-      choices: allProjectsArray.filter(p => p.name !== projectToLinkTo).map(p => ({
-        value: p.name,
-        name: p.name,
-      })),
+      choices: allProjectsArray
+        .filter(p => p.name !== projectToLinkTo)
+        .map(p => ({
+          value: p.name,
+          name: p.name,
+        })),
     },
   )
 
@@ -38,7 +43,9 @@ module.exports = async function linkProjects() {
     process.exit(0)
   }
 
-  TerminalUtils.verbose(`Chosen linked dependencies: [${projectsToLink.join(', ')}]`)
+  TerminalUtils.verbose(
+    `Chosen linked dependencies: [${projectsToLink.join(', ')}]`,
+  )
 
   const dependencyType = await TerminalUtils.select(
     'What type of dependency should we link them as?',
@@ -55,10 +62,11 @@ module.exports = async function linkProjects() {
   const targetProject = allProjects[projectToLinkTo]
   const sourceProjects = projectsToLink.map(x => allProjects[x])
 
-  ProjectUtils.addLinkedDependencies(targetProject, sourceProjects, dependencyType)
-
-  // Ensure sym links are created.
-  ProjectUtils.linkAllProjects()
+  ProjectUtils.addLinkedDependencies(
+    targetProject,
+    sourceProjects,
+    dependencyType,
+  )
 
   TerminalUtils.success('Done')
 }

@@ -5,8 +5,11 @@ const fs = require('fs-extra')
 const path = require('path')
 const pSeries = require('p-series')
 const writeJsonFile = require('write-json-file')
-const { TerminalUtils, ChildProcessUtils, ProjectUtils } = require('constellate-dev-utils')
-
+const {
+  TerminalUtils,
+  ChildProcessUtils,
+  ProjectUtils,
+} = require('constellate-dev-utils')
 const moveToTargetTag = require('../utils/moveToTargetTag')
 const rollbackRepo = require('../utils/rollbackRepo')
 
@@ -21,12 +24,15 @@ module.exports = async function deploy() {
   try {
     // Ask the user which tag to operate against
     const targetTag = await moveToTargetTag({
-      question: 'Which version of the application would you like to deploy from?',
+      question:
+        'Which version of the application would you like to deploy from?',
     })
 
     TerminalUtils.info('Resolving projects at version that can be deployed...')
 
-    TerminalUtils.verbose(`Moving repo to ${targetTag} to determine project versions`)
+    TerminalUtils.verbose(
+      `Moving repo to ${targetTag} to determine project versions`,
+    )
 
     // Get the current versions for each project (will be based within the
     // context of the current checked out version of the repo 👍)
@@ -44,17 +50,25 @@ module.exports = async function deploy() {
   `),
     )
   } catch (err) {
-    TerminalUtils.verbose('Rolling back repo to current and prepping for deployment...')
+    TerminalUtils.verbose(
+      'Rolling back repo to current and prepping for deployment...',
+    )
     rollbackRepo({ quiet: true })
     throw err
   }
 
-  TerminalUtils.verbose('Rolling back repo to current and prepping for deployment...')
+  TerminalUtils.verbose(
+    'Rolling back repo to current and prepping for deployment...',
+  )
   rollbackRepo({ quiet: true })
 
-  const projectsWithDeployConfig = allProjectsArray.filter(project => project.deployPlugin)
+  const projectsWithDeployConfig = allProjectsArray.filter(
+    project => project.deployPlugin,
+  )
   if (projectsWithDeployConfig.length === 0) {
-    TerminalUtils.info('You do not have any projects with a deploy configuration.  Exiting...')
+    TerminalUtils.info(
+      'You do not have any projects with a deploy configuration.  Exiting...',
+    )
     process.exit(0)
   }
 
@@ -93,7 +107,10 @@ module.exports = async function deploy() {
           cwd: installRoot,
         },
       )
-      const deployRoot = path.resolve(installRoot, `./node_modules/${project.packageName}`)
+      const deployRoot = path.resolve(
+        installRoot,
+        `./node_modules/${project.packageName}`,
+      )
       await project.plugins.deployPlugin.deploy(deployRoot)
     }),
   )

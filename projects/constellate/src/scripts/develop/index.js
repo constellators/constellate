@@ -1,7 +1,11 @@
 /* eslint-disable no-use-before-define */
 
 const R = require('ramda')
-const { TerminalUtils, AppUtils, ProjectUtils } = require('constellate-dev-utils')
+const {
+  TerminalUtils,
+  AppUtils,
+  ProjectUtils,
+} = require('constellate-dev-utils')
 const createProjectDevelopConductor = require('./createProjectDevelopConductor')
 const createProjectWatcher = require('./createProjectWatcher')
 const gracefulShutdownManager = require('./gracefulShutdownManager')
@@ -24,9 +28,6 @@ module.exports = async function develop() {
   // Firstly clean build for all projects
   await ProjectUtils.cleanProjects(allProjectsArray, { build: true })
 
-  // Ensure all the projects are linked
-  ProjectUtils.linkAllProjects()
-
   // Represents the current project being built
   let currentlyProcessing = null
 
@@ -39,7 +40,8 @@ module.exports = async function develop() {
   )
 
   // :: Project -> Array<Project>
-  const getProjectDependants = project => project.dependants.map(name => allProjects[name])
+  const getProjectDependants = project =>
+    project.dependants.map(name => allProjects[name])
 
   // :: Project -> void -> void
   const onChange = project => () => {
@@ -54,7 +56,9 @@ module.exports = async function develop() {
   // :: Object<string, ProjectWatcher>
   const projectWatchers = allProjectsArray.reduce(
     (acc, project) =>
-      Object.assign(acc, { [project.name]: createProjectWatcher(onChange(project), project) }),
+      Object.assign(acc, {
+        [project.name]: createProjectWatcher(onChange(project), project),
+      }),
     {},
   )
 
@@ -62,24 +66,34 @@ module.exports = async function develop() {
   const projectDevelopConductors = allProjectsArray.reduce(
     (acc, project) =>
       Object.assign(acc, {
-        [project.name]: createProjectDevelopConductor(project, projectWatchers[project.name]),
+        [project.name]: createProjectDevelopConductor(
+          project,
+          projectWatchers[project.name],
+        ),
       }),
     {},
   )
 
-  const queueProjectForProcessing = (projectToQueue) => {
+  const queueProjectForProcessing = projectToQueue => {
     TerminalUtils.verbose(`Attempting to queue ${projectToQueue.name}`)
-    if (currentlyProcessing !== null && projectHasDependant(projectToQueue, currentlyProcessing)) {
+    if (
+      currentlyProcessing !== null &&
+      projectHasDependant(projectToQueue, currentlyProcessing)
+    ) {
       // Do nothing as the project currently being built will result in this
       // project being built via it's dependancy chain.
       TerminalUtils.verbose(
-        `Skipping queue of ${projectToQueue.name} as represented by the project currently being processed`,
+        `Skipping queue of ${
+          projectToQueue.name
+        } as represented by the project currently being processed`,
       )
     } else if (R.any(projectHasDependant(projectToQueue), toProcessQueue)) {
       // Do nothing as one of the queued projectsToDevelop will result in this project
       // getting built via it's dependancy chain.
       TerminalUtils.verbose(
-        `Skipping queue of ${projectToQueue.name} as represented by the items within the queue`,
+        `Skipping queue of ${
+          projectToQueue.name
+        } as represented by the items within the queue`,
       )
     } else {
       // Queue the project for building.
@@ -88,17 +102,23 @@ module.exports = async function develop() {
       // We'll assign the project to the build queue, removing any of the
       // project's dependants as they will be represented by the project being
       // added.
-      toProcessQueue = R.without(projectDependants, toProcessQueue).concat([projectToQueue])
-      TerminalUtils.verbose(`Queue: [${toProcessQueue.map(x => x.name).join(',')}]`)
+      toProcessQueue = R.without(projectDependants, toProcessQueue).concat([
+        projectToQueue,
+      ])
+      TerminalUtils.verbose(
+        `Queue: [${toProcessQueue.map(x => x.name).join(',')}]`,
+      )
     }
   }
 
-  const processProject = (project) => {
+  const processProject = project => {
     currentlyProcessing = project
     const projectDevelopConductor = projectDevelopConductors[project.name]
     if (!projectDevelopConductor) {
       TerminalUtils.error(
-        `Did not run develop process for ${project.name} as there is no project develop conductor registered for it`,
+        `Did not run develop process for ${
+          project.name
+        } as there is no project develop conductor registered for it`,
       )
       return
     }
@@ -108,8 +128,11 @@ module.exports = async function develop() {
       // Develop kickstart succeeded 🎉
       .then(() => ({ success: true }))
       // Or, failed 😭
-      .catch((err) => {
-        TerminalUtils.error(`Please fix the following issue on ${project.name}:`, err)
+      .catch(err => {
+        TerminalUtils.error(
+          `Please fix the following issue on ${project.name}:`,
+          err,
+        )
         return { success: false }
       })
       // Finally...
@@ -120,7 +143,9 @@ module.exports = async function develop() {
         // If the build succeeded we will queue dependants
         if (success) {
           TerminalUtils.verbose(
-            `Develop process ran successfully for ${project.name}, queueing dependants...`,
+            `Develop process ran successfully for ${
+              project.name
+            }, queueing dependants...`,
           )
           const projectDependants = getProjectDependants(project)
           projectDependants.forEach(queueProjectForProcessing)
@@ -157,7 +182,9 @@ module.exports = async function develop() {
   allProjectsArray.forEach(queueProjectForProcessing)
 
   // SET...
-  Object.keys(projectWatchers).forEach(projectName => projectWatchers[projectName].start())
+  Object.keys(projectWatchers).forEach(projectName =>
+    projectWatchers[projectName].start(),
+  )
 
   // GO! 🚀
   processNextInTheQueue()
