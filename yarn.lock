@@ -484,9 +484,9 @@ babel-plugin-dynamic-import-node@1.1.0:
     babel-template "^6.26.0"
     babel-types "^6.26.0"
 
-babel-plugin-inject-source-map-init@0.19.5:
-  version "0.19.5"
-  resolved "https://registry.yarnpkg.com/babel-plugin-inject-source-map-init/-/babel-plugin-inject-source-map-init-0.19.5.tgz#9c4a95e79c92aba3e38c271d5275ccb59aa8a050"
+babel-plugin-inject-source-map-init@0.19.8-core2:
+  version "0.19.8-core2"
+  resolved "https://registry.yarnpkg.com/babel-plugin-inject-source-map-init/-/babel-plugin-inject-source-map-init-0.19.8-core2.tgz#c983c092fed424dd9595d17c2dad6fb5b530b179"
   dependencies:
     babel-template "6.26.0"
 
@@ -1117,9 +1117,9 @@ center-align@^0.1.1:
     align-text "^0.1.3"
     lazy-cache "^1.0.3"
 
-chalk@2.2.0:
-  version "2.2.0"
-  resolved "https://registry.yarnpkg.com/chalk/-/chalk-2.2.0.tgz#477b3bf2f9b8fd5ca9e429747e37f724ee7af240"
+chalk@2.3.0:
+  version "2.3.0"
+  resolved "https://registry.yarnpkg.com/chalk/-/chalk-2.3.0.tgz#b5ea48efc9c1793dccc9b4767c93914d3f2d52ba"
   dependencies:
     ansi-styles "^3.1.0"
     escape-string-regexp "^1.0.5"
@@ -1269,11 +1269,11 @@ console-control-strings@^1.0.0, console-control-strings@~1.1.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/console-control-strings/-/console-control-strings-1.1.0.tgz#3d7cf4464db6446ea644bf4b39507f9851008e8e"
 
-constellate-dev-utils@0.19.5:
-  version "0.19.5"
-  resolved "https://registry.yarnpkg.com/constellate-dev-utils/-/constellate-dev-utils-0.19.5.tgz#4f2720a4cf3e03cab467ea5c2af41d437be99f92"
+constellate-dev-utils@0.19.8-core2:
+  version "0.19.8-core2"
+  resolved "https://registry.yarnpkg.com/constellate-dev-utils/-/constellate-dev-utils-0.19.8-core2.tgz#f3a3ae57c1b0ac274122872696599c38b9c5986a"
   dependencies:
-    chalk "2.2.0"
+    chalk "2.3.0"
     dedent "0.7.0"
     deepmerge "2.0.0"
     execa "0.8.0"
@@ -1290,14 +1290,14 @@ constellate-dev-utils@0.19.5:
     write-json-file "2.3.0"
     write-pkg "3.1.0"
 
-constellate-plugin-build-babel@0.19.5:
-  version "0.19.5"
-  resolved "https://registry.yarnpkg.com/constellate-plugin-build-babel/-/constellate-plugin-build-babel-0.19.5.tgz#c41f130f5f31595d75376df0047d5b0f154c35b9"
+constellate-plugin-build-babel@0.19.8-core2:
+  version "0.19.8-core2"
+  resolved "https://registry.yarnpkg.com/constellate-plugin-build-babel/-/constellate-plugin-build-babel-0.19.8-core2.tgz#62d5d00cc4579e9bda0d5033ab9b038116291b46"
   dependencies:
     babel-cli "6.26.0"
     babel-core "6.26.0"
     babel-plugin-dynamic-import-node "1.1.0"
-    babel-plugin-inject-source-map-init "0.19.5"
+    babel-plugin-inject-source-map-init "0.19.8-core2"
     babel-plugin-syntax-dynamic-import "6.18.0"
     babel-plugin-syntax-trailing-function-commas "6.22.0"
     babel-plugin-transform-class-properties "6.24.1"
@@ -1311,16 +1311,16 @@ constellate-plugin-build-babel@0.19.5:
     babel-preset-env "1.6.1"
     babel-preset-react "6.24.1"
     babel-template "6.26.0"
-    constellate-dev-utils "0.19.5"
+    constellate-dev-utils "0.19.8-core2"
     fs-extra "4.0.2"
     globby "6.1.0"
     p-limit "1.1.0"
     pify "3.0.0"
     ramda "0.25.0"
 
-constellate-plugin-build-flow@0.19.5:
-  version "0.19.5"
-  resolved "https://registry.yarnpkg.com/constellate-plugin-build-flow/-/constellate-plugin-build-flow-0.19.5.tgz#6090e6de2055abfab502404e36f56f27f0f655be"
+constellate-plugin-build-flow@0.19.8-core2:
+  version "0.19.8-core2"
+  resolved "https://registry.yarnpkg.com/constellate-plugin-build-flow/-/constellate-plugin-build-flow-0.19.8-core2.tgz#929976f1a5943c214e6b8d1f9b078659518378e7"
   dependencies:
     flow-remove-types "1.2.3"
     fs-extra "4.0.2"
@@ -1328,21 +1328,21 @@ constellate-plugin-build-flow@0.19.5:
     p-limit "1.1.0"
     ramda "0.25.0"
 
-constellate-utils@0.19.5:
-  version "0.19.5"
-  resolved "https://registry.yarnpkg.com/constellate-utils/-/constellate-utils-0.19.5.tgz#8279aeedaeb07d3e6c90fd34615f30cf7533ba98"
+constellate-utils@0.19.8-core2:
+  version "0.19.8-core2"
+  resolved "https://registry.yarnpkg.com/constellate-utils/-/constellate-utils-0.19.8-core2.tgz#dfab0332cc6341ff87f6f6c78436074e1df54094"
   dependencies:
     deepmerge "2.0.0"
     fs-extra "4.0.2"
 
-constellate@0.19.6:
-  version "0.19.6"
-  resolved "https://registry.yarnpkg.com/constellate/-/constellate-0.19.6.tgz#e9121c05f58ced08bbf3c6d358641a102ecab03b"
+constellate@0.19.8-core2:
+  version "0.19.8-core2"
+  resolved "https://registry.yarnpkg.com/constellate/-/constellate-0.19.8-core2.tgz#5cc3836f700712831b0ecc3a6be9cb9d8d907664"
   dependencies:
     chokidar "1.7.0"
     commander "2.11.0"
-    constellate-dev-utils "0.19.5"
-    constellate-utils "0.19.5"
+    constellate-dev-utils "0.19.8-core2"
+    constellate-utils "0.19.8-core2"
     dotenv "4.0.0"
     fs-extra "4.0.2"
     jest "21.2.1"
@@ -1656,9 +1656,9 @@ eslint-config-airbnb@16.1.0:
   dependencies:
     eslint-config-airbnb-base "^12.1.0"
 
-eslint-config-constellate@0.19.5:
-  version "0.19.5"
-  resolved "https://registry.yarnpkg.com/eslint-config-constellate/-/eslint-config-constellate-0.19.5.tgz#b4ff6baff4e2eda8299ffd006634fdb84ee2bc98"
+eslint-config-constellate@0.19.8-core2:
+  version "0.19.8-core2"
+  resolved "https://registry.yarnpkg.com/eslint-config-constellate/-/eslint-config-constellate-0.19.8-core2.tgz#a6bf06af569006df30c856cd80a75284b4f6fc2b"
   dependencies:
     babel-eslint "8.0.1"
     eslint "4.9.0"

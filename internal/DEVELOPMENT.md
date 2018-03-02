@@ -2,6 +2,9 @@
 
 Below are some critical things to be aware of when developing the core Constellate packages.
 
+## Releasing constellate
+
+Given the behaviour of Yarn we want to release a seperate set of versions of constellate for constellate itself to depend on. Postfix the versions with "-core" and also make sure to run the release command with "-f" to force all packages to deploy. Thereafter we can do a standard release.
 
 ## Linking
 
