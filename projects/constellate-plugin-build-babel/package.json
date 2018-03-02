@@ -1,5 +1,5 @@
 {
-	"version": "0.20.5",
+	"version": "0.20.8",
 	"name": "constellate-plugin-build-babel",
 	"description": "Babel build plugin for Constellate projects.",
 	"main": "modules/index.js",
@@ -24,7 +24,7 @@
 		"babel-preset-env": "1.6.1",
 		"babel-preset-react": "6.24.1",
 		"babel-template": "6.26.0",
-		"constellate-dev-utils": "0.20.5",
+		"constellate-dev-utils": "0.20.8",
 		"fs-extra": "5.0.0",
 		"globby": "8.0.1",
 		"p-limit": "1.2.0",
