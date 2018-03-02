@@ -24,17 +24,16 @@ module.exports = function getWebProjectManifest(
   if (cache[projectName]) {
     return cache[projectName]
   }
-  const packagePath = require.resolve(projectName)
   let distPath = path.resolve(
     process.cwd(),
-    `./node_modules/${packagePath}/${basePath}`,
+    `./node_modules/${projectName}/${basePath}`,
   )
   let manifestFile = path.resolve(distPath, `./webpack-manifest.json`)
   if (!fs.existsSync(manifestFile)) {
     // constellate app root path
     distPath = path.resolve(
       process.cwd(),
-      `../../node_modules/${packagePath}/${basePath}`,
+      `../../node_modules/${projectName}/${basePath}`,
     )
     manifestFile = path.resolve(distPath, `./webpack-manifest.json`)
     if (!fs.existsSync(manifestFile)) {
