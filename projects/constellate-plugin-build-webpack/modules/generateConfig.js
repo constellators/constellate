@@ -46,7 +46,8 @@ module.exports = function generateConfig(project, options) {
             '[name].js',
 
       // The name format for any additional chunks produced for the bundle.
-      chunkFilename: env === 'development' ? '[name]-[hash].js' : '[name]-[chunkhash].js',
+      chunkFilename:
+        env === 'development' ? '[name]-[hash].js' : '[name]-[chunkhash].js',
 
       publicPath:
         env === 'development' && !!devServerPort
@@ -105,7 +106,10 @@ module.exports = function generateConfig(project, options) {
 
       // This makes debugging much easier as webpack will add filenames to
       // modules
-      LogicUtils.onlyIf(env === 'development', () => new webpack.NamedModulesPlugin()),
+      LogicUtils.onlyIf(
+        env === 'development',
+        () => new webpack.NamedModulesPlugin(),
+      ),
 
       // For our production web targets we need to make sure we pass the required
       // configuration to ensure that the output is minimized/optimized.
@@ -141,7 +145,10 @@ module.exports = function generateConfig(project, options) {
       // Watcher doesn't work well if you mistype casing in a path so we use
       // a plugin that prints an error when you attempt to do this.
       // See https://github.com/facebookincubator/create-react-app/issues/240
-      LogicUtils.onlyIf(env === 'development', () => new CaseSensitivePathsPlugin()),
+      LogicUtils.onlyIf(
+        env === 'development',
+        () => new CaseSensitivePathsPlugin(),
+      ),
 
       // If you require a missing module and then `npm install` it, you still have
       // to restart the development server for Webpack to discover it. This plugin
@@ -154,10 +161,16 @@ module.exports = function generateConfig(project, options) {
 
       // We don't want webpack errors to occur during development as it will
       // kill our dev servers.
-      LogicUtils.onlyIf(env === 'development', () => new webpack.NoEmitOnErrorsPlugin()),
+      LogicUtils.onlyIf(
+        env === 'development',
+        () => new webpack.NoEmitOnErrorsPlugin(),
+      ),
 
       // We need this plugin to enable hot reloading of our client.
-      LogicUtils.onlyIf(env === 'development', () => new webpack.HotModuleReplacementPlugin()),
+      LogicUtils.onlyIf(
+        env === 'development',
+        () => new webpack.HotModuleReplacementPlugin(),
+      ),
 
       // For a production build of a web target we need to extract the CSS into
       // CSS files.
@@ -188,13 +201,13 @@ module.exports = function generateConfig(project, options) {
           test: /\.js$/,
           use: [
             {
-              loader: 'cache-loader',
+              loader: require.resolve('cache-loader'),
               options: {
                 cacheDirectory: project.paths.webpackCache,
               },
             },
             {
-              loader: 'babel-loader',
+              loader: require.resolve('babel-loader'),
               options: generateBabelConfig(project),
             },
           ],
@@ -204,7 +217,7 @@ module.exports = function generateConfig(project, options) {
 
         {
           test: /\.(jpg|jpeg|png|gif|ico|eot|svg|ttf|woff|woff2|otf|mp4|mp3|ogg|swf|webp)$/,
-          loader: 'url-loader',
+          loader: require.resolve('url-loader'),
           options: {
             // We only emit files when building a web bundle, node bundles only
             // need the file paths.
@@ -219,9 +232,9 @@ module.exports = function generateConfig(project, options) {
         LogicUtils.onlyIf(env === 'development', () => ({
           test: /\.css$/,
           loader: [
-            'style-loader',
+            require.resolve('style-loader'),
             {
-              loader: 'css-loader',
+              loader: require.resolve('css-loader'),
               options: {
                 importLoaders: 1,
                 // Include sourcemaps for dev experience++.
@@ -229,12 +242,17 @@ module.exports = function generateConfig(project, options) {
               },
             },
             {
-              loader: 'postcss-loader',
+              loader: require.resolve('postcss-loader'),
               options: {
                 ident: 'postcss',
                 plugins: () => [
                   autoprefixer({
-                    browsers: ['>1%', 'last 4 versions', 'Firefox ESR', 'not ie < 9'],
+                    browsers: [
+                      '>1%',
+                      'last 4 versions',
+                      'Firefox ESR',
+                      'not ie < 9',
+                    ],
                   }),
                 ],
               },
@@ -251,21 +269,26 @@ module.exports = function generateConfig(project, options) {
         LogicUtils.onlyIf(env === 'production', () => ({
           test: /\.css$/,
           loader: ExtractTextPlugin.extract({
-            fallback: 'style-loader',
+            fallback: require.resolve('style-loader'),
             use: [
               {
-                loader: 'css-loader',
+                loader: require.resolve('css-loader'),
                 options: {
                   importLoaders: 1,
                 },
               },
               {
-                loader: 'postcss-loader',
+                loader: require.resolve('postcss-loader'),
                 options: {
                   ident: 'postcss',
                   plugins: () => [
                     autoprefixer({
-                      browsers: ['>1%', 'last 4 versions', 'Firefox ESR', 'not ie < 9'],
+                      browsers: [
+                        '>1%',
+                        'last 4 versions',
+                        'Firefox ESR',
+                        'not ie < 9',
+                      ],
                     }),
                   ],
                 },
