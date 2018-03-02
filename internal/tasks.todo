@@ -2,6 +2,7 @@
 
 ## Bugs
 
+ - [ ] Repo rollback on release errors sucks at the moment.
  - [ ] Show consecutive build errors as may contain new info.
  - [X] Build output folders need to be ignored by the develop mode watcher.
  - [X] constellate-utils publishing one version behind?
