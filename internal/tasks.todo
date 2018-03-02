@@ -24,6 +24,7 @@ Docs:
 
 Features/Chores:
 
+  ☐ Support dist tags on release (https://docs.npmjs.com/getting-started/using-tags)
   ☐ Better help on constellate bin
   ✔ Replace linking etc with yarn workspaces. sigh. lol. @done (2018-3-2 15:14:35)
   ☐ Integration tests
