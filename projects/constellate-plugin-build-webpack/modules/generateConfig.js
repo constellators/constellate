@@ -205,13 +205,13 @@ module.exports = function generateConfig(project, options) {
           test: /\.js$/,
           use: [
             {
-              loader: 'cache-loader',
+              loader: require.resolve('cache-loader'),
               options: {
                 cacheDirectory: project.paths.webpackCache,
               },
             },
             {
-              loader: 'babel-loader',
+              loader: require.resolve('babel-loader'),
               options: generateBabelConfig(project),
             },
           ],
@@ -221,7 +221,7 @@ module.exports = function generateConfig(project, options) {
 
         {
           test: /\.(jpg|jpeg|png|gif|ico|eot|svg|ttf|woff|woff2|otf|mp4|mp3|ogg|swf|webp)$/,
-          loader: 'url-loader',
+          loader: require.resolve('url-loader'),
           options: {
             // We only emit files when building a web bundle, node bundles only
             // need the file paths.
@@ -236,9 +236,9 @@ module.exports = function generateConfig(project, options) {
         LogicUtils.onlyIf(env === 'development', () => ({
           test: /\.css$/,
           loader: [
-            'style-loader',
+            require.resolve('style-loader'),
             {
-              loader: 'css-loader',
+              loader: require.resolve('css-loader'),
               options: {
                 importLoaders: 1,
                 // Include sourcemaps for dev experience++.
@@ -246,7 +246,7 @@ module.exports = function generateConfig(project, options) {
               },
             },
             {
-              loader: 'postcss-loader',
+              loader: require.resolve('postcss-loader'),
               options: {
                 ident: 'postcss',
                 plugins: () => [
@@ -273,16 +273,16 @@ module.exports = function generateConfig(project, options) {
         LogicUtils.onlyIf(env === 'production', () => ({
           test: /\.css$/,
           loader: ExtractTextPlugin.extract({
-            fallback: 'style-loader',
+            fallback: require.resolve('style-loader'),
             use: [
               {
-                loader: 'css-loader',
+                loader: require.resolve('css-loader'),
                 options: {
                   importLoaders: 1,
                 },
               },
               {
-                loader: 'postcss-loader',
+                loader: require.resolve('postcss-loader'),
                 options: {
                   ident: 'postcss',
                   plugins: () => [
