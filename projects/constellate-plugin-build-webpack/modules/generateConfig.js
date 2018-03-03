@@ -309,9 +309,9 @@ module.exports = function generateConfig(project, options) {
   if (env === 'development' && !!devServerPort) {
     webpackConfig.entry.index = [
       `${require.resolve(
-        'webpack-dev-server/client',
-      )}?http://0.0.0.0:${devServerPort}`,
-      require.resolve('webpack/hot/dev-server'),
+        'webpack-dev-server',
+      )}/client?http://0.0.0.0:${devServerPort}`,
+      `${require.resolve('webpack')}/hot/dev-server`,
       ...webpackConfig.entry.index,
     ]
 
