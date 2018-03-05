@@ -15,7 +15,7 @@ module.exports = pluginName => {
     ? pluginName
     : `constellate-plugin-${pluginName}`
 
-  switch (pluginName) {
+  switch (fullPluginName) {
     case 'constellate-plugin-build':
       return require('./build')
     case 'constellate-plugin-server':
