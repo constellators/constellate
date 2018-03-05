@@ -11,20 +11,20 @@ module.exports = pluginName => {
     throw new Error('No plugin name was given to resolvePlugin')
   }
 
-  switch (pluginName) {
-    case 'develop-build':
-      return require('./develop/build')
-    case 'develop-server':
-      return require('./develop/server')
-    case 'develop-script':
-      return require('./develop/script')
-    default:
-    // Do nothing, fall through and resolve custom plugin...
-  }
-
   const fullPluginName = pluginName.startsWith('constellate-plugin-')
     ? pluginName
     : `constellate-plugin-${pluginName}`
+
+  switch (pluginName) {
+    case 'constellate-plugin-build':
+      return require('./build')
+    case 'constellate-plugin-server':
+      return require('./server')
+    case 'constellate-plugin-script':
+      return require('./script')
+    default:
+    // Do nothing, fall through and resolve custom plugin...
+  }
 
   if (pluginCache[fullPluginName]) {
     return pluginCache[fullPluginName]

@@ -1,7 +1,7 @@
 const path = require('path')
-const TerminalUtils = require('../../../terminal')
-const ChildProcessUtils = require('../../../childProcess')
-const ProjectUtils = require('../../../projects')
+const TerminalUtils = require('../../terminal')
+const ChildProcessUtils = require('../../childProcess')
+const ProjectUtils = require('../../projects')
 const DevelopPluginUtils = require('../utils')
 
 const childProcessMap = {}

@@ -1,16 +1,16 @@
-const TerminalUtils = require('../../terminal')
+const TerminalUtils = require('../terminal')
 
 function killChildProcess(project, childProcess) {
   TerminalUtils.verbose(`Killing ${project.name}...`)
 
-  return new Promise((resolve) => {
+  return new Promise(resolve => {
     let killed = false
 
     childProcess.on('close', () => {
       killed = true
     })
 
-    childProcess.catch((err) => {
+    childProcess.catch(err => {
       TerminalUtils.verbose(`${project.name} was not killed with errors`)
       TerminalUtils.verbose(err)
       resolve()
@@ -25,7 +25,7 @@ function killChildProcess(project, childProcess) {
     }, 50)
 
     childProcess.kill('SIGTERM')
-  }).catch((err) => {
+  }).catch(err => {
     TerminalUtils.verbose(`Fatal error whilst killing ${project.name}`)
     throw err
   })

@@ -1,7 +1,7 @@
 const R = require('ramda')
 const readPkg = require('read-pkg')
-const TerminalUtils = require('../../../terminal')
-const ChildProcessUtils = require('../../../childProcess')
+const TerminalUtils = require('../../terminal')
+const ChildProcessUtils = require('../../childProcess')
 const DevelopPluginUtils = require('../utils')
 
 const childProcessMap = {}

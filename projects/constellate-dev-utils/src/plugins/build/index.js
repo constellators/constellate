@@ -1,4 +1,4 @@
-const ProjectUtils = require('../../../projects')
+const ProjectUtils = require('../../projects')
 
 // :: (Project, DevelopOptions, Watcher) -> DevelopAPI
 module.exports = function buildDevelopPlugin(project) {

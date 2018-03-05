@@ -39,6 +39,8 @@ Constellate allows for a powerful plugin based system that allows you to target 
 
 In addition to using one of the core plugins the system allows you to use any custom plugin, developed by your team or others. Please see the ["Plugin Development"](#plugin-development) docs for more information.
 
+TODO: built in plugins
+
 ### constellate-plugin-babel
 
 > TODO

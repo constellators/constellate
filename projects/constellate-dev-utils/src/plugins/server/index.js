@@ -1,5 +1,4 @@
-const TerminalUtils = require('../../../terminal')
-
+const TerminalUtils = require('../../terminal')
 const develop = require('./develop')
 
 // :: (Project, DevelopOptions, Watcher) -> DevelopAPI
