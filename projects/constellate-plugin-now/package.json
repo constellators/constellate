@@ -1,0 +1,17 @@
+{
+  "version": "0.21.1",
+  "name": "constellate-plugin-now",
+  "description": "Allows deployment of constellate projects to Zeit's now",
+  "main": "modules/index.js",
+  "files": ["modules"],
+  "dependencies": {
+    "chalk": "2.3.1",
+    "constellate-dev-utils": "0.21.1",
+    "dedent": "0.7.0",
+    "deepmerge": "2.0.1",
+    "p-whilst": "1.0.0",
+    "ramda": "0.25.0",
+    "temp-write": "3.4.0",
+    "write-json-file": "2.3.0"
+  }
+}

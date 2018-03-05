@@ -6,10 +6,12 @@ const DevelopPluginUtils = require('../utils')
 
 const childProcessMap = {}
 
-const killChildProcessFor = (project) => {
+const killChildProcessFor = project => {
   const childProcess = childProcessMap[project.name]
   if (!childProcess) {
-    TerminalUtils.verbose(`No running child process for ${project.name} to kill`)
+    TerminalUtils.verbose(
+      `No running child process for ${project.name} to kill`,
+    )
     return Promise.resolve()
   }
   return DevelopPluginUtils.killChildProcess(project, childProcess).then(() => {
@@ -23,14 +25,18 @@ const killChildProcessFor = (project) => {
 // :: (Project, DevelopOptions, Watcher) -> DevelopAPI
 module.exports = function scriptDevelop(project, options) {
   if (!options.scriptName) {
-    throw new Error(`No scriptName was provided for the develop configuration of ${project.name}.`)
+    throw new Error(
+      `No scriptName was provided for the develop configuration of ${
+        project.name
+      }.`,
+    )
   }
 
   const pkgJson = readPkg.sync(project.paths.packageJson)
 
   return {
-    start: () =>
-      new Promise((resolve) => {
+    develop: () =>
+      new Promise(resolve => {
         if (options.scriptRunOnce && childProcessMap[project.name]) {
           resolve()
         } else {
@@ -42,19 +48,29 @@ module.exports = function scriptDevelop(project, options) {
             const scriptCmd = R.path(['scripts', options.scriptName], pkgJson)
             if (!scriptCmd || R.isEmpty(scriptCmd)) {
               throw new Error(
-                `Could not resolve script named "${options.scriptName}" on ${project.name}`,
+                `Could not resolve script named "${options.scriptName}" on ${
+                  project.name
+                }`,
               )
             }
 
-            TerminalUtils.info(`Executing script "${options.scriptName}" for ${project.name}`)
+            TerminalUtils.info(
+              `Executing script "${options.scriptName}" for ${project.name}`,
+            )
 
-            const childProcess = ChildProcessUtils.spawn('npm', ['run', options.scriptName], {
-              stdio: 'inherit',
-              cwd: project.paths.root,
-            })
-            childProcess.catch((err) => {
+            const childProcess = ChildProcessUtils.spawn(
+              'npm',
+              ['run', options.scriptName],
+              {
+                stdio: 'inherit',
+                cwd: project.paths.root,
+              },
+            )
+            childProcess.catch(err => {
               TerminalUtils.verbose(
-                `Error executing script "${options.scriptName}" for ${project.name}`,
+                `Error executing script "${options.scriptName}" for ${
+                  project.name
+                }`,
               )
               reject(err)
             })

@@ -1,0 +1,14 @@
+{
+  "version": "0.21.1",
+  "name": "constellate-plugin-flow",
+  "description": "Flow plugin for Constellate projects.",
+  "main": "modules/index.js",
+  "files": ["modules"],
+  "dependencies": {
+    "flow-remove-types": "1.2.3",
+    "fs-extra": "5.0.0",
+    "globby": "8.0.1",
+    "p-limit": "1.2.0",
+    "ramda": "0.25.0"
+  }
+}

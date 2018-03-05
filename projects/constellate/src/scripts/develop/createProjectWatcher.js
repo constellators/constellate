@@ -9,7 +9,9 @@ module.exports = function createProjectWatcher(onChange, project) {
       // TODO: Add the paths to the build folders of each of it's dependencies.
       [project.paths.root],
       {
-        ignored: project.plugins.buildPlugin ? project.plugins.buildPlugin.outputDir() : undefined,
+        ignored: project.plugins.buildPlugin
+          ? project.plugins.buildPlugin.outputDir()
+          : undefined,
         ignoreInitial: true,
         cwd: project.paths.root,
         ignorePermissionErrors: true,

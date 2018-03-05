@@ -11,9 +11,7 @@ const R = require('ramda')
 const TerminalUtils = require('../terminal')
 const AppUtils = require('../app')
 const ObjectUtils = require('../objects')
-const resolveBuildPlugin = require('../plugins/build/resolveBuildPlugin')
-const resolveDevelopPlugin = require('../plugins/develop/resolveDevelopPlugin')
-const resolveDeployPlugin = require('../plugins/deploy/resolveDeployPlugin')
+const resolvePlugin = require('../plugins/resolvePlugin')
 
 let cache = null
 
@@ -77,7 +75,7 @@ const toProject = projectName => {
   }
 }
 
-const resolvePlugin = (project, type, resolver) => {
+const resolvePluginFor = (project, type) => {
   const pluginDef = project.config[type]
   if (pluginDef == null) {
     return null
@@ -88,15 +86,15 @@ const resolvePlugin = (project, type, resolver) => {
         options: pluginDef.length > 1 ? pluginDef[1] : {},
       }
     : { name: pluginDef, options: {} }
-  const pluginFactory = resolver(config.name)
+  const pluginFactory = resolvePlugin(config.name)
   return pluginFactory(project, config.options)
 }
 
 function getPlugins(project) {
   return {
-    buildPlugin: resolvePlugin(project, 'build', resolveBuildPlugin),
-    developPlugin: resolvePlugin(project, 'develop', resolveDevelopPlugin),
-    deployPlugin: resolvePlugin(project, 'deploy', resolveDeployPlugin),
+    buildPlugin: resolvePluginFor(project, 'build'),
+    developPlugin: resolvePluginFor(project, 'develop'),
+    deployPlugin: resolvePluginFor(project, 'deploy'),
   }
 }
 

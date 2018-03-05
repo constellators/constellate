@@ -6,20 +6,29 @@ module.exports = function createProjectDevelopConductor(project, watcher) {
   return {
     // :: void -> Promise
     start: () => {
-      TerminalUtils.verbose(`Starting develop implementation for ${project.name}`)
+      TerminalUtils.verbose(
+        `Starting develop implementation for ${project.name}`,
+      )
 
       if (!project.plugins.developPlugin) {
         throw new Error(
-          `Trying to run develop plugin on project without one specified: ${project.name}`,
+          `Trying to run develop plugin on project without one specified: ${
+            project.name
+          }`,
         )
       }
 
-      return project.plugins.developPlugin.start(watcher).then((developInstance) => {
-        runningDevelopInstance = developInstance
-      })
+      return project.plugins.developPlugin
+        .develop(watcher)
+        .then(developInstance => {
+          runningDevelopInstance = developInstance
+        })
     },
 
     // :: void -> Promise
-    stop: () => (runningDevelopInstance ? runningDevelopInstance.kill() : Promise.resolve()),
+    stop: () =>
+      runningDevelopInstance
+        ? runningDevelopInstance.kill()
+        : Promise.resolve(),
   }
 }

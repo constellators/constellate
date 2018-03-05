@@ -12,12 +12,12 @@ A toolchain to rapidly create and deploy Node applications.
 
 ## TOC
 
- - [Introduction](#introduction)
- - [Features](#features)
- - [Getting started](#getting-started)
- - [Plugins](#plugins)
- - [Plugin Development](#plugin-development)
- - [Templates](#templates)
+* [Introduction](#introduction)
+* [Features](#features)
+* [Getting started](#getting-started)
+* [Plugins](#plugins)
+* [Plugin Development](#plugin-development)
+* [Templates](#templates)
 
 ## Introduction
 
@@ -35,52 +35,29 @@ Most of the development tooling (bundling, transpiling, hot module reloading) ar
 
 ## Plugins
 
-Constellate allows for a powerful plugin based system that allows you to target 3 seperate aspects of the system: build, develop, and deploy.  We provide a set of Core plugins - some of which need to be explicitly installed so that we keep the core `constellate` package size respectable.
+Constellate allows for a powerful plugin based system that allows you to target 3 seperate aspects of the system: build, develop, and deploy. We provide a set of Core plugins - some of which need to be explicitly installed so that we keep the core `constellate` package size respectable.
 
-In addition to using one of the core plugins the system allows you to use any custom plugin, developed by your team or others.  Please see the ["Plugin Development"](#plugin-development) docs for more information.
+In addition to using one of the core plugins the system allows you to use any custom plugin, developed by your team or others. Please see the ["Plugin Development"](#plugin-development) docs for more information.
 
-### Build Plugins
-
-#### none
+### constellate-plugin-babel
 
 > TODO
 
-#### constellate-plugin-build-babel
+### constellate-plugin-flow
 
 > TODO
 
-#### constellate-plugin-build-webpack
+### constellate-plugin-now
 
 > TODO
 
-#### constellate-plugin-build-webpack-node
+### constellate-plugin-webpack
 
 > TODO
 
-### Develop Plugins
-
-#### none
+### constellate-plugin-webpack-node
 
 > TODO
-
-#### server
-
-> TODO
-
-#### constellate-plugin-develop-webpack
-
-> TODO
-
-### Deploy Plugins
-
-#### none
-
-> TODO
-
-#### constellate-plugin-deploy-now
-
-> TODO
-
 
 ## Plugin Development
 

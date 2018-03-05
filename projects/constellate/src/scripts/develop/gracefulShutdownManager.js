@@ -1,7 +1,10 @@
 const R = require('ramda')
 const { TerminalUtils, AppUtils } = require('constellate-dev-utils')
 
-module.exports = function gracefulShutdownManager(projectDevelopConductors, projectWatchers) {
+module.exports = function gracefulShutdownManager(
+  projectDevelopConductors,
+  projectWatchers,
+) {
   let shuttingDown = false
   let postDevelopRun = false
 
@@ -40,7 +43,9 @@ module.exports = function gracefulShutdownManager(projectDevelopConductors, proj
       }, 10 * 1000)
 
       // Firstly kill all our projectWatchers.
-      Object.keys(projectWatchers).forEach(projectName => projectWatchers[projectName].stop())
+      Object.keys(projectWatchers).forEach(projectName =>
+        projectWatchers[projectName].stop(),
+      )
 
       // Then call off the `.stop()` against all our project conductors.
       await Promise.all(
@@ -52,7 +57,10 @@ module.exports = function gracefulShutdownManager(projectDevelopConductors, proj
       // Then call the post develop hook
       await ensurePostDevelopHookRun()
     } catch (err) {
-      TerminalUtils.error('An error occurred whilst shutting down the development environment', err)
+      TerminalUtils.error(
+        'An error occurred whilst shutting down the development environment',
+        err,
+      )
       process.exit(1)
     }
     process.exit(exitCode)
@@ -60,14 +68,14 @@ module.exports = function gracefulShutdownManager(projectDevelopConductors, proj
 
   // Ensure that we perform a graceful shutdown when any of the following
   // signals are sent to our process.
-  ['SIGINT', 'SIGTERM'].forEach((signal) => {
+  ;['SIGINT', 'SIGTERM'].forEach(signal => {
     process.on(signal, () => {
       TerminalUtils.verbose(`Received ${signal} termination signal`)
       performGracefulShutdown(0)
     })
   })
 
-  process.on('unhandledRejection', (err) => {
+  process.on('unhandledRejection', err => {
     TerminalUtils.error('Unhandled error.', err)
     performGracefulShutdown(1)
   })
