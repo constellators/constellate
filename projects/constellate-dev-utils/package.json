@@ -22,7 +22,7 @@
 		"globby": "8.0.1",
 		"inquirer": "5.1.0",
 		"load-json-file": "4.0.0",
-		"p-series": "1.0.0",
+		"p-series": "1.1.0",
 		"ramda": "0.25.0",
 		"read-pkg": "3.0.0",
 		"semver": "5.5.0",

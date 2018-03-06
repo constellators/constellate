@@ -1,7 +1,7 @@
 Constellate Roadmap / Todo:
 
 Bugs:
-  ☐ Merge the develop and webpack plugins into a single package to aid dependency resolution.
+  ✔ Merge the develop and webpack plugins into a single package to aid dependency resolution. @done (2018-3-5 15:13:40)
   ☐ Repo rollback on release errors sucks at the moment.
   ☐ Show consecutive build errors as may contain new info.
   ✔ Build output folders need to be ignored by the develop mode watcher. @done (2018-3-2 15:20:28)
@@ -25,6 +25,7 @@ Docs:
 
 Features/Chores:
 
+  ☐ parceljs plugin
   ☐ Support dist tags on release (https://docs.npmjs.com/getting-started/using-tags)
   ☐ Better help on constellate bin
   ✔ Replace linking etc with yarn workspaces. sigh. lol. @done (2018-3-2 15:14:35)
