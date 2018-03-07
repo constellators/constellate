@@ -1,6 +1,7 @@
 Constellate Roadmap / Todo:
 
 Bugs:
+  ☐ The child process cache on the script plugin doesn't allow for parallel executed scripts.
   ✔ Merge the develop and webpack plugins into a single package to aid dependency resolution. @done (2018-3-5 15:13:40)
   ☐ Repo rollback on release errors sucks at the moment.
   ☐ Show consecutive build errors as may contain new info.
