@@ -57,10 +57,17 @@ module.exports = async function deploy() {
     throw err
   }
 
+  /*
   TerminalUtils.verbose(
     'Rolling back repo to current and prepping for deployment...',
   )
   rollbackRepo({ quiet: true })
+  */
+
+  const rollbackExit = code => {
+    rollbackRepo({ quiet: true })
+    process.exit(code)
+  }
 
   const projectsWithDeployConfig = allProjectsArray.filter(
     project => project.deployPlugin,
@@ -69,7 +76,7 @@ module.exports = async function deploy() {
     TerminalUtils.info(
       'You do not have any projects with a deploy configuration.  Exiting...',
     )
-    process.exit(0)
+    rollbackExit(0)
   }
 
   const namesOfProjectsToDeploy = await TerminalUtils.multiSelect(
@@ -84,24 +91,27 @@ module.exports = async function deploy() {
 
   if (namesOfProjectsToDeploy.length === 0) {
     TerminalUtils.info('No projects selected. Exiting...')
-    process.exit(0)
+    rollbackExit(0)
   }
+
+  ChildProcessUtils.execSync('yarn', ['install'])
 
   const projectsToDeploy = namesOfProjectsToDeploy.map(x => allProjects[x])
 
   TerminalUtils.info('Deploying selected projects...')
 
-  const deployRootPath = path.resolve(process.cwd(), './deploy')
+  // const deployRootPath = path.resolve(process.cwd(), './deploy')
 
   await pSeries(
     projectsToDeploy.map(project => async () => {
+      /*
       const installRoot = path.resolve(deployRootPath, `./${project.name}`)
       fs.ensureDirSync(installRoot)
       const tempPkgJson = { name: `deploy-${project.name}`, private: true }
       const tempPkgJsonPath = path.resolve(installRoot, './package.json')
       writeJsonFile.sync(tempPkgJsonPath, tempPkgJson)
       ChildProcessUtils.execSync(
-        'npm',
+        'yarn',
         ['install', `${project.packageName}@${currentVersions[project.name]}`],
         {
           cwd: installRoot,
@@ -111,12 +121,13 @@ module.exports = async function deploy() {
         installRoot,
         `./node_modules/${project.packageName}`,
       )
-      await project.plugins.deployPlugin.deploy(deployRoot)
+      */
+      await project.plugins.deployPlugin.deploy()
     }),
   )
 
-  TerminalUtils.verbose('Cleaning deploy dir')
-  fs.removeSync(deployRootPath)
+  // TerminalUtils.verbose('Cleaning deploy dir')
+  // fs.removeSync(deployRootPath)
 
   TerminalUtils.success('Done')
 }

@@ -10,9 +10,11 @@ type Options = {
 
 const defaultOptions = { quiet: false }
 
-const executeBuild = (project) => {
+const executeBuild = project => {
   TerminalUtils.verbose(`Building ${project.name}`)
-  return project.plugins.buildPlugin ? project.plugins.buildPlugin.build() : Promise.resolve()
+  return project.plugins.buildPlugin
+    ? project.plugins.buildPlugin.build()
+    : Promise.resolve()
 }
 
 module.exports = async function buildProject(

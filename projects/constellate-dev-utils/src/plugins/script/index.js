@@ -34,61 +34,70 @@ module.exports = function scriptDevelop(project, options) {
 
   const pkgJson = readPkg.sync(project.paths.packageJson)
 
-  return {
-    develop: () =>
-      new Promise(resolve => {
-        if (options.scriptRunOnce && childProcessMap[project.name]) {
-          resolve()
-        } else {
-          resolve(killChildProcessFor(project))
-        }
-      }).then(
-        () =>
-          new Promise((resolve, reject) => {
-            const scriptCmd = R.path(['scripts', options.scriptName], pkgJson)
-            if (!scriptCmd || R.isEmpty(scriptCmd)) {
-              throw new Error(
-                `Could not resolve script named "${options.scriptName}" on ${
-                  project.name
-                }`,
-              )
-            }
-
-            TerminalUtils.info(
-              `Executing script "${options.scriptName}" for ${project.name}`,
+  const runScript = () =>
+    new Promise(resolve => {
+      if (options.scriptRunOnce && childProcessMap[project.name]) {
+        resolve()
+      } else {
+        resolve(killChildProcessFor(project))
+      }
+    }).then(
+      () =>
+        new Promise((resolve, reject) => {
+          const scriptCmd = R.path(['scripts', options.scriptName], pkgJson)
+          if (!scriptCmd || R.isEmpty(scriptCmd)) {
+            throw new Error(
+              `Could not resolve script named "${options.scriptName}" on ${
+                project.name
+              }`,
             )
+          }
 
-            const childProcess = ChildProcessUtils.spawn(
-              'npm',
-              ['run', options.scriptName],
-              {
-                stdio: 'inherit',
-                cwd: project.paths.root,
-              },
+          TerminalUtils.info(
+            `Executing script "${options.scriptName}" for ${project.name}`,
+          )
+
+          const childProcess = ChildProcessUtils.spawn(
+            'npm',
+            ['run', options.scriptName],
+            {
+              stdio: 'inherit',
+              cwd: project.paths.root,
+            },
+          )
+          childProcess.catch(err => {
+            TerminalUtils.verbose(
+              `Error executing script "${options.scriptName}" for ${
+                project.name
+              }`,
             )
-            childProcess.catch(err => {
+            reject(err)
+          })
+
+          // Give the catch above a tick of space, so that it can resolve any
+          // error that may have occurred
+          process.nextTick(() => {
+            childProcess.on('close', () => {
               TerminalUtils.verbose(
-                `Error executing script "${options.scriptName}" for ${
+                `Stopped script "${options.scriptName}" process for ${
                   project.name
                 }`,
               )
-              reject(err)
             })
 
-            // Give the catch above a tick of space, so that it can resolve any
-            // error that may have occurred
-            process.nextTick(() => {
-              childProcess.on('close', () => {
-                TerminalUtils.verbose(`Server process ${project.name} stopped`)
-              })
+            childProcessMap[project.name] = childProcess
 
-              childProcessMap[project.name] = childProcess
-
-              resolve({
-                kill: () => killChildProcessFor(project),
-              })
+            resolve({
+              kill: () => killChildProcessFor(project),
             })
-          }),
-      ),
+          })
+        }),
+    )
+
+  return {
+    build: runScript,
+    clean: runScript,
+    develop: runScript,
+    deploy: runScript,
   }
 }

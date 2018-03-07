@@ -23,12 +23,26 @@ module.exports = function nowDeploy(project, options) {
   }
 
   if (R.isNil(options.alias) || R.isEmpty(options.alias)) {
-    TerminalUtils.error('You must supply an "alias" for the "now" deploy plugin.')
+    TerminalUtils.error(
+      'You must supply an "alias" for the "now" deploy plugin.',
+    )
     process.exit(1)
   }
 
   return {
-    deploy: async (deployPath) => {
+    build: () => {
+      TerminalUtils.error('"build" not supported by "now" plugin')
+      process.exit(1)
+    },
+    clean: () => {
+      TerminalUtils.error('"clean" not supported by "now" plugin')
+      process.exit(1)
+    },
+    develop: () => {
+      TerminalUtils.error('"develop" not supported by "now" plugin')
+      process.exit(1)
+    },
+    deploy: async () => {
       try {
         ChildProcessUtils.execSync('now', ['-v'])
       } catch (err) {
@@ -81,16 +95,18 @@ module.exports = function nowDeploy(project, options) {
         process.env.NOW_TOKEN,
       ]
 
-      TerminalUtils.verbose(`Deploy path: ${deployPath}`)
-
-      const deployResponse = await ChildProcessUtils.exec('now', args, { cwd: deployPath })
+      const deployResponse = await ChildProcessUtils.exec('now', args, {
+        cwd: project.paths.root,
+      })
       const deploymentIdRegex = /(https:\/\/.+\.now\.sh)/g
       if (!deploymentIdRegex.test(deployResponse)) {
         // Todo error
         process.exit(1)
       }
       const deploymentId = deployResponse.match(deploymentIdRegex)[0]
-      TerminalUtils.info(`Creating deployment (${deploymentId}) for ${project.name}...`)
+      TerminalUtils.info(
+        `Creating deployment (${deploymentId}) for ${project.name}...`,
+      )
 
       // Now we need to wait for the deployment to be ready.
 
@@ -104,7 +120,7 @@ module.exports = function nowDeploy(project, options) {
           dedent(`
           The deployment process timed out. :( There may be an issue with your deployment or with "now". You could try to manually deploy using the following commands to gain more insight into the issue:
 
-            ${chalk.blue(`cd ${deployPath}`)}
+            ${chalk.blue(`cd ${project.paths.root}`)}
             ${chalk.blue(`now ${args.join(' ')}`)}
           `),
         )
@@ -125,7 +141,11 @@ module.exports = function nowDeploy(project, options) {
         },
       )
 
-      TerminalUtils.info(`Setting up alias for new deployment of ${project.name} to ${alias}....`)
+      TerminalUtils.info(
+        `Setting up alias for new deployment of ${
+          project.name
+        } to ${alias}....`,
+      )
       await ChildProcessUtils.exec('now', ['alias', 'set', deploymentId, alias])
 
       // We need to do this at this point before attaching the rules as the rules
@@ -133,8 +153,15 @@ module.exports = function nowDeploy(project, options) {
       if (!options.disableRemovePrevious) {
         // Removes previous deployments 👍
         try {
-          TerminalUtils.info(`Removing unaliased deployments for ${project.name}...`)
-          await ChildProcessUtils.exec('now', ['rm', deploymentName, '--safe', '-y'])
+          TerminalUtils.info(
+            `Removing unaliased deployments for ${project.name}...`,
+          )
+          await ChildProcessUtils.exec('now', [
+            'rm',
+            deploymentName,
+            '--safe',
+            '-y',
+          ])
         } catch (err) {
           TerminalUtils.verbose(
             'Failed to remove previous deployments. There may not be any available.',
@@ -154,13 +181,20 @@ module.exports = function nowDeploy(project, options) {
             },
           ],
         })
-        await ChildProcessUtils.exec('now', ['alias', alias, '-r', aliasRulesPath])
+        await ChildProcessUtils.exec('now', [
+          'alias',
+          alias,
+          '-r',
+          aliasRulesPath,
+        ])
       }
 
       const minScale = R.path(['scale', 'min'], options)
       if (minScale) {
         const maxScale = R.path(['scale', 'max'], options)
-        TerminalUtils.info(`Setting the scale factor to ${minScale} ${maxScale || ''}....`)
+        TerminalUtils.info(
+          `Setting the scale factor to ${minScale} ${maxScale || ''}....`,
+        )
         await ChildProcessUtils.exec(
           'now',
           ['scale', deploymentId, minScale, maxScale].filter(x => x != null),

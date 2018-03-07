@@ -7,10 +7,7 @@ module.exports = async options => {
     ? await ProjectUtils.resolveProjects(options.projects)
     : ProjectUtils.getAllProjectsArray()
 
-  await ProjectUtils.cleanProjects(projectsToClean, {
-    nodeModules: options.nodeModules,
-    build: options.build,
-  })
+  await ProjectUtils.cleanProjects(projectsToClean)
 
   TerminalUtils.success('Done')
 }

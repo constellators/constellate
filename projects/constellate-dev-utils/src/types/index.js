@@ -1,9 +1,5 @@
 // @flow
-
-export type CleanOptions = {
-  nodeModules?: boolean,
-  build?: boolean,
-}
+/* eslint-disable no-use-before-define */
 
 export type ProjectVersions = { [string]: string }
 
@@ -24,12 +20,10 @@ export type ProjectPaths = {|
 
 export type BuildPlugin = {|
   build: () => Promise<mixed>,
-  clean: () => Promise<mixed>,
-  outputDir: string,
 |}
 
-export type DevelopPlugin = {|
-  start: ProjectWatcher => Promise<mixed>,
+export type CleanPlugin = {|
+  clean: () => Promise<mixed>,
 |}
 
 export type DeployPath = string
@@ -38,10 +32,15 @@ export type DeployPlugin = {|
   deploy: DeployPath => Promise<mixed>,
 |}
 
+export type DevelopPlugin = {|
+  develop: ProjectWatcher => Promise<mixed>,
+|}
+
 export type ProjectPlugins = {
   buildPlugin: ?BuildPlugin,
-  developPlugin: ?DevelopPlugin,
+  cleanPlugin: ?CleanPlugin,
   deployPlugin: ?DeployPlugin,
+  developPlugin: ?DevelopPlugin,
 }
 
 export type Project = {|

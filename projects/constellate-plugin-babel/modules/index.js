@@ -5,6 +5,7 @@ const pLimit = require('p-limit')
 const R = require('ramda')
 const fs = require('fs-extra')
 const globby = require('globby')
+const { TerminalUtils } = require('constellate-dev-utils')
 const generateConfig = require('./generateConfig')
 
 // Having concurrent babel transpilations seems to break the sourcemap output.
@@ -17,16 +18,20 @@ const maxConcurrentTranspiles = 1
 const transformFile = pify(babel.transformFile)
 
 // :: string -> void
-const ensureParentDirectoryExists = (filePath) => {
+const ensureParentDirectoryExists = filePath => {
   const dir = path.dirname(filePath)
   fs.ensureDirSync(dir)
 }
 
 // :: Project, Options -> DevelopAPI
 module.exports = function babelBuildPlugin(project, options) {
-  const buildOutputRoot = path.resolve(project.paths.root, options.outputDir || './dist')
-  const patterns = (options.inputs || ['**/*.js', '**/*.jsx', '!__tests__', '!test.js'])
-    .concat(['!node_modules/**/*', `!${path.basename(buildOutputRoot)}/**/*`])
+  const buildOutputRoot = path.resolve(
+    project.paths.root,
+    options.outputDir || './dist',
+  )
+  const patterns = (
+    options.inputs || ['**/*.js', '**/*.jsx', '!__tests__', '!test.js']
+  ).concat(['!node_modules/**/*', `!${path.basename(buildOutputRoot)}/**/*`])
   const sourceRoot =
     options.sourceDir != null
       ? path.resolve(project.paths.root, options.sourceDir)
@@ -40,17 +45,19 @@ module.exports = function babelBuildPlugin(project, options) {
 
   return {
     build: () =>
-      getJsFilePaths().then((filePaths) => {
+      getJsFilePaths().then(filePaths => {
         // :: Object
         const babelConfig = generateConfig(project, options)
 
         // :: string -> Promise<void>
-        const transpileFile = (filePath) => {
-          const writeTranspiledFile = (result) => {
+        const transpileFile = filePath => {
+          const writeTranspiledFile = result => {
             const outFile = path.resolve(buildOutputRoot, filePath)
             ensureParentDirectoryExists(outFile)
             fs.writeFileSync(outFile, result.code, { encoding: 'utf8' })
-            fs.writeFileSync(`${outFile}.map`, JSON.stringify(result.map), { encoding: 'utf8' })
+            fs.writeFileSync(`${outFile}.map`, JSON.stringify(result.map), {
+              encoding: 'utf8',
+            })
           }
           const module = path.resolve(sourceRoot, filePath)
           return transformFile(module, babelConfig).then(writeTranspiledFile)
@@ -61,12 +68,19 @@ module.exports = function babelBuildPlugin(project, options) {
         return Promise.all(R.map(queueTranspile, filePaths))
       }),
     clean: () =>
-      new Promise((resolve) => {
+      new Promise(resolve => {
         if (fs.pathExistsSync(buildOutputRoot)) {
           fs.removeSync(buildOutputRoot)
         }
         resolve()
       }),
-    outputDir: () => buildOutputRoot,
+    deploy: () => {
+      TerminalUtils.error('"deploy" not supported by "babel" plugin')
+      process.exit(1)
+    },
+    develop: () => {
+      TerminalUtils.error('"develop" not supported by "babel" plugin')
+      process.exit(1)
+    },
   }
 }

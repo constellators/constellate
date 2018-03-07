@@ -12,5 +12,19 @@ module.exports = function serverDevelop(project, options) {
     process.exit(1)
   }
 
-  return { develop: watcher => develop(project, options, watcher) }
+  return {
+    build: () => {
+      TerminalUtils.error('"build" not supported by "server" plugin')
+      process.exit(1)
+    },
+    clean: () => {
+      TerminalUtils.error('"clean" not supported by "server" plugin')
+      process.exit(1)
+    },
+    develop: watcher => develop(project, options, watcher),
+    deploy: () => {
+      TerminalUtils.error('"deploy" not supported by "server" plugin')
+      process.exit(1)
+    },
+  }
 }

@@ -1,5 +1,6 @@
 const fs = require('fs-extra')
 const path = require('path')
+const { TerminalUtils } = require('constellate-dev-utils')
 const bundle = require('./bundle')
 const develop = require('./develop')
 
@@ -17,7 +18,6 @@ module.exports = function webpackBuildPlugin(project, options = {}) {
 
   return {
     build: () => bundle(project, defaultedOptions),
-    develop: watcher => develop(project, options, watcher),
     clean: () =>
       new Promise(resolve => {
         if (fs.pathExistsSync(outputDirPath)) {
@@ -25,6 +25,10 @@ module.exports = function webpackBuildPlugin(project, options = {}) {
         }
         resolve()
       }),
-    outputDir: () => outputDirPath,
+    deploy: () => {
+      TerminalUtils.error('"deploy" not supported by "webpack" plugin')
+      process.exit(1)
+    },
+    develop: watcher => develop(project, options, watcher),
   }
 }
