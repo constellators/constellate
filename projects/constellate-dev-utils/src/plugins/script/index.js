@@ -4,24 +4,6 @@ const TerminalUtils = require('../../terminal')
 const ChildProcessUtils = require('../../childProcess')
 const DevelopPluginUtils = require('../utils')
 
-const childProcessMap = {}
-
-const killChildProcessFor = project => {
-  const childProcess = childProcessMap[project.name]
-  if (!childProcess) {
-    TerminalUtils.verbose(
-      `No running child process for ${project.name} to kill`,
-    )
-    return Promise.resolve()
-  }
-  return DevelopPluginUtils.killChildProcess(project, childProcess).then(() => {
-    TerminalUtils.verbose(`${project.name} killed successfully`)
-    if (childProcessMap[project.name]) {
-      delete childProcessMap[project.name]
-    }
-  })
-}
-
 // :: (Project, DevelopOptions, Watcher) -> DevelopAPI
 module.exports = function scriptDevelop(project, options) {
   if (!options.scriptName) {
@@ -32,13 +14,39 @@ module.exports = function scriptDevelop(project, options) {
     )
   }
 
+  const childProcessMap = {}
+
+  const addChildProcess = (task, processInstance) => {
+    childProcessMap[task] = processInstance
+  }
+
+  const killChildProcessFor = task => {
+    const childProcess = childProcessMap[task]
+    if (!childProcess) {
+      TerminalUtils.verbose(
+        `No running "${task}" script process for ${project.name} to kill`,
+      )
+      return Promise.resolve()
+    }
+    return DevelopPluginUtils.killChildProcess(project, childProcess).then(
+      () => {
+        TerminalUtils.verbose(
+          `Killed "${task}" script process for ${project.name} successfully`,
+        )
+        if (childProcessMap[task]) {
+          delete childProcessMap[task]
+        }
+      },
+    )
+  }
+
   const pkgJson = readPkg.sync(project.paths.packageJson)
 
   const returnAPI = {
     kill: () => killChildProcessFor(project),
   }
 
-  const runScript = async () => {
+  const runScript = task => async () => {
     const existingProcess = childProcessMap[project.name]
     if (options.scriptRunOnce && existingProcess) {
       return returnAPI
@@ -87,7 +95,7 @@ module.exports = function scriptDevelop(project, options) {
             }`,
           )
         })
-        childProcessMap[project.name] = childProcess
+        addChildProcess(task, childProcess)
         resolve()
       })
     })
@@ -96,9 +104,9 @@ module.exports = function scriptDevelop(project, options) {
   }
 
   return {
-    build: runScript,
-    clean: runScript,
-    develop: runScript,
-    deploy: runScript,
+    build: runScript('build'),
+    clean: runScript('clean'),
+    develop: runScript('develop'),
+    deploy: runScript('deploy'),
   }
 }
