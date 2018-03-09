@@ -1,6 +1,8 @@
 // @flow
 
-const { EOL } = require('os')
+const {
+  EOL
+} = require('os')
 const R = require('ramda')
 const semver = require('semver')
 const pSeries = require('p-series')
@@ -16,19 +18,22 @@ const {
 } = require('constellate-dev-utils')
 const requestNextVersion = require('../utils/requestNextVersion')
 
-type Options = {|
-  persist?: boolean,
-  force?: boolean,
-|}
-
-const defaultOptions: Options = {
-  persist: true,
-  force: false,
+type Options = { |
+  git ? : boolean,
+  force ? : boolean,
+  npmTag ? : string,
+  |
 }
 
-module.exports = async function release(options: Options = defaultOptions) {
+const defaultOptions: Options = {
+  git: true,
+  force: false,
+  npmTag: 'latest',
+}
+
+module.exports = async function publish(options: Options = defaultOptions) {
   TerminalUtils.verbose(
-    `Running release with options: ${JSON.stringify(
+    `Running publish with options: ${JSON.stringify(
       R.pick(['persist', 'force'], options),
       null,
       2,
@@ -101,9 +106,10 @@ module.exports = async function release(options: Options = defaultOptions) {
 
   const toUpdateVersionFor =
     isFirstPublish || options.force // We will release all the projects as this is our first release.
-      ? // OR if the force option was provided
-        allProjectsArray // Else we filter to the projects that have had changes since the last release
-      : allProjectsArray.filter(ProjectUtils.changedSince(lastVersionTag))
+    ? // OR if the force option was provided
+    allProjectsArray // Else we filter to the projects that have had changes since the last release
+    :
+    allProjectsArray.filter(ProjectUtils.changedSince(lastVersionTag))
 
   let finalToUpdateVersionFor
 
@@ -162,22 +168,19 @@ module.exports = async function release(options: Options = defaultOptions) {
   // Get the current versions for each project
   const previousVersions = allProjectsArray.reduce(
     (acc, cur) =>
-      Object.assign(acc, {
-        [cur.name]: cur.version,
-      }),
-    {},
+    Object.assign(acc, {
+      [cur.name]: cur.version,
+    }), {},
   )
 
   // Prep the next version numbers for each project
-  const versions = Object.assign(
-    {},
+  const versions = Object.assign({},
     previousVersions,
     finalToUpdateVersionFor.reduce(
       (acc, cur) =>
-        Object.assign(acc, {
-          [cur.name]: nextVersion,
-        }),
-      {},
+      Object.assign(acc, {
+        [cur.name]: nextVersion,
+      }), {},
     ),
   )
 
@@ -186,18 +189,31 @@ module.exports = async function release(options: Options = defaultOptions) {
   )
 
   const tagAnswer = await TerminalUtils.confirm(
-    `The following projects will be released with the respective new versions. Proceed?${EOL}\t${finalToUpdateVersionFor
+    `The following projects will be published with the respective new versions. Proceed?${EOL}\t${finalToUpdateVersionFor
       .map(
-        ({ name }) => `${name} ${previousVersions[name]} -> ${versions[name]}`,
+        ({ name }) => `
+    $ {
+      name
+    }
+    $ {
+      previousVersions[name]
+    } - > $ {
+      versions[name]
+    }
+    `,
       )
-      .join(`${EOL}\t`)}`,
+      .join(`
+    $ {
+      EOL
+    }\
+    t `)}`,
   )
 
   if (!tagAnswer) {
     process.exit(0)
   }
 
-  TerminalUtils.info('Building projects in preparation for release...')
+  TerminalUtils.info('Building projects in preparation for publish...')
 
   // Build..
   await pSeries(
@@ -214,7 +230,7 @@ module.exports = async function release(options: Options = defaultOptions) {
   })
 
   if (options.persist) {
-    TerminalUtils.verbose('Tagging project for github release')
+    TerminalUtils.verbose('Tagging git repo')
 
     try {
       GitUtils.stageAllChanges()
@@ -254,7 +270,7 @@ module.exports = async function release(options: Options = defaultOptions) {
       }
     }
   } else {
-    TerminalUtils.verbose('Skipping tagging of project for github release')
+    TerminalUtils.verbose('Skipping tagging of project for git tagging')
   }
 
   TerminalUtils.info(
@@ -264,11 +280,9 @@ module.exports = async function release(options: Options = defaultOptions) {
   // Rebuild to ensure new versions are being referenced
   await rebuildProjects()
 
-  TerminalUtils.info(
-    'Projects are versioned, publishing them to NPM repository...',
-  )
+  TerminalUtils.info('Projects are versioned, publishing them to NPM...')
 
-  // 📦 Publish
+  // 📦 Publish to NPM
 
   const failedToPublish = []
 
@@ -282,7 +296,7 @@ module.exports = async function release(options: Options = defaultOptions) {
       TerminalUtils.info(`Publishing ${project.name}...`)
 
       try {
-        ChildProcessUtils.execSync('npm', ['publish'], {
+        ChildProcessUtils.execSync('npm', ['publish', '--tag', options.tag], {
           cwd: project.paths.root,
         })
         TerminalUtils.verbose(`Published ${project.name}`)
@@ -312,7 +326,7 @@ module.exports = async function release(options: Options = defaultOptions) {
       NOTE: If you decide to retry the publishing of them at a later point you
       may need to make sure that your run the build command first -
 
-      \t${chalk.blue('npx constellate build')}
+      \t${chalk.blue('constellate build')}
     `),
     )
   }

@@ -136,21 +136,23 @@ program
   )
 
 program
-  .command('release')
+  .command('publish')
   .description(
-    'Creates a new release, versioning the app, the changed projects, and publishing the projects to NPM',
+    'Creates a new version, tagging the git repo, and publishing the new versions to NPM',
   )
-  .option(
-    '-n, --no-persist',
-    'Does not persist the version changes to the git repository. This is useful to create test releases.',
-  )
+  .option('-n, --no-git', 'Does not create a tag/commit on the git repository.')
   .option(
     '-f, --force',
-    "Forces all projects to be released even if they don't have any changes.",
+    "Forces all projects to be published even if they don't have any changes.",
+  )
+  .option(
+    '-t',
+    '--npm-tag',
+    'Publishes the versions with the specific tag, defaulting to "latest"',
   )
   .action(
     createAction({
-      resolveScript: options => () => require('../scripts/release')(options),
+      resolveScript: options => () => require('../scripts/publish')(options),
     }),
   )
 

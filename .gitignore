@@ -14,8 +14,8 @@ npm-debug.log
 pids
 Thumbs.db
 .vscode
-
 .simeerc
+flow-typed
 
 # Transpiled Projects (damn you vscode for forcing me to be so explict here)
 # Helps with vscode gitignore plugin too

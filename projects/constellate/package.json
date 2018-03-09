@@ -26,5 +26,9 @@
 		"ramda": "0.25.0",
 		"read-pkg": "3.0.0",
 		"semver": "5.5.0"
+	},
+	"devDependencies": {
+		"flow-bin": "0.67.1",
+		"flow-typed": "2.3.0"
 	}
 }

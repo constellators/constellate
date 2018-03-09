@@ -2,6 +2,7 @@
   "private": true,
   "workspaces": ["projects/*"],
   "scripts": {
+    "flowtypes": "flow-mono install-types",
     "test": "constellate test",
     "update": "yarn upgrade-interactive --latest --exact"
   },
@@ -9,7 +10,8 @@
     "constellate": "0.19.8-core2",
     "constellate-plugin-build-babel": "0.19.8-core2",
     "constellate-plugin-build-flow": "0.19.8-core2",
-    "eslint-config-constellate": "0.19.8-core2"
+    "eslint-config-constellate": "0.19.8-core2",
+    "flow-mono-cli": "1.3.0"
   },
   "eslintConfig": {
     "root": true,

@@ -1,7 +1,8 @@
 [ignore]
 
 [include]
-../../node_modules
+flow-typed/
+../../node_modules/constellate-dev-utils
 
 [libs]
 

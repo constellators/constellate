@@ -1,7 +1,7 @@
 [ignore]
 
 [include]
-../../node_modules
+flow-typed/
 
 [libs]
 
