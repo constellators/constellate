@@ -10,7 +10,7 @@
 		"chalk": "2.3.2",
 		"constellate-dev-utils": "0.22.7",
 		"dedent": "0.7.0",
-		"deepmerge": "2.0.1",
+		"deepmerge": "2.1.0",
 		"p-whilst": "1.0.0",
 		"ramda": "0.25.0",
 		"temp-write": "3.4.0",

@@ -15,7 +15,7 @@
 	},
 	"dependencies": {
 		"chokidar": "2.0.2",
-		"commander": "2.14.1",
+		"commander": "2.15.0",
 		"constellate-dev-utils": "0.22.7",
 		"constellate-utils": "0.22.0",
 		"dotenv": "5.0.1",
