@@ -150,8 +150,7 @@ program
     "Forces all projects to be published even if they don't have any changes.",
   )
   .option(
-    '-t',
-    '--npm-tag',
+    '-t, --npm-tag <npmTag>',
     'Publishes to npm with the specified tag, defaulting to "latest"',
   )
   .action(
