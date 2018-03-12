@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+/* @flow */
 /* eslint-disable no-case-declarations */
 /* eslint-disable global-require */
 

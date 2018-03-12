@@ -7,11 +7,15 @@ const dedent = require('dedent')
 const GitUtils = require('../git')
 const TerminalUtils = require('../terminal')
 
-const resolveVersionFor = (project) => {
+const resolveVersionFor = project => {
   const pkgJson = project.packageJson
   const lastAppVersionTag = GitUtils.getLastAnnotatedTagInfo()
 
-  if (pkgJson.version && lastAppVersionTag && semver.gt(pkgJson.version, lastAppVersionTag.tag)) {
+  if (
+    pkgJson.version &&
+    lastAppVersionTag &&
+    semver.gt(pkgJson.version, lastAppVersionTag.tag)
+  ) {
     TerminalUtils.warning(
       dedent(
         `Project has a higher version that the highest known version.oject:
@@ -22,7 +26,7 @@ const resolveVersionFor = (project) => {
   }
 
   if (pkgJson.version) {
-    return semver.clean(pkgJson.version)
+    return semver.clean(pkgJson.version) || '0.0.0'
   }
 
   return '0.0.0'
