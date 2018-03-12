@@ -188,22 +188,11 @@ module.exports = async function publish(options: Options = defaultOptions) {
   )
 
   const tagAnswer = await TerminalUtils.confirm(
-    `The following projects will be published with the respective new versions. Proceed?${EOL}\t${finalToUpdateVersionFor.map(
-      ({ name }) => `
-    $ {
-      name
-    }
-    $ {
-      previousVersions[name]
-    } - > $ {
-      versions[name]
-    }
-    `,
-    ).join(`
-    $ {
-      EOL
-    }\
-    t `)}`,
+    `The following projects will be published with the respective new versions. Proceed?${EOL}\t${finalToUpdateVersionFor
+      .map(
+        ({ name }) => `${name} ${previousVersions[name]} -> ${versions[name]}`,
+      )
+      .join(`${EOL}\t `)}`,
   )
 
   if (!tagAnswer) {
@@ -293,9 +282,13 @@ module.exports = async function publish(options: Options = defaultOptions) {
       TerminalUtils.info(`Publishing ${project.name}...`)
 
       try {
-        ChildProcessUtils.execSync('npm', ['publish', '--tag', options.tag], {
-          cwd: project.paths.root,
-        })
+        ChildProcessUtils.execSync(
+          'npm',
+          ['publish', '--tag', options.npmTag],
+          {
+            cwd: project.paths.root,
+          },
+        )
         TerminalUtils.verbose(`Published ${project.name}`)
       } catch (err) {
         TerminalUtils.warning(`Failed to publish ${project.name}`)
