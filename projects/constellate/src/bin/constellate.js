@@ -140,7 +140,10 @@ program
   .description(
     'Creates a new version, tagging the git repo, and publishing the new versions to NPM',
   )
-  .option('-n, --no-git', 'Does not create a tag/commit on the git repository.')
+  .option(
+    '-g, --no-git',
+    'Does not create a tagged commit for the release on the git repository.',
+  )
   .option(
     '-f, --force',
     "Forces all projects to be published even if they don't have any changes.",
@@ -148,7 +151,7 @@ program
   .option(
     '-t',
     '--npm-tag',
-    'Publishes the versions with the specific tag, defaulting to "latest"',
+    'Publishes to npm with the specified tag, defaulting to "latest"',
   )
   .action(
     createAction({

@@ -34,12 +34,12 @@ const defaultOptions: Options = {
 module.exports = async function publish(options: Options = defaultOptions) {
   TerminalUtils.verbose(
     `Running publish with options: ${JSON.stringify(
-      R.pick(['persist', 'force'], options),
+      R.pick(['git', 'force', 'npmTag'], options),
       null,
       2,
     )}`,
   )
-  TerminalUtils.title('Running release...')
+  TerminalUtils.title('Running publish...')
 
   const allProjects = ProjectUtils.getAllProjects()
   const allProjectsArray = R.values(allProjects)
