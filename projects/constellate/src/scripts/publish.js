@@ -1,8 +1,6 @@
 // @flow
 
-const {
-  EOL
-} = require('os')
+const { EOL } = require('os')
 const R = require('ramda')
 const semver = require('semver')
 const pSeries = require('p-series')
@@ -18,11 +16,10 @@ const {
 } = require('constellate-dev-utils')
 const requestNextVersion = require('../utils/requestNextVersion')
 
-type Options = { |
-  git ? : boolean,
-  force ? : boolean,
-  npmTag ? : string,
-  |
+type Options = {
+  git?: boolean,
+  force?: boolean,
+  npmTag?: string,
 }
 
 const defaultOptions: Options = {
@@ -106,10 +103,9 @@ module.exports = async function publish(options: Options = defaultOptions) {
 
   const toUpdateVersionFor =
     isFirstPublish || options.force // We will release all the projects as this is our first release.
-    ? // OR if the force option was provided
-    allProjectsArray // Else we filter to the projects that have had changes since the last release
-    :
-    allProjectsArray.filter(ProjectUtils.changedSince(lastVersionTag))
+      ? // OR if the force option was provided
+        allProjectsArray // Else we filter to the projects that have had changes since the last release
+      : allProjectsArray.filter(ProjectUtils.changedSince(lastVersionTag))
 
   let finalToUpdateVersionFor
 
@@ -168,19 +164,22 @@ module.exports = async function publish(options: Options = defaultOptions) {
   // Get the current versions for each project
   const previousVersions = allProjectsArray.reduce(
     (acc, cur) =>
-    Object.assign(acc, {
-      [cur.name]: cur.version,
-    }), {},
+      Object.assign(acc, {
+        [cur.name]: cur.version,
+      }),
+    {},
   )
 
   // Prep the next version numbers for each project
-  const versions = Object.assign({},
+  const versions = Object.assign(
+    {},
     previousVersions,
     finalToUpdateVersionFor.reduce(
       (acc, cur) =>
-      Object.assign(acc, {
-        [cur.name]: nextVersion,
-      }), {},
+        Object.assign(acc, {
+          [cur.name]: nextVersion,
+        }),
+      {},
     ),
   )
 
@@ -189,9 +188,8 @@ module.exports = async function publish(options: Options = defaultOptions) {
   )
 
   const tagAnswer = await TerminalUtils.confirm(
-    `The following projects will be published with the respective new versions. Proceed?${EOL}\t${finalToUpdateVersionFor
-      .map(
-        ({ name }) => `
+    `The following projects will be published with the respective new versions. Proceed?${EOL}\t${finalToUpdateVersionFor.map(
+      ({ name }) => `
     $ {
       name
     }
@@ -201,8 +199,7 @@ module.exports = async function publish(options: Options = defaultOptions) {
       versions[name]
     }
     `,
-      )
-      .join(`
+    ).join(`
     $ {
       EOL
     }\
