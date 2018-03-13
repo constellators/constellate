@@ -26,12 +26,12 @@ Docs:
 
 Features/Chores:
 
+  ☐ rollup plugin
   ☐ parceljs plugin
-  ☐ Support dist tags on release (https://docs.npmjs.com/getting-started/using-tags)
+  ✔ Support dist tags on release (https://docs.npmjs.com/getting-started/using-tags) @done (2018-3-13 09:45:03)
   ☐ Better help on constellate bin
   ✔ Replace linking etc with yarn workspaces. sigh. lol. @done (2018-3-2 15:14:35)
   ☐ Integration tests
-  ☐ Postfix async functions with "Async"
   ☐ Application template
   ☐ Empty project template
   ☐ Create project command
