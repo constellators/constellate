@@ -26,6 +26,7 @@ Docs:
 
 Features/Chores:
 
+  ☐ Change the --no-git command to --no-persist?
   ☐ rollup plugin
   ☐ parceljs plugin
   ✔ Support dist tags on release (https://docs.npmjs.com/getting-started/using-tags) @done (2018-3-13 09:45:03)

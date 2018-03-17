@@ -7,10 +7,10 @@
     "update": "yarn upgrade-interactive --latest --exact"
   },
   "devDependencies": {
-    "constellate": "0.23.0-Core3",
-    "constellate-plugin-babel": "0.23.0-Core3",
-    "constellate-plugin-flow": "0.23.0-Core3",
-    "eslint-config-constellate": "0.23.0-Core3",
+    "constellate": "0.23.0-Core2",
+    "constellate-plugin-build-babel": "0.19.8-core2",
+    "constellate-plugin-build-flow": "0.19.8-core2",
+    "eslint-config-constellate": "0.23.0-Core2",
     "flow-mono-cli": "1.3.0"
   },
   "eslintConfig": {
