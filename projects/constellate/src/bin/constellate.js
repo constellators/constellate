@@ -142,8 +142,8 @@ program
     'Creates a new version, tagging the git repo, and publishing the new versions to NPM',
   )
   .option(
-    '-g, --no-git',
-    'Does not create a tagged commit for the release on the git repository.',
+    '-p, --no-persist',
+    'Does not persist the version number changes. Useful for temp or tagged package publishing.',
   )
   .option(
     '-f, --force',

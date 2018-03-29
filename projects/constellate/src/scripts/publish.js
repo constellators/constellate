@@ -17,7 +17,7 @@ const {
 const requestNextVersion = require('../utils/requestNextVersion')
 
 type Options = {
-  git?: boolean,
+  persist?: boolean,
   force?: boolean,
   npmTag?: string,
 }
@@ -31,7 +31,7 @@ const defaultOptions: Options = {
 module.exports = async function publish(options: Options = defaultOptions) {
   TerminalUtils.verbose(
     `Running publish with options: ${JSON.stringify(
-      R.pick(['git', 'force', 'npmTag'], options),
+      R.pick(['persist', 'force', 'npmTag'], options),
       null,
       2,
     )}`,
@@ -323,7 +323,8 @@ module.exports = async function publish(options: Options = defaultOptions) {
 
   if (!options.persist) {
     // As this release isn't being persisted we must roll back all the file
-    // changes and then rebuild the projects.
+    // changes and then rebuild the projects. This is because the package.json
+    // files would have had their version numbers incremented.
     GitUtils.clearAllChanges()
     await rebuildProjects()
   }
