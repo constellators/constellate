@@ -14,21 +14,20 @@
 		"url": "https://github.com/constellators/constellate/issues"
 	},
 	"dependencies": {
-		"chokidar": "2.0.2",
-		"commander": "2.15.0",
+		"chokidar": "2.0.3",
+		"commander": "2.15.1",
 		"constellate-dev-utils": "0.22.7",
 		"constellate-utils": "0.22.0",
 		"dotenv": "5.0.1",
 		"fs-extra": "5.0.0",
-		"jest": "22.4.2",
-		"npm-check": "5.5.2",
+		"jest": "22.4.3",
 		"p-series": "1.1.0",
 		"ramda": "0.25.0",
 		"read-pkg": "3.0.0",
 		"semver": "5.5.0"
 	},
 	"devDependencies": {
-		"flow-bin": "0.68.0",
+		"flow-bin": "0.69.0",
 		"flow-typed": "2.4.0"
 	}
 }

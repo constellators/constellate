@@ -2,6 +2,7 @@
   "private": true,
   "workspaces": ["projects/*"],
   "scripts": {
+    "build": "constellate build",
     "flowtypes": "flow-mono install-types",
     "test": "constellate test",
     "update": "yarn upgrade-interactive --latest --exact"
