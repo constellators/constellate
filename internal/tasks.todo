@@ -1,6 +1,7 @@
 Constellate Roadmap / Todo:
 
 Bugs:
+  ✔ An unexpected error is printed when executing constellate with an invalid command. @done (2018-4-3 21:03:28)
   ✔ The child process cache on the script plugin doesn't allow for parallel executed scripts. @done (2018-3-7 18:19:51)
   ✔ Merge the develop and webpack plugins into a single package to aid dependency resolution. @done (2018-3-5 15:13:40)
   ☐ Repo rollback on release errors sucks at the moment.
@@ -26,7 +27,8 @@ Docs:
 
 Features/Chores:
 
-  ☐ Change the --no-git command to --no-persist?
+  ☐ Ability to have individual version numbers.
+  ✔ Change the --no-git command to --no-persist? @done (2018-3-29 21:11:56)
   ☐ rollup plugin
   ☐ parceljs plugin
   ✔ Support dist tags on release (https://docs.npmjs.com/getting-started/using-tags) @done (2018-3-13 09:45:03)

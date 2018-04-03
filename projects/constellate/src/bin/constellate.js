@@ -189,7 +189,7 @@ program
 
 // If the user passes no args, or an unknown arg then we will show the help
 const showHelp = () => {
-  program.outputHelp(x => console.log(x))
+  program.outputHelp()
   process.exit(0)
 }
 program.command('*').action(showHelp)
