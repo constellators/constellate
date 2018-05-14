@@ -114,18 +114,6 @@ program
   )
 
 program
-  .command('install')
-  .description('Runs yarn install')
-  .action(
-    createAction({
-      // We should not use "production" as a NODE_ENV because then only our
-      // production dependencies will get installed, i.e. no devDependencies
-      defaultEnv: 'development',
-      resolveScript: options => () => require('../scripts/install')(options),
-    }),
-  )
-
-program
   .command('link-projects')
   .description(
     'Allows you to link projects to another project as dependencies, updating the package.json file respectively.',
@@ -133,29 +121,6 @@ program
   .action(
     createAction({
       resolveScript: () => require('../scripts/linkProjects'),
-    }),
-  )
-
-program
-  .command('publish')
-  .description(
-    'Creates a new version, tagging the git repo, and publishing the new versions to NPM',
-  )
-  .option(
-    '-p, --no-persist',
-    'Does not persist the version number changes. Useful for temp or tagged package publishing.',
-  )
-  .option(
-    '-f, --force',
-    "Forces all projects to be published even if they don't have any changes.",
-  )
-  .option(
-    '-t, --npm-tag <npmTag>',
-    'Publishes to npm with the specified tag, defaulting to "latest"',
-  )
-  .action(
-    createAction({
-      resolveScript: options => () => require('../scripts/publish')(options),
     }),
   )
 
@@ -172,20 +137,6 @@ program
   .action(() => {
     throw new Error('This action has a special handler')
   })
-
-program
-  .command('update')
-  .description(
-    'Executes the yarn upgrade-interactive command (with --latest and --exact enabled)',
-  )
-  .action(
-    createAction({
-      // We should not use "production" as a NODE_ENV because then only our
-      // production dependencies will get installed, i.e. no devDependencies
-      defaultEnv: 'development',
-      resolveScript: () => require('../scripts/update'),
-    }),
-  )
 
 // If the user passes no args, or an unknown arg then we will show the help
 const showHelp = () => {

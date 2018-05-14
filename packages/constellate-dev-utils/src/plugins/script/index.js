@@ -5,7 +5,7 @@ const ChildProcessUtils = require('../../childProcess')
 const DevelopPluginUtils = require('../utils')
 
 // :: (Project, DevelopOptions, Watcher) -> DevelopAPI
-module.exports = function scriptDevelop(project, options) {
+module.exports = function scriptPlugin(project, options) {
   if (!options.scriptName) {
     throw new Error(
       `No scriptName was provided for the develop configuration of ${
