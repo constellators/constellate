@@ -7,7 +7,7 @@
     "build": "constellate build",
     "flowtypes": "flow-mono install-types",
     "publish": "constellate build && lerna publish",
-    "publish:core": "constellate build && lerna publish -fg --npm-tag=core",
+    "publish:core": "constellate build && lerna publish --skip-git --temp-tag --npm-tag=core",
     "test": "constellate test",
     "update": "yarn upgrade-interactive --latest --exact"
   },
