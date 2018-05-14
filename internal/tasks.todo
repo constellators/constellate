@@ -27,6 +27,8 @@ Docs:
 
 Features/Chores:
 
+  ☐ Use "src/index.js" as natural entry point rather than "modules/index.js"
+  ☐ Rebrand as bolt on lerna
   ☐ Ability to have individual version numbers.
   ✔ Change the --no-git command to --no-persist? @done (2018-3-29 21:11:56)
   ☐ rollup plugin
@@ -38,7 +40,6 @@ Features/Chores:
   ☐ Application template
   ☐ Empty project template
   ☐ Create project command
-  ☐ Better messages during publish process
   ☐ Rename all dependencies and devDependencies to linked*
   ☐ Allow specifying an exact tag version for doing publishing from
   ☐ Command hooks + error handling of them!
@@ -46,8 +47,6 @@ Features/Chores:
    ✔ postdevelop @done (2018-3-2 15:15:11)
    ✔ pretest @done (2018-3-2 15:15:10)
    ✔ posttest @done (2018-3-2 15:15:10)
-   ☐ prepublish
-   ☐ postpublish
   ☐ Finish all inline TODO comments within code.
   ☐ Enforce Node >=8.2.0 - i.e. bundled with npm@>=5.3.0
   ☐ Plugin extension API

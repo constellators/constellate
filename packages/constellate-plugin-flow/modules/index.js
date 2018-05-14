@@ -1,21 +1,13 @@
+const os = require('os')
 const path = require('path')
-const babel = require('babel-core')
-const pify = require('pify')
 const pLimit = require('p-limit')
 const R = require('ramda')
 const fs = require('fs-extra')
 const globby = require('globby')
+const flowRemoveTypes = require('flow-remove-types')
 const { TerminalUtils } = require('constellate-dev-utils')
-const generateConfig = require('./generateConfig')
 
-// Having concurrent babel transpilations seems to break the sourcemap output.
-// Incorrect sources get mapped - I wonder if there is a shared global state
-// that references the "current" file being transpiled for reference in a
-// sourcemap.
-const maxConcurrentTranspiles = 1
-
-// :: (..args) => Promise<BabelTransformFileResult>
-const transformFile = pify(babel.transformFile)
+const maxConcurrentTranspiles = os.cpus().length
 
 // :: string -> void
 const ensureParentDirectoryExists = filePath => {
@@ -27,10 +19,10 @@ const ensureParentDirectoryExists = filePath => {
 module.exports = function babelBuildPlugin(project, options) {
   const buildOutputRoot = path.resolve(
     project.paths.root,
-    options.outputDir || './dist',
+    options.outputDir || './build',
   )
   const patterns = (
-    options.inputs || ['**/*.js', '**/*.jsx', '!__tests__', '!test.js']
+    options.inputs || ['**/*.js', '!__tests__', '!test.js']
   ).concat(['!node_modules/**/*', `!${path.basename(buildOutputRoot)}/**/*`])
   const sourceRoot =
     options.sourceDir != null
@@ -46,22 +38,18 @@ module.exports = function babelBuildPlugin(project, options) {
   return {
     build: () =>
       getJsFilePaths().then(filePaths => {
-        // :: Object
-        const babelConfig = generateConfig(project, options)
-
         // :: string -> Promise<void>
-        const transpileFile = filePath => {
-          const writeTranspiledFile = result => {
+        const transpileFile = filePath =>
+          new Promise(resolve => {
+            const module = path.resolve(sourceRoot, filePath)
+            const input = fs.readFileSync(module, 'utf8')
+            const output = flowRemoveTypes(input)
             const outFile = path.resolve(buildOutputRoot, filePath)
             ensureParentDirectoryExists(outFile)
-            fs.writeFileSync(outFile, result.code, { encoding: 'utf8' })
-            fs.writeFileSync(`${outFile}.map`, JSON.stringify(result.map), {
-              encoding: 'utf8',
-            })
-          }
-          const module = path.resolve(sourceRoot, filePath)
-          return transformFile(module, babelConfig).then(writeTranspiledFile)
-        }
+            fs.writeFileSync(outFile, output.toString(), { encoding: 'utf8' })
+            fs.writeFileSync(`${outFile}.flow`, input, { encoding: 'utf8' })
+            resolve()
+          })
 
         const limit = pLimit(maxConcurrentTranspiles)
         const queueTranspile = filePath => limit(() => transpileFile(filePath))
@@ -75,11 +63,11 @@ module.exports = function babelBuildPlugin(project, options) {
         resolve()
       }),
     deploy: () => {
-      TerminalUtils.error('"deploy" not supported by "babel" plugin')
+      TerminalUtils.error('"deploy" not supported by "flow" plugin')
       process.exit(1)
     },
     develop: () => {
-      TerminalUtils.error('"develop" not supported by "babel" plugin')
+      TerminalUtils.error('"develop" not supported by "flow" plugin')
       process.exit(1)
     },
   }

@@ -17,8 +17,6 @@ Thumbs.db
 .simeerc
 flow-typed
 
-# Transpiled Projects (damn you vscode for forcing me to be so explict here)
-# Helps with vscode gitignore plugin too
-projects/constellate/modules
-projects/constellate-dev-utils/modules
-projects/constellate-utils/modules
+# Transpiled Projects
+packages/**/build
+

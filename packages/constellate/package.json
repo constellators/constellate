@@ -3,10 +3,10 @@
 	"name": "constellate",
 	"description": "The ❤️ of Constellate applications.",
 	"bin": {
-		"constellate": "modules/bin/constellate.js"
+		"constellate": "build/bin/constellate.js"
 	},
 	"files": [
-		"modules"
+		"build"
 	],
 	"repository": "constellators/constellate",
 	"license": "MIT",

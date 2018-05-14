@@ -3,7 +3,7 @@ const flowProjectConfig = {
     'flow',
     {
       sourceDir: './src',
-      outputDir: './modules',
+      outputDir: './build',
     },
   ],
 }
@@ -18,7 +18,7 @@ module.exports = {
         {
           nodeVersion: '4.8.3',
           sourceDir: './src',
-          outputDir: './modules',
+          outputDir: './build',
         },
       ],
     },

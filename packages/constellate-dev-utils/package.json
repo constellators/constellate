@@ -7,9 +7,9 @@
 	"bugs": {
 		"url": "https://github.com/constellators/constellate/issues"
 	},
-	"main": "modules/index.js",
+	"main": "build/index.js",
 	"files": [
-		"modules",
+		"build",
 		"types"
 	],
 	"dependencies": {

@@ -1,26 +1,61 @@
 {
   "private": true,
-  "workspaces": ["projects/*"],
+  "workspaces": [
+    "packages/*"
+  ],
   "scripts": {
     "build": "constellate build",
     "flowtypes": "flow-mono install-types",
-    "publish": "constellate publish",
-    "publish:core": "constellate publish -fg --npm-tag=core",
+    "publish": "constellate build && lerna publish",
+    "publish:core": "constellate build && lerna publish -fg --npm-tag=core",
     "test": "constellate test",
     "update": "yarn upgrade-interactive --latest --exact"
   },
   "devDependencies": {
-    "constellate": "0.23.0-Core2",
     "constellate-plugin-build-babel": "0.19.8-core2",
     "constellate-plugin-build-flow": "0.19.8-core2",
-    "eslint-config-constellate": "0.23.0-Core2",
-    "flow-mono-cli": "1.3.0"
+    "eslint": "4.19.1",
+    "eslint-config-airbnb": "16.1.0",
+    "eslint-config-prettier": "2.9.0",
+    "eslint-plugin-import": "2.11.0",
+    "eslint-plugin-jsx-a11y": "6.0.3",
+    "eslint-plugin-react": "7.8.2",
+    "flow-mono-cli": "1.3.0",
+    "lerna": "^2.11.0"
   },
   "eslintConfig": {
     "root": true,
-    "extends": "constellate",
+    "parser": "babel-eslint",
+    "extends": [
+      "eslint-config-airbnb",
+      "eslint-config-prettier"
+    ],
+    "env": {
+      "browser": true,
+      "es6": true,
+      "node": true,
+      "jest": true
+    },
+    "ecmaFeatures": {
+      "defaultParams": true
+    },
     "rules": {
-      "no-console": 0
+      "array-callback-return": 0,
+      "arrow-parens": [
+        "error",
+        "as-needed"
+      ],
+      "camelcase": 0,
+      "no-nested-ternary": 0,
+      "no-underscore-dangle": 0,
+      "import/no-extraneous-dependencies": 0,
+      "import/prefer-default-export": 0,
+      "react/forbid-prop-types": 0,
+      "react/jsx-filename-extension": 0,
+      "react/no-array-index-key": 0,
+      "react/no-did-mount-set-state": 0,
+      "react/no-find-dom-node": 0,
+      "react/sort-comp": 0
     }
   },
   "prettier": {
