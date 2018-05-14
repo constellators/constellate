@@ -27,6 +27,7 @@ Docs:
 
 Features/Chores:
 
+  ☐ Change default packages root to "packages" rather than "projects" and make configurable via config
   ☐ Use "src/index.js" as natural entry point rather than "modules/index.js"
   ☐ Rebrand as bolt on lerna
   ☐ Ability to have individual version numbers.
