@@ -5,7 +5,7 @@ const bundle = require('./bundle')
 const develop = require('./develop')
 
 const defaultOptions = {
-  outputDir: './build',
+  outputDir: 'build',
 }
 
 // :: Package, Options -> DevelopAPI

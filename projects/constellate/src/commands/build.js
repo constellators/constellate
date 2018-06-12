@@ -9,6 +9,9 @@ module.exports = {
   desc: 'Executes the configured build plugin for each package',
   handler: async () => {
     try {
+      if (!process.env.NODE_ENV) {
+        process.env.NODE_ENV = 'production'
+      }
       TerminalUtils.title('Running build...')
       const packages = await PackageUtils.getAllPackages()
       const queueBuild = pkg => () => PackageUtils.buildPackage(pkg)

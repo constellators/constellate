@@ -1,3 +1,5 @@
+/* eslint-disable no-console */
+
 const deepMerge = require('deepmerge')
 
 const defaultConfig = {

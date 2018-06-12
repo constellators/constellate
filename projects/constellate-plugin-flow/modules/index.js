@@ -19,15 +19,12 @@ const ensureParentDirectoryExists = filePath => {
 module.exports = function flowBuildPlugin(pkg, options) {
   const buildOutputRoot = path.resolve(
     pkg.paths.root,
-    options.outputDir || './build',
+    options.outputDir || 'build',
   )
   const patterns = (
     options.inputs || ['**/*.js', '!__tests__', '!test.js']
   ).concat(['!node_modules/**/*', `!${path.basename(buildOutputRoot)}/**/*`])
-  const sourceRoot =
-    options.sourceDir != null
-      ? path.resolve(pkg.paths.root, options.sourceDir)
-      : pkg.paths.root
+  const sourceRoot = path.resolve(pkg.paths.root, options.sourceDir || 'src')
 
   // :: string -> Array<string>
   const getJsFilePaths = () =>

@@ -12,8 +12,14 @@ module.exports = function generateConfig(pkg, options) {
 
   const env = process.env.NODE_ENV
 
-  const entryFilePath = path.resolve(pkg.paths.root, options.entryFile)
-  const outputDirPath = path.resolve(pkg.paths.root, options.outputDir)
+  const entryFilePath = path.resolve(
+    pkg.paths.root,
+    options.entryFile || 'src/index.js',
+  )
+  const outputDirPath = path.resolve(
+    pkg.paths.root,
+    options.outputDir || 'build',
+  )
 
   const webpackConfig = {
     // Keep quiet in dev mode.

@@ -15,7 +15,6 @@ module.exports = {
     try {
       TerminalUtils.title('Running clean...')
       const packages = await PackageUtils.resolvePackages(argv.packages)
-      console.log(packages)
       const clean = pkg => () => PackageUtils.cleanPackage(pkg)
       await pSeries(R.values(packages).map(clean))
       TerminalUtils.success('Done')

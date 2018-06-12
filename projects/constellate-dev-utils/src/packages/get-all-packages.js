@@ -79,9 +79,7 @@ const resolvePluginFor = (pkg, type) => {
         options: pluginDef.length > 1 ? pluginDef[1] : {},
       }
     : { name: pluginDef, options: {} }
-  console.log(pkg.name, pkg.config)
   const pluginFactory = resolvePlugin(config.name)
-  console.log(pluginFactory)
   return pluginFactory(pkg, config.options)
 }
 

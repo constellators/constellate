@@ -1,8 +1,6 @@
 // @flow
 
-const { TerminalUtils, PackageUtils } = require('constellate-dev-utils')
-const R = require('ramda')
-const pSeries = require('p-series')
+const { TerminalUtils } = require('constellate-dev-utils')
 const deploymentService = require('../deployment-service')
 
 module.exports = {
@@ -10,6 +8,9 @@ module.exports = {
   desc: 'Executes the deployment process',
   handler: async () => {
     try {
+      if (!process.env.NODE_ENV) {
+        process.env.NODE_ENV = 'production'
+      }
       TerminalUtils.title('Running deploy...')
       await deploymentService()
       TerminalUtils.success('Done')

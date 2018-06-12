@@ -7,9 +7,9 @@
  *
  * @return {string} The error string if an error exists.
  */
-module.exports = function extractError(package, err, stats) {
+module.exports = function extractError(pkg, err, stats) {
   if (err) {
-    return `Fatal error attempting to bundle ${package.name}\n${err}`
+    return `Fatal error attempting to bundle ${pkg.name}\n${err}`
   }
   if (stats.hasErrors()) {
     return stats.toString({ colors: true, chunks: false })

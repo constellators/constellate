@@ -7,6 +7,7 @@ module.exports = function loadEnvVars() {
   const env = process.env.NODE_ENV || 'production'
   const envSpecificPath = path.resolve(process.cwd(), `./.env.${env}`)
   if (fs.existsSync(envSpecificPath)) {
+    // eslint-disable-next-line no-console
     console.log(`Loading environment variables from ${envSpecificPath}`)
     dotenv.config({ path: envSpecificPath })
   }
@@ -14,6 +15,7 @@ module.exports = function loadEnvVars() {
   // Then load any generic .env "overides"
   const envPath = path.resolve(process.cwd(), './.env')
   if (fs.existsSync(envPath)) {
+    // eslint-disable-next-line no-console
     console.log(`Loading environment variables from ${envPath}`)
     dotenv.config({ path: envPath })
   }
