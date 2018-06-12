@@ -37,7 +37,7 @@ const chalk = require('chalk')
 const inquirer = require('inquirer')
 
 function verbose(msg: string): void {
-  if (process.env.DEBUG) {
+  if (process.env.VERBOSE) {
     console.log(chalk.dim(msg))
   }
 }

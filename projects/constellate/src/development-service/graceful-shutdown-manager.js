@@ -81,6 +81,7 @@ module.exports = function gracefulShutdownManager(
   })
 
   process.on('exit', () => {
+    performGracefulShutdown(0)
     TerminalUtils.info('Till next time. *kiss*')
   })
 }

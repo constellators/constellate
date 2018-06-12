@@ -296,7 +296,11 @@ module.exports = async function getAllPackages(
     // Verbose logging
     R.map(pkg => {
       TerminalUtils.verbose(
-        `Resolved package ${pkg.name}:${EOL}${JSON.stringify(pkg, null, 2)}`,
+        `Resolved package ${pkg.name}:${EOL}${JSON.stringify(
+          R.omit(['packageJson'], pkg),
+          null,
+          2,
+        )}`,
       )
       return pkg
     }),
