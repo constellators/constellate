@@ -2,6 +2,7 @@
 
 const { TerminalUtils } = require('constellate-dev-utils')
 const developmentService = require('../development-service')
+const preventScriptExit = require('../utils/prevent-script-exit')
 
 module.exports = {
   command: 'develop',
@@ -13,6 +14,7 @@ module.exports = {
         process.env.NODE_ENV = 'development'
       }
       await developmentService()
+      preventScriptExit()
       TerminalUtils.success('Done')
     } catch (ex) {
       TerminalUtils.error('Build failed', ex)
