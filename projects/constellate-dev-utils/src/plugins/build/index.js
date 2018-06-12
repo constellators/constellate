@@ -1,9 +1,14 @@
-const ProjectUtils = require('../../projects')
+// @flow
+
+import type { Package } from '../../types'
+
+const PackageUtils = require('../../packages')
 const TerminalUtils = require('../../terminal')
 
-// :: (Project, DevelopOptions, Watcher) -> DevelopAPI
-module.exports = function buildPlugin(project) {
+// :: (Package, DevelopOptions, Watcher) -> DevelopAPI
+module.exports = function buildPlugin(pkg: Package) {
   return {
+    name: 'constellate-core-plugin/build',
     clean: () => {
       TerminalUtils.error('"clean" not supported by "build" plugin')
       process.exit(1)
@@ -13,7 +18,7 @@ module.exports = function buildPlugin(project) {
       process.exit(1)
     },
     develop: () =>
-      ProjectUtils.buildProject(project)
+      PackageUtils.buildPackage(pkg)
         // we ensure that nothing is returned as we won't be resolving a
         // develop instance with kill cmd etc
         .then(() => undefined),

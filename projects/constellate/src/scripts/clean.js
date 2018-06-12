@@ -1,13 +1,13 @@
-const { TerminalUtils, ProjectUtils } = require('constellate-dev-utils')
+const { TerminalUtils, PackageUtils } = require('constellate-dev-utils')
 
 module.exports = async options => {
   TerminalUtils.title('Running clean...')
 
-  const projectsToClean = options.projects
-    ? await ProjectUtils.resolveProjects(options.projects)
-    : ProjectUtils.getAllProjectsArray()
+  const packagesToClean = options.packages
+    ? await PackageUtils.resolvePackages(options.packages)
+    : PackageUtils.getAllPackagesArray()
 
-  await ProjectUtils.cleanProjects(projectsToClean)
+  await PackageUtils.cleanPackages(packagesToClean)
 
   TerminalUtils.success('Done')
 }

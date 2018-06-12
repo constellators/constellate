@@ -1,10 +1,1 @@
-[ignore]
-
-[include]
-flow-typed/
-
-[libs]
-
-[lints]
-
-[options]
+/Users/seanmatheson/Development/ctrlplusb/constellate/flow/.flowconfig

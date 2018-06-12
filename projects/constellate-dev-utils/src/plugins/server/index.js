@@ -1,18 +1,19 @@
 const TerminalUtils = require('../../terminal')
 const develop = require('./develop')
 
-// :: (Project, DevelopOptions, Watcher) -> DevelopAPI
-module.exports = function serverPlugin(project, options) {
-  if (!project.packageJson.main) {
+// :: (Package, DevelopOptions, Watcher) -> DevelopAPI
+module.exports = function serverPlugin(pkg, options) {
+  if (!pkg.packageJson.main) {
     TerminalUtils.error(
       `You must provide a "main" within your package.json when using the "server" develop plugin. See the configuration for ${
-        project.name
+        pkg.name
       }`,
     )
     process.exit(1)
   }
 
   return {
+    name: 'constellate-core-plugin/sever',
     build: () => {
       TerminalUtils.error('"build" not supported by "server" plugin')
       process.exit(1)
@@ -21,7 +22,7 @@ module.exports = function serverPlugin(project, options) {
       TerminalUtils.error('"clean" not supported by "server" plugin')
       process.exit(1)
     },
-    develop: watcher => develop(project, options, watcher),
+    develop: watcher => develop(pkg, options, watcher),
     deploy: () => {
       TerminalUtils.error('"deploy" not supported by "server" plugin')
       process.exit(1)

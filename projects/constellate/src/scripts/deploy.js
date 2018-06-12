@@ -8,16 +8,16 @@ const writeJsonFile = require('write-json-file')
 const {
   TerminalUtils,
   ChildProcessUtils,
-  ProjectUtils,
+  PackageUtils,
 } = require('constellate-dev-utils')
 const moveToTargetTag = require('../utils/moveToTargetTag')
 const rollbackRepo = require('../utils/rollbackRepo')
 
-module.exports = async function deploy() {
+module.exports = async function deploymentService() {
   TerminalUtils.title('Running deploy...')
 
-  const allProjects = ProjectUtils.getAllProjects()
-  const allProjectsArray = R.values(allProjects)
+  const allPackages = PackageUtils.getAllPackages()
+  const allPackagesArray = R.values(allPackages)
 
   let currentVersions
 
@@ -28,22 +28,22 @@ module.exports = async function deploy() {
         'Which version of the application would you like to deploy from?',
     })
 
-    TerminalUtils.info('Resolving projects at version that can be deployed...')
+    TerminalUtils.info('Resolving packages at version that can be deployed...')
 
     TerminalUtils.verbose(
-      `Moving repo to ${targetTag} to determine project versions`,
+      `Moving repo to ${targetTag} to determine package versions`,
     )
 
-    // Get the current versions for each project (will be based within the
+    // Get the current versions for each package (will be based within the
     // context of the current checked out version of the repo 👍)
-    currentVersions = allProjectsArray.reduce(
+    currentVersions = allPackagesArray.reduce(
       (acc, cur) => Object.assign(acc, { [cur.name]: cur.version }),
       {},
     )
 
     TerminalUtils.verbose(
       dedent(`
-    Resolved project versions as:
+    Resolved package versions as:
     \t${Object.keys(currentVersions)
       .map(name => `- ${name}@${currentVersions[name]}`)
       .join(`${EOL}\t`)}
@@ -69,60 +69,60 @@ module.exports = async function deploy() {
     process.exit(code)
   }
 
-  const projectsWithDeployConfig = allProjectsArray.filter(
-    project => project.deployPlugin,
+  const packagesWithDeployConfig = allPackagesArray.filter(
+    pkg => pkg.deployPlugin,
   )
-  if (projectsWithDeployConfig.length === 0) {
+  if (packagesWithDeployConfig.length === 0) {
     TerminalUtils.info(
-      'You do not have any projects with a deploy configuration.  Exiting...',
+      'You do not have any packages with a deploy configuration.  Exiting...',
     )
     rollbackExit(0)
   }
 
-  const namesOfProjectsToDeploy = await TerminalUtils.multiSelect(
-    'Which projects would you like to deploy?',
+  const namesOfPackagesToDeploy = await TerminalUtils.multiSelect(
+    'Which packages would you like to deploy?',
     {
-      choices: projectsWithDeployConfig.map(x => ({
+      choices: packagesWithDeployConfig.map(x => ({
         value: x.name,
         text: `${x.name} (${x.version})`,
       })),
     },
   )
 
-  if (namesOfProjectsToDeploy.length === 0) {
-    TerminalUtils.info('No projects selected. Exiting...')
+  if (namesOfPackagesToDeploy.length === 0) {
+    TerminalUtils.info('No packages selected. Exiting...')
     rollbackExit(0)
   }
 
   ChildProcessUtils.execSync('yarn', ['install'])
 
-  const projectsToDeploy = namesOfProjectsToDeploy.map(x => allProjects[x])
+  const packagesToDeploy = namesOfPackagesToDeploy.map(x => allPackages[x])
 
-  TerminalUtils.info('Deploying selected projects...')
+  TerminalUtils.info('Deploying selected packages...')
 
   // const deployRootPath = path.resolve(process.cwd(), './deploy')
 
   await pSeries(
-    projectsToDeploy.map(project => async () => {
+    packagesToDeploy.map(pkg => async () => {
       /*
-      const installRoot = path.resolve(deployRootPath, `./${project.name}`)
+      const installRoot = path.resolve(deployRootPath, `./${package.name}`)
       fs.ensureDirSync(installRoot)
-      const tempPkgJson = { name: `deploy-${project.name}`, private: true }
+      const tempPkgJson = { name: `deploy-${package.name}`, private: true }
       const tempPkgJsonPath = path.resolve(installRoot, './package.json')
       writeJsonFile.sync(tempPkgJsonPath, tempPkgJson)
       ChildProcessUtils.execSync(
         'yarn',
-        ['install', `${project.packageName}@${currentVersions[project.name]}`],
+        ['install', `${package.packageName}@${currentVersions[package.name]}`],
         {
           cwd: installRoot,
         },
       )
       const deployRoot = path.resolve(
         installRoot,
-        `./node_modules/${project.packageName}`,
+        `./node_modules/${package.packageName}`,
       )
       */
-      await project.plugins.deployPlugin.deploy()
+      await pkg.plugins.deployPlugin.deploy()
     }),
   )
 

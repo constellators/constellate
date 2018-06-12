@@ -1,7 +1,7 @@
 const R = require('ramda')
 const dedent = require('dedent')
 const chalk = require('chalk')
-const { TerminalUtils, AppUtils, GitUtils, ProjectUtils } = require('constellate-dev-utils')
+const { TerminalUtils, AppUtils, GitUtils, PackageUtils } = require('constellate-dev-utils')
 
 const defaultOptions = { quiet: false }
 
@@ -11,12 +11,12 @@ module.exports = function rollbackRepo(options = defaultOptions) {
   const appConfig = AppUtils.getConfig()
   const targetBranch = R.path(['publishing', 'gitBranchName'], appConfig)
   try {
-    const allProjects = ProjectUtils.getAllProjects()
-    const allProjectsArray = R.values(allProjects)
+    const allPackages = PackageUtils.getAllPackages()
+    const allPackagesArray = R.values(allPackages)
     GitUtils.resetHead()
     GitUtils.checkout('.')
     GitUtils.checkout(targetBranch)
-    allProjectsArray.forEach(ProjectUtils.installDeps)
+    allPackagesArray.forEach(PackageUtils.installDeps)
     GitUtils.checkout('.')
   } catch (err) {
     TerminalUtils.error(

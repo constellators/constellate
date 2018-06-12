@@ -7,6 +7,9 @@ const ObjectUtils = require('../objects')
 const TerminalUtils = require('../terminal')
 
 const defaultAppConfig = {
+  packages: [
+    'packages/*'
+  ],
   publishing: {
     gitBranchName: 'master',
     gitRemoteName: 'origin',

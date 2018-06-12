@@ -1,7 +1,7 @@
 const TerminalUtils = require('../terminal')
 
-function killChildProcess(project, childProcess) {
-  TerminalUtils.verbose(`Killing ${project.name}...`)
+function killChildProcess(package, childProcess) {
+  TerminalUtils.verbose(`Killing ${package.name}...`)
 
   return new Promise(resolve => {
     let killed = false
@@ -11,14 +11,14 @@ function killChildProcess(project, childProcess) {
     })
 
     childProcess.catch(err => {
-      TerminalUtils.verbose(`${project.name} was not killed with errors`)
+      TerminalUtils.verbose(`${package.name} was not killed with errors`)
       TerminalUtils.verbose(err)
       resolve()
     })
 
     const checkInterval = setInterval(() => {
       if (killed) {
-        TerminalUtils.verbose(`Kill for ${project.name} resolved`)
+        TerminalUtils.verbose(`Kill for ${package.name} resolved`)
         clearInterval(checkInterval)
         resolve()
       }
@@ -26,7 +26,7 @@ function killChildProcess(project, childProcess) {
 
     childProcess.kill('SIGTERM')
   }).catch(err => {
-    TerminalUtils.verbose(`Fatal error whilst killing ${project.name}`)
+    TerminalUtils.verbose(`Fatal error whilst killing ${package.name}`)
     throw err
   })
 }

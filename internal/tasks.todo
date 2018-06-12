@@ -26,10 +26,11 @@ Docs:
   ☐ Usage of process.stdin.read() to stop process exiting (even though it has child processes)
 
 Features/Chores:
-
-  ☐ Change default packages root to "packages" rather than "projects" and make configurable via config
+  ☐ Read the lerna config for package sources if none specified in constellate config
+  ☐ Change deployment process to allow for the selection of independent versions for each package as well as being able to specify that the latest version should be deployed.
+  ✔ Change default packages root to "packages" rather than "projects" and make configurable via config @done (2018-6-11 19:05:54)
   ☐ Use "src/index.js" as natural entry point rather than "modules/index.js"
-  ☐ Rebrand as bolt on lerna
+  ☐ Rebrand as hydra-cola
   ☐ Ability to have individual version numbers.
   ✔ Change the --no-git command to --no-persist? @done (2018-3-29 21:11:56)
   ☐ rollup plugin
@@ -38,9 +39,9 @@ Features/Chores:
   ☐ Better help on constellate bin
   ✔ Replace linking etc with yarn workspaces. sigh. lol. @done (2018-3-2 15:14:35)
   ☐ Integration tests
-  ☐ Application template
-  ☐ Empty project template
-  ☐ Create project command
+  ✘ Application template @cancelled (2018-6-11 19:06:30)
+  ✘ Empty project template @cancelled (2018-6-11 19:06:34)
+  ✘ Create project command @cancelled (2018-6-11 19:06:37)
   ☐ Rename all dependencies and devDependencies to linked*
   ☐ Allow specifying an exact tag version for doing publishing from
   ☐ Command hooks + error handling of them!
@@ -58,10 +59,9 @@ Features/Chores:
   ☐ auto-add source-map-support to build dependencies, and then re-enable for production builds.
   ☐ plugin interface for compilers - pre/post compile
   ☐ plugin interface for compilers - pre/post develop
-  ☐ Manual reload override for development mode.
+  ☐ Manual reload override for development mode (like nodemon rs).
   ☐ Allow for explicit ignoring of a dependency when doing hot development reloads.
- https://stackoverflow.com/questions/30335637/get-width-of-terminal-in-node-js
-  ☐ use why-is-node-running for helpful errors?
+  ✘ use why-is-node-running for helpful errors? @cancelled (2018-6-11 19:09:07)
   ✔ Flow @done (2018-3-2 15:16:05)
   ✔ Move the dotenv loader into constellate-utils @done (2018-3-2 15:16:07)
   ✔ constellate-plugin-build-flow @done (2018-3-2 15:16:09)

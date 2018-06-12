@@ -1,19 +1,19 @@
 const chokidar = require('chokidar')
 const { TerminalUtils } = require('constellate-dev-utils')
 
-module.exports = function createProjectWatcher(onChange, project) {
-  TerminalUtils.verbose(`Creating watcher for ${project.name}.`)
+module.exports = function createPackageWatcher(onChange, pkg) {
+  TerminalUtils.verbose(`Creating watcher for ${pkg.name}.`)
 
   const createWatcher = () => {
     const watcher = chokidar.watch(
       // TODO: Add the paths to the build folders of each of it's dependencies.
-      [project.paths.root],
+      [pkg.paths.root],
       {
-        ignored: project.plugins.buildPlugin
-          ? project.plugins.buildPlugin.outputDir()
+        ignored: pkg.plugins.buildPlugin
+          ? pkg.plugins.buildPlugin.outputDir()
           : undefined,
         ignoreInitial: true,
-        cwd: project.paths.root,
+        cwd: pkg.paths.root,
         ignorePermissionErrors: true,
       },
     )

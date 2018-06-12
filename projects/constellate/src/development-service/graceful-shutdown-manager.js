@@ -2,8 +2,8 @@ const R = require('ramda')
 const { TerminalUtils, AppUtils } = require('constellate-dev-utils')
 
 module.exports = function gracefulShutdownManager(
-  projectDevelopConductors,
-  projectWatchers,
+  packageDevelopConductors,
+  packageWatchers,
 ) {
   let shuttingDown = false
   let postDevelopRun = false
@@ -24,7 +24,7 @@ module.exports = function gracefulShutdownManager(
     if (shuttingDown) return
     shuttingDown = true
     try {
-      TerminalUtils.info('Shutting down development environment...')
+      TerminalUtils.info('Shutting down development service...')
 
       // This will ensure that the process exits after a 10 second grace period.
       // Hopefully all the dispose functions below would have completed
@@ -42,15 +42,15 @@ module.exports = function gracefulShutdownManager(
         process.exit(1)
       }, 10 * 1000)
 
-      // Firstly kill all our projectWatchers.
-      Object.keys(projectWatchers).forEach(projectName =>
-        projectWatchers[projectName].stop(),
+      // Firstly kill all our packageWatchers.
+      Object.keys(packageWatchers).forEach(packageName =>
+        packageWatchers[packageName].stop(),
       )
 
-      // Then call off the `.stop()` against all our project conductors.
+      // Then call off the `.stop()` against all our package conductors.
       await Promise.all(
-        R.values(projectDevelopConductors).map(projectDevelopConductor =>
-          projectDevelopConductor.stop(),
+        R.values(packageDevelopConductors).map(packageDevelopConductor =>
+          packageDevelopConductor.stop(),
         ),
       )
 
@@ -58,7 +58,7 @@ module.exports = function gracefulShutdownManager(
       await ensurePostDevelopHookRun()
     } catch (err) {
       TerminalUtils.error(
-        'An error occurred whilst shutting down the development environment',
+        'An error occurred whilst shutting down the development service',
         err,
       )
       process.exit(1)

@@ -7,16 +7,14 @@ const defaultOptions = {
   outputDir: './build',
 }
 
-// :: Project, Options -> DevelopAPI
-module.exports = function webpackNodeBuildPlugin(project, options = {}) {
+// :: Package, Options -> DevelopAPI
+module.exports = function webpackNodeBuildPlugin(pkg, options = {}) {
   const defaultedOptions = Object.assign({}, options, defaultOptions)
-  const outputDirPath = path.resolve(
-    project.paths.root,
-    defaultedOptions.outputDir,
-  )
+  const outputDirPath = path.resolve(pkg.paths.root, defaultedOptions.outputDir)
 
   return {
-    build: () => bundle(project, defaultedOptions),
+    name: 'constellate-plugin-webpack-node',
+    build: () => bundle(pkg, defaultedOptions),
     clean: () =>
       new Promise(resolve => {
         if (fs.pathExistsSync(outputDirPath)) {

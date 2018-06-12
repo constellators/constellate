@@ -1,5 +1,5 @@
 /**
- * Tons of inspiration taken from Facebook's superb Create React App project
+ * Tons of inspiration taken from Facebook's superb Create React App package
  * https://github.com/facebookincubator/create-react-app
  * ❤️
  */
@@ -7,13 +7,13 @@
 const { ArrayUtils, LogicUtils } = require('constellate-dev-utils')
 
 // :: Options -> BabelConfig
-module.exports = function generateConfig(project) {
+module.exports = function generateConfig(pkg) {
   const env = process.env.BABEL_ENV || process.env.NODE_ENV
   return {
     babelrc: false,
 
     // Handy for sourcemaps generation.
-    sourceRoot: project.paths.root,
+    sourceRoot: pkg.paths.root,
 
     presets: ArrayUtils.removeNil([
       [
@@ -61,17 +61,26 @@ module.exports = function generateConfig(project) {
       // Replaces the React.createElement function with one that is
       // more optimized for production.
       // NOTE: Relies on Symbol being available.
-      LogicUtils.onlyIf(env === 'production', 'transform-react-inline-elements'),
+      LogicUtils.onlyIf(
+        env === 'production',
+        'transform-react-inline-elements',
+      ),
 
       // Hoists element creation to the top level for subtrees that
       // are fully static, which reduces call to React.createElement
       // and the resulting allocations. More importantly, it tells
       // React that the subtree hasn’t changed so React can completely
       // skip it when reconciling.
-      LogicUtils.onlyIf(env === 'production', 'transform-react-constant-elements'),
+      LogicUtils.onlyIf(
+        env === 'production',
+        'transform-react-constant-elements',
+      ),
 
       // Removes PropTypes code as it's just dead weight for a production build.
-      LogicUtils.onlyIf(env === 'production', 'babel-plugin-transform-react-remove-prop-types'),
+      LogicUtils.onlyIf(
+        env === 'production',
+        'babel-plugin-transform-react-remove-prop-types',
+      ),
 
       // The following two plugins are currently necessary to make React warnings
       // include more valuable information. They are included here because they are
@@ -81,10 +90,16 @@ module.exports = function generateConfig(project) {
       // https://github.com/facebookincubator/create-react-app/issues/989
 
       // Adds __self attribute to JSX which React will use for some warnings
-      LogicUtils.onlyIf(env === 'development' || env === 'test', 'transform-react-jsx-self'),
+      LogicUtils.onlyIf(
+        env === 'development' || env === 'test',
+        'transform-react-jsx-self',
+      ),
 
       // Adds component stack to warning messages
-      LogicUtils.onlyIf(env === 'development' || env === 'test', 'transform-react-jsx-source'),
+      LogicUtils.onlyIf(
+        env === 'development' || env === 'test',
+        'transform-react-jsx-source',
+      ),
     ]),
   }
 }

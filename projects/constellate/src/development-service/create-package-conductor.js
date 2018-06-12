@@ -1,24 +1,22 @@
 const { TerminalUtils } = require('constellate-dev-utils')
 
-module.exports = function createProjectDevelopConductor(project, watcher) {
+module.exports = function createPackageConductor(pkg, watcher) {
   let runningDevelopInstance
 
   return {
     // :: void -> Promise
     start: () => {
-      TerminalUtils.verbose(
-        `Starting develop implementation for ${project.name}`,
-      )
+      TerminalUtils.verbose(`Starting develop implementation for ${pkg.name}`)
 
-      if (!project.plugins.developPlugin) {
+      if (!pkg.plugins.developPlugin) {
         throw new Error(
-          `Trying to run develop plugin on project without one specified: ${
-            project.name
+          `Trying to run develop plugin on package without one specified: ${
+            pkg.name
           }`,
         )
       }
 
-      return project.plugins.developPlugin
+      return pkg.plugins.developPlugin
         .develop(watcher)
         .then(developInstance => {
           runningDevelopInstance = developInstance

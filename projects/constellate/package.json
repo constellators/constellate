@@ -1,5 +1,5 @@
 {
-	"version": "0.25.1-core",
+	"version": "0.25.2-core",
 	"name": "constellate",
 	"description": "The ❤️ of Constellate applications.",
 	"bin": {
@@ -15,19 +15,19 @@
 	},
 	"dependencies": {
 		"chokidar": "2.0.3",
-		"commander": "2.15.1",
-		"constellate-dev-utils": "^0.25.1-core",
-		"constellate-utils": "^0.25.1-core",
-		"dotenv": "5.0.1",
+		"constellate-dev-utils": "^0.25.2-core",
+		"constellate-utils": "^0.25.2-core",
+		"dotenv": "6.0.0",
 		"fs-extra": "6.0.1",
-		"jest": "22.4.3",
+		"jest": "23.1.0",
 		"p-series": "1.1.0",
 		"ramda": "0.25.0",
 		"read-pkg": "3.0.0",
-		"semver": "5.5.0"
+		"semver": "5.5.0",
+		"yargs": "11.0.0"
 	},
 	"devDependencies": {
-		"flow-bin": "0.72.0",
+		"flow-bin": "0.74.0",
 		"flow-typed": "2.4.0"
 	}
 }

@@ -7,13 +7,13 @@ const autoprefixer = require('autoprefixer')
 const { ArrayUtils, LogicUtils } = require('constellate-dev-utils')
 const generateBabelConfig = require('./generateBabelConfig')
 
-module.exports = function generateConfig(project, options) {
+module.exports = function generateConfig(pkg, options) {
   const { devServerPort } = options
 
   const env = process.env.NODE_ENV
 
-  const entryFilePath = path.resolve(project.paths.root, options.entryFile)
-  const outputDirPath = path.resolve(project.paths.root, options.outputDir)
+  const entryFilePath = path.resolve(pkg.paths.root, options.entryFile)
+  const outputDirPath = path.resolve(pkg.paths.root, options.outputDir)
 
   const webpackConfig = {
     // Keep quiet in dev mode.
@@ -52,8 +52,8 @@ module.exports = function generateConfig(project, options) {
         env === 'development' && !!devServerPort
           ? // As we run a seperate webpack-dev-server in development we need an
             // absolute http path for the public path.
-            `http://0.0.0.0:${devServerPort}/constellate/${project.name}/`
-          : `/constellate/${project.name}/`,
+            `http://0.0.0.0:${devServerPort}/constellate/${pkg.name}/`
+          : `/constellate/${pkg.name}/`,
 
       // Add /* filename */ comments to generated require()s in the output.
       pathinfo: env === 'development',
@@ -63,7 +63,7 @@ module.exports = function generateConfig(project, options) {
 
     resolve: {
       extensions: ['.js', '.json', '.jsx'],
-      modules: ['node_modules', project.paths.appRootNodeModules],
+      modules: ['node_modules', pkg.paths.appRootNodeModules],
     },
 
     // Source map settings.
@@ -159,7 +159,7 @@ module.exports = function generateConfig(project, options) {
       // See https://github.com/facebookincubator/create-react-app/issues/186
       LogicUtils.onlyIf(
         env === 'development',
-        () => new WatchMissingNodeModulesPlugin(project.paths.nodeModules),
+        () => new WatchMissingNodeModulesPlugin(package.paths.nodeModules),
       ),
       */
 
@@ -207,16 +207,16 @@ module.exports = function generateConfig(project, options) {
             {
               loader: require.resolve('cache-loader'),
               options: {
-                cacheDirectory: project.paths.webpackCache,
+                cacheDirectory: pkg.paths.webpackCache,
               },
             },
             {
               loader: require.resolve('babel-loader'),
-              options: generateBabelConfig(project),
+              options: generateBabelConfig(pkg),
             },
           ],
-          include: [project.paths.root],
-          exclude: [project.paths.nodeModules, outputDirPath],
+          include: [pkg.paths.root],
+          exclude: [pkg.paths.nodeModules, outputDirPath],
         },
 
         {
@@ -262,7 +262,7 @@ module.exports = function generateConfig(project, options) {
               },
             },
           ],
-          include: [project.paths.root, project.paths.appRootNodeModules],
+          include: [pkg.paths.root, pkg.paths.appRootNodeModules],
           exclude: [outputDirPath],
         })),
 
@@ -299,7 +299,7 @@ module.exports = function generateConfig(project, options) {
               },
             ],
           }),
-          include: [project.paths.root, project.paths.appRootNodeModules],
+          include: [pkg.paths.root, pkg.paths.appRootNodeModules],
           exclude: [outputDirPath],
         })),
       ]),
@@ -337,7 +337,7 @@ module.exports = function generateConfig(project, options) {
         // Watching too many files can result in high CPU/memory usage.
         // We will manually control reloads based on dependency changes.
         ignored: /node_modules/,
-        // TODO: Allow watching of any dependencies that are Constellate projects.
+        // TODO: Allow watching of any dependencies that are Constellate packages.
       },
     }
   }

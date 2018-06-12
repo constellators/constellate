@@ -1,5 +1,5 @@
 {
-	"version": "0.25.1-core",
+	"version": "0.25.2-core",
 	"name": "constellate-plugin-webpack-node",
 	"description": "Webpack (node targetting) plugin for Constellate projects.",
 	"main": "modules/index.js",
@@ -22,14 +22,14 @@
 		"babel-preset-env": "1.7.0",
 		"babel-preset-react": "6.24.1",
 		"cache-loader": "1.2.2",
-		"constellate-dev-utils": "^0.25.1-core",
+		"constellate-dev-utils": "^0.25.2-core",
 		"css-loader": "0.28.11",
 		"file-loader": "1.1.11",
 		"ramda": "0.25.0",
 		"read-pkg": "3.0.0",
 		"semver": "5.5.0",
-		"url-loader": "0.6.2",
-		"webpack": "3.8.1",
-		"webpack-node-externals": "1.6.0"
+		"url-loader": "1.0.1",
+		"webpack": "4.12.0",
+		"webpack-node-externals": "1.7.2"
 	}
 }

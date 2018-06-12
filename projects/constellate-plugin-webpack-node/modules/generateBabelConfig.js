@@ -2,7 +2,7 @@ const semver = require('semver')
 const { ArrayUtils, LogicUtils } = require('constellate-dev-utils')
 
 // :: Options -> BabelConfig
-module.exports = function generateBabelConfig(project, options) {
+module.exports = function generateBabelConfig(package, options) {
   const env = process.env.BABEL_ENV || process.env.NODE_ENV
 
   const targetNodeVersion = options.nodeVersion || process.versions.node
@@ -11,7 +11,7 @@ module.exports = function generateBabelConfig(project, options) {
     babelrc: false,
 
     // Handy for sourcemaps generation.
-    sourceRoot: project.paths.root,
+    sourceRoot: package.paths.root,
 
     // Webpack has our back.
     sourceMaps: false,
@@ -38,7 +38,7 @@ module.exports = function generateBabelConfig(project, options) {
       [
         'transform-object-rest-spread',
         {
-          // For a node project we can rely on native Object.assign, else it will
+          // For a node package we can rely on native Object.assign, else it will
           // need to be polyfilled.
           useBuiltIns: semver.major(targetNodeVersion) >= 6,
         },

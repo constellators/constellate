@@ -1,9 +1,9 @@
 const configureGracefulExit = require('./configureGracefulExit')
-const getWebProjectManifest = require('./getWebProjectManifest')
+const getWebPackageManifest = require('./getWebPackageManifest')
 const loadEnvVars = require('./loadEnvVars')
 
 module.exports = {
   configureGracefulExit,
-  getWebProjectManifest,
+  getWebPackageManifest,
   loadEnvVars,
 }

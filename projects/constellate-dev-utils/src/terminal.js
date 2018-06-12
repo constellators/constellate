@@ -44,9 +44,7 @@ function verbose(msg: string): void {
 
 function error(msg: string, err?: Error): void {
   console.log(chalk.red.bold(msg))
-  if (err != null) {
-    console.log(err)
-  }
+  console.log(err || new Error(msg))
 }
 
 function warning(msg: string): void {

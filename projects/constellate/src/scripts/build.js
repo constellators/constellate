@@ -1,13 +1,13 @@
 // @flow
 
 const pSeries = require('p-series')
-const { TerminalUtils, ProjectUtils } = require('constellate-dev-utils')
+const { TerminalUtils, PackageUtils } = require('constellate-dev-utils')
+const R = require('ramda')
 
 module.exports = async function build() {
   TerminalUtils.title('Running build...')
-
-  const queueBuild = project => () => ProjectUtils.buildProject(project)
-  await pSeries(ProjectUtils.getAllProjectsArray().map(queueBuild))
-
+  const packages = await PackageUtils.getAllPackages()
+  const buildPkg = pkg => () => PackageUtils.buildPackage(pkg)
+  await pSeries(R.values(packages).map(buildPkg))
   TerminalUtils.success('Done')
 }

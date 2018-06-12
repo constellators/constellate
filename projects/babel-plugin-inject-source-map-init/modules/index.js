@@ -10,7 +10,7 @@ const sourceMapImportAST = template(`
       environment: 'node'
     });
   } catch(err) {
-    console.log('In order to provide a better debugging experience of your Constellate projects please ensure that source-map-support is installed.${EOL}${EOL}\tnpm i source-map-support -S -E');
+    console.log('In order to provide a better debugging experience of your Constellate packages please ensure that source-map-support is installed.${EOL}${EOL}\tnpm i source-map-support -S -E');
   }
 `)()
 

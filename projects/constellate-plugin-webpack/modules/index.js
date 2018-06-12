@@ -8,16 +8,14 @@ const defaultOptions = {
   outputDir: './build',
 }
 
-// :: Project, Options -> DevelopAPI
-module.exports = function webpackBuildPlugin(project, options = {}) {
+// :: Package, Options -> DevelopAPI
+module.exports = function webpackBuildPlugin(pkg, options = {}) {
   const defaultedOptions = Object.assign({}, options, defaultOptions)
-  const outputDirPath = path.resolve(
-    project.paths.root,
-    defaultedOptions.outputDir,
-  )
+  const outputDirPath = path.resolve(pkg.paths.root, defaultedOptions.outputDir)
 
   return {
-    build: () => bundle(project, defaultedOptions),
+    name: 'constellate-plugin-webpack',
+    build: () => bundle(pkg, defaultedOptions),
     clean: () =>
       new Promise(resolve => {
         if (fs.pathExistsSync(outputDirPath)) {
@@ -29,6 +27,6 @@ module.exports = function webpackBuildPlugin(project, options = {}) {
       TerminalUtils.error('"deploy" not supported by "webpack" plugin')
       process.exit(1)
     },
-    develop: watcher => develop(project, options, watcher),
+    develop: watcher => develop(pkg, options, watcher),
   }
 }

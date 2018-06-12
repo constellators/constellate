@@ -7,7 +7,7 @@ const tempWrite = require('temp-write')
 const writeJsonFile = require('write-json-file')
 const { TerminalUtils, ChildProcessUtils } = require('constellate-dev-utils')
 
-module.exports = function nowDeploy(project, options) {
+module.exports = function nowDeploy(pkg, options) {
   if (process.env.NOW_USERNAME == null) {
     TerminalUtils.error(
       'In order to deploy to "now" you must supply your "now" username via a NOW_USERNAME environment variable.',
@@ -30,6 +30,7 @@ module.exports = function nowDeploy(project, options) {
   }
 
   return {
+    name: 'constellate-plugin-now',
     build: () => {
       TerminalUtils.error('"build" not supported by "now" plugin')
       process.exit(1)
@@ -52,7 +53,7 @@ module.exports = function nowDeploy(project, options) {
         throw err
       }
 
-      const deploymentName = project.packageName
+      const deploymentName = pkg.packageName
 
       const alias = options.alias
       const envVars = options.passThroughEnvVars
@@ -96,7 +97,7 @@ module.exports = function nowDeploy(project, options) {
       ]
 
       const deployResponse = await ChildProcessUtils.exec('now', args, {
-        cwd: project.paths.root,
+        cwd: pkg.paths.root,
       })
       const deploymentIdRegex = /(https:\/\/.+\.now\.sh)/g
       if (!deploymentIdRegex.test(deployResponse)) {
@@ -105,7 +106,7 @@ module.exports = function nowDeploy(project, options) {
       }
       const deploymentId = deployResponse.match(deploymentIdRegex)[0]
       TerminalUtils.info(
-        `Creating deployment (${deploymentId}) for ${project.name}...`,
+        `Creating deployment (${deploymentId}) for ${pkg.name}...`,
       )
 
       // Now we need to wait for the deployment to be ready.
@@ -120,7 +121,7 @@ module.exports = function nowDeploy(project, options) {
           dedent(`
           The deployment process timed out. :( There may be an issue with your deployment or with "now". You could try to manually deploy using the following commands to gain more insight into the issue:
 
-            ${chalk.blue(`cd ${project.paths.root}`)}
+            ${chalk.blue(`cd ${pkg.paths.root}`)}
             ${chalk.blue(`now ${args.join(' ')}`)}
           `),
         )
@@ -142,9 +143,7 @@ module.exports = function nowDeploy(project, options) {
       )
 
       TerminalUtils.info(
-        `Setting up alias for new deployment of ${
-          project.name
-        } to ${alias}....`,
+        `Setting up alias for new deployment of ${pkg.name} to ${alias}....`,
       )
       await ChildProcessUtils.exec('now', ['alias', 'set', deploymentId, alias])
 
@@ -154,7 +153,7 @@ module.exports = function nowDeploy(project, options) {
         // Removes previous deployments 👍
         try {
           TerminalUtils.info(
-            `Removing unaliased deployments for ${project.name}...`,
+            `Removing unaliased deployments for ${pkg.name}...`,
           )
           await ChildProcessUtils.exec('now', [
             'rm',
@@ -201,7 +200,7 @@ module.exports = function nowDeploy(project, options) {
         )
       }
 
-      TerminalUtils.success(`${project.name} has been successfully deployed`)
+      TerminalUtils.success(`${pkg.name} has been successfully deployed`)
     },
   }
 }

@@ -12,28 +12,28 @@ const requireFn =
 const cache = {}
 
 /**
- * Gets the manifest for the constellate web project by the given name.
+ * Gets the manifest for the constellate web package by the given name.
  *
- * @param  {string} projectName The project's name
+ * @param  {string} packageName The package's name
  * @return {Object}             The manifest
  */
-module.exports = function getWebProjectManifest(
-  projectName,
+module.exports = function getWebPackageManifest(
+  packageName,
   basePath = './dist',
 ) {
-  if (cache[projectName]) {
-    return cache[projectName]
+  if (cache[packageName]) {
+    return cache[packageName]
   }
   let distPath = path.resolve(
     process.cwd(),
-    `./node_modules/${projectName}/${basePath}`,
+    `./node_modules/${packageName}/${basePath}`,
   )
   let manifestFile = path.resolve(distPath, `./webpack-manifest.json`)
   if (!fs.existsSync(manifestFile)) {
     // constellate app root path
     distPath = path.resolve(
       process.cwd(),
-      `../../node_modules/${projectName}/${basePath}`,
+      `../../node_modules/${packageName}/${basePath}`,
     )
     manifestFile = path.resolve(distPath, `./webpack-manifest.json`)
     if (!fs.existsSync(manifestFile)) {
@@ -44,7 +44,7 @@ module.exports = function getWebProjectManifest(
   const manifest = requireFn(manifestFile)
   if (!manifest.index) {
     throw new Error(
-      `Invalid constellate web project manifest found at ${manifestFile}`,
+      `Invalid constellate web package manifest found at ${manifestFile}`,
     )
   }
 
@@ -53,7 +53,7 @@ module.exports = function getWebProjectManifest(
     .split('/')
   const rootHttpPath = jsParts.slice(0, jsParts.length - 1).join('/')
 
-  cache[projectName] = {
+  cache[packageName] = {
     serverPaths: {
       root: distPath,
     },
@@ -65,5 +65,5 @@ module.exports = function getWebProjectManifest(
     manifest,
   }
 
-  return cache[projectName]
+  return cache[packageName]
 }

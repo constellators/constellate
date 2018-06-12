@@ -18,11 +18,11 @@ const createNodeExternalsConfig = modulesDir =>
     modulesDir,
   })
 
-module.exports = function generateConfig(project, options) {
+module.exports = function generateConfig(package, options) {
   const env = process.env.NODE_ENV
 
-  const entryFilePath = path.resolve(project.paths.root, options.entryFile)
-  const outputDirPath = path.resolve(project.paths.root, options.outputDir)
+  const entryFilePath = path.resolve(package.paths.root, options.entryFile)
+  const outputDirPath = path.resolve(package.paths.root, options.outputDir)
 
   return {
     // Keep quiet in dev mode.
@@ -30,7 +30,7 @@ module.exports = function generateConfig(project, options) {
 
     target: 'node',
 
-    context: project.paths.root,
+    context: package.paths.root,
 
     entry: {
       // We name it "index" to make it easy to resolve the entry files within
@@ -53,7 +53,7 @@ module.exports = function generateConfig(project, options) {
       chunkFilename:
         env === 'development' ? '[name]-[hash].js' : '[name]-[chunkhash].js',
 
-      publicPath: `/constellate/${project.name}/`,
+      publicPath: `/constellate/${package.name}/`,
 
       // Add /* filename */ comments to generated require()s in the output.
       pathinfo: env === 'development',
@@ -63,7 +63,7 @@ module.exports = function generateConfig(project, options) {
 
     resolve: {
       extensions: ['.js', '.json', '.jsx'],
-      modules: ['node_modules', project.paths.appRootNodeModules],
+      modules: ['node_modules', package.paths.appRootNodeModules],
     },
 
     // Ensure that webpack polyfills the following node features
@@ -73,8 +73,8 @@ module.exports = function generateConfig(project, options) {
     // our node bundle. This is important as not all deps will be supported by
     // the bundling process. Instead they will be resolved at run time.
     externals: [
-      createNodeExternalsConfig(project.paths.nodeModules),
-      createNodeExternalsConfig(project.paths.appRootNodeModules),
+      createNodeExternalsConfig(package.paths.nodeModules),
+      createNodeExternalsConfig(package.paths.appRootNodeModules),
     ],
 
     // Produces an external source map (lives next to bundle output files).
@@ -132,16 +132,16 @@ module.exports = function generateConfig(project, options) {
             {
               loader: 'cache-loader',
               options: {
-                cacheDirectory: project.paths.webpackCache,
+                cacheDirectory: package.paths.webpackCache,
               },
             },
             {
               loader: 'babel-loader',
-              options: generateBabelConfig(project, options),
+              options: generateBabelConfig(package, options),
             },
           ],
-          include: [project.paths.root],
-          exclude: [project.paths.nodeModules, outputDirPath],
+          include: [package.paths.root],
+          exclude: [package.paths.nodeModules, outputDirPath],
         },
 
         {
@@ -161,7 +161,7 @@ module.exports = function generateConfig(project, options) {
         {
           test: /\.css$/,
           loaders: ['css-loader/locals'],
-          include: [project.paths.root],
+          include: [package.paths.root],
           exclude: [outputDirPath],
         },
       ]),

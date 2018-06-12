@@ -15,10 +15,10 @@ const ensureParentDirectoryExists = filePath => {
   fs.ensureDirSync(dir)
 }
 
-// :: Project, Options -> DevelopAPI
-module.exports = function babelBuildPlugin(project, options) {
+// :: Package, Options -> DevelopAPI
+module.exports = function flowBuildPlugin(pkg, options) {
   const buildOutputRoot = path.resolve(
-    project.paths.root,
+    pkg.paths.root,
     options.outputDir || './build',
   )
   const patterns = (
@@ -26,8 +26,8 @@ module.exports = function babelBuildPlugin(project, options) {
   ).concat(['!node_modules/**/*', `!${path.basename(buildOutputRoot)}/**/*`])
   const sourceRoot =
     options.sourceDir != null
-      ? path.resolve(project.paths.root, options.sourceDir)
-      : project.paths.root
+      ? path.resolve(pkg.paths.root, options.sourceDir)
+      : pkg.paths.root
 
   // :: string -> Array<string>
   const getJsFilePaths = () =>
@@ -36,6 +36,7 @@ module.exports = function babelBuildPlugin(project, options) {
     })
 
   return {
+    name: 'constellate-plugin-flow',
     build: () =>
       getJsFilePaths().then(filePaths => {
         // :: string -> Promise<void>

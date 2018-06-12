@@ -1,5 +1,7 @@
+// @flow
+
 const AppUtils = require('./app')
-const ProjectUtils = require('./projects')
+const PackageUtils = require('./packages')
 const ArrayUtils = require('./arrays')
 const ChildProcessUtils = require('./childProcess')
 const FnUtils = require('./fns')
@@ -12,7 +14,6 @@ const TerminalUtils = require('./terminal')
 
 module.exports = {
   AppUtils,
-  ProjectUtils,
   ArrayUtils,
   ChildProcessUtils,
   FnUtils,
@@ -20,6 +21,7 @@ module.exports = {
   GitUtils,
   LogicUtils,
   ObjectUtils,
+  PackageUtils,
   StringUtils,
   TerminalUtils,
 }

@@ -1,14 +1,14 @@
 // @flow
 /* eslint-disable no-use-before-define */
 
-export type ProjectVersions = { [string]: string }
+export type PackageVersions = { [string]: string }
 
-export type ProjectWatcher = {|
+export type PackageWatcher = {|
   start: () => void,
   stop: () => void,
 |}
 
-export type ProjectPaths = {|
+export type PackagePaths = {|
   appRoot: string,
   appRootNodeModules: string,
   root: string,
@@ -19,40 +19,39 @@ export type ProjectPaths = {|
 |}
 
 export type BuildPlugin = {|
-  build: () => Promise<mixed>,
-|}
-
-export type CleanPlugin = {|
+  name: string,
   clean: () => Promise<mixed>,
+  build: () => Promise<mixed>,
 |}
 
 export type DeployPath = string
 
 export type DeployPlugin = {|
+  name: string,
   deploy: DeployPath => Promise<mixed>,
 |}
 
 export type DevelopPlugin = {|
-  develop: ProjectWatcher => Promise<mixed>,
+  name: string,
+  develop: PackageWatcher => Promise<mixed>,
 |}
 
-export type ProjectPlugins = {
+export type PackagePlugins = {
   buildPlugin: ?BuildPlugin,
-  cleanPlugin: ?CleanPlugin,
   deployPlugin: ?DeployPlugin,
   developPlugin: ?DevelopPlugin,
 }
 
-export type Project = {|
+export type Package = {|
   name: string,
   config: Object,
   packageJson: Object,
   packageName: string,
   version: string,
-  paths: ProjectPaths,
-  plugins: ProjectPlugins,
+  paths: PackagePaths,
+  plugins: PackagePlugins,
   dependencies: Array<string>,
   devDependencies: Array<string>,
 |}
 
-export type ProjectMap = { [string]: Project }
+export type PackageMap = { [string]: Package }

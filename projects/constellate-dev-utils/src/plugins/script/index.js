@@ -4,56 +4,51 @@ const TerminalUtils = require('../../terminal')
 const ChildProcessUtils = require('../../childProcess')
 const DevelopPluginUtils = require('../utils')
 
-// :: (Project, DevelopOptions, Watcher) -> DevelopAPI
-module.exports = function scriptPlugin(project, options) {
+// :: (Package, DevelopOptions, Watcher) -> DevelopAPI
+module.exports = function scriptPlugin(pkg, options) {
   if (!options.scriptName) {
     throw new Error(
       `No scriptName was provided for the develop configuration of ${
-        project.name
+        pkg.name
       }.`,
     )
   }
-
   const childProcessMap = {}
-
   const addChildProcess = (task, processInstance) => {
     childProcessMap[task] = processInstance
   }
-
   const killChildProcessFor = task => {
     const childProcess = childProcessMap[task]
     if (!childProcess) {
       TerminalUtils.verbose(
-        `No running "${task}" script process for ${project.name} to kill`,
+        `No running "${task}" script process for ${pkg.name} to kill`,
       )
       return Promise.resolve()
     }
-    return DevelopPluginUtils.killChildProcess(project, childProcess).then(
-      () => {
-        TerminalUtils.verbose(
-          `Killed "${task}" script process for ${project.name} successfully`,
-        )
-        if (childProcessMap[task]) {
-          delete childProcessMap[task]
-        }
-      },
-    )
+    return DevelopPluginUtils.killChildProcess(pkg, childProcess).then(() => {
+      TerminalUtils.verbose(
+        `Killed "${task}" script process for ${pkg.name} successfully`,
+      )
+      if (childProcessMap[task]) {
+        delete childProcessMap[task]
+      }
+    })
   }
 
-  const pkgJson = readPkg.sync(project.paths.packageJson)
+  const pkgJson = readPkg.sync(pkg.paths.packageJson)
 
   const returnAPI = {
-    kill: () => killChildProcessFor(project),
+    kill: () => killChildProcessFor(pkg),
   }
 
   const runScript = task => async () => {
-    const existingProcess = childProcessMap[project.name]
+    const existingProcess = childProcessMap[pkg.name]
     if (options.scriptRunOnce && existingProcess) {
       return returnAPI
     }
 
     if (existingProcess) {
-      await killChildProcessFor(project)
+      await killChildProcessFor(pkg)
     }
 
     await new Promise((resolve, reject) => {
@@ -61,13 +56,13 @@ module.exports = function scriptPlugin(project, options) {
       if (!scriptCmd || R.isEmpty(scriptCmd)) {
         throw new Error(
           `Could not resolve script named "${options.scriptName}" on ${
-            project.name
+            pkg.name
           }`,
         )
       }
 
       TerminalUtils.info(
-        `Executing script "${options.scriptName}" for ${project.name}`,
+        `Executing script "${options.scriptName}" for ${pkg.name}`,
       )
 
       const childProcess = ChildProcessUtils.spawn(
@@ -75,12 +70,12 @@ module.exports = function scriptPlugin(project, options) {
         ['run', options.scriptName],
         {
           stdio: 'inherit',
-          cwd: project.paths.root,
+          cwd: pkg.paths.root,
         },
       )
       childProcess.catch(err => {
         TerminalUtils.verbose(
-          `Error executing script "${options.scriptName}" for ${project.name}`,
+          `Error executing script "${options.scriptName}" for ${pkg.name}`,
         )
         reject(err)
       })
@@ -90,9 +85,7 @@ module.exports = function scriptPlugin(project, options) {
       process.nextTick(() => {
         childProcess.on('close', () => {
           TerminalUtils.verbose(
-            `Stopped script "${options.scriptName}" process for ${
-              project.name
-            }`,
+            `Stopped script "${options.scriptName}" process for ${pkg.name}`,
           )
         })
         addChildProcess(task, childProcess)
@@ -104,6 +97,7 @@ module.exports = function scriptPlugin(project, options) {
   }
 
   return {
+    name: 'constellate-core-plugin/script',
     build: runScript('build'),
     clean: runScript('clean'),
     develop: runScript('develop'),

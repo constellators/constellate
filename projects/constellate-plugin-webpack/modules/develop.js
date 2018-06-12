@@ -7,21 +7,21 @@ const generateConfig = require('./generateConfig')
 
 const devInstanceMap = {}
 
-const killDevServerFor = project => {
-  const devInstance = devInstanceMap[project.name]
+const killDevServerFor = pkg => {
+  const devInstance = devInstanceMap[pkg.name]
   if (!devInstance) {
     return Promise.resolve()
   }
   return new Promise(resolve => {
     devInstance.webpackDevServer.close(() => {
-      delete devInstanceMap[project.name]
+      delete devInstanceMap[pkg.name]
       resolve()
     })
   })
 }
 
-module.exports = function develop(project, options, watcher) {
-  const devInstance = devInstanceMap[project.name]
+module.exports = function develop(pkg, options, watcher) {
+  const devInstance = devInstanceMap[pkg.name]
   if (devInstance) {
     return Promise.resolve(devInstance.api)
   }
@@ -34,7 +34,7 @@ module.exports = function develop(project, options, watcher) {
         let showNextSuccess = false
 
         const config = generateConfig(
-          project,
+          pkg,
           Object.assign({}, options, { devServerPort: port }),
         )
         const compiler = webpack(config)
@@ -42,23 +42,23 @@ module.exports = function develop(project, options, watcher) {
         const server = new WebpackDevServer(compiler, config.devServer)
         server.listen(port, '0.0.0.0', () => {
           TerminalUtils.verbose(
-            `${project.name} listening on http://0.0.0.0:${port}`,
+            `${pkg.name} listening on http://0.0.0.0:${port}`,
           )
         })
 
-        TerminalUtils.info(`Building ${project.name}`)
+        TerminalUtils.info(`Building ${pkg.name}`)
 
         compiler.plugin('done', doneStats => {
-          const doneError = extractError(project, null, doneStats)
+          const doneError = extractError(pkg, null, doneStats)
           if (doneError && hasResolved) {
             TerminalUtils.error(
-              `Please fix the following issue on ${project.name}`,
+              `Please fix the following issue on ${pkg.name}`,
               doneError,
             )
             showNextSuccess = hasResolved && true
           } else {
             TerminalUtils[showNextSuccess ? 'success' : 'verbose'](
-              `${project.name} is good again`,
+              `${pkg.name} is good again`,
             )
             showNextSuccess = false
           }
@@ -106,9 +106,9 @@ module.exports = function develop(project, options, watcher) {
     })
     .then(webpackDevServer => {
       const api = {
-        kill: () => killDevServerFor(project),
+        kill: () => killDevServerFor(pkg),
       }
-      devInstanceMap[project.name] = {
+      devInstanceMap[pkg.name] = {
         api,
         webpackDevServer,
       }
