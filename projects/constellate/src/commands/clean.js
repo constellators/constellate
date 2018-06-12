@@ -1,6 +1,7 @@
 const { TerminalUtils, PackageUtils } = require('constellate-dev-utils')
 const R = require('ramda')
 const pSeries = require('p-series')
+const asyncCommandHandler = require('../utils/async-command-handler')
 
 module.exports = {
   command: 'clean',
@@ -11,7 +12,7 @@ module.exports = {
       describe: 'The packages to clean',
       type: 'array',
     }),
-  handler: async argv => {
+  handler: asyncCommandHandler(async argv => {
     try {
       TerminalUtils.title('Running clean...')
       const packages = await PackageUtils.resolvePackages(argv.packages)
@@ -21,5 +22,5 @@ module.exports = {
     } catch (ex) {
       TerminalUtils.error('Clean failed', ex)
     }
-  },
+  }),
 }
