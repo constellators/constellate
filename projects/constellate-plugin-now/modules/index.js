@@ -8,20 +8,6 @@ const writeJsonFile = require('write-json-file')
 const { TerminalUtils, ChildProcessUtils } = require('constellate-dev-utils')
 
 module.exports = function nowDeploy(pkg, options) {
-  if (process.env.NOW_USERNAME == null) {
-    TerminalUtils.error(
-      'In order to deploy to "now" you must supply your "now" username via a NOW_USERNAME environment variable.',
-    )
-    process.exit(1)
-  }
-
-  if (process.env.NOW_TOKEN == null) {
-    TerminalUtils.error(
-      'In order to deploy to "now" you must supply your "now" API token via a NOW_TOKEN environment variable.',
-    )
-    process.exit(1)
-  }
-
   if (R.isNil(options.alias) || R.isEmpty(options.alias)) {
     TerminalUtils.error(
       'You must supply an "alias" for the "now" deploy plugin.',
@@ -44,6 +30,20 @@ module.exports = function nowDeploy(pkg, options) {
       process.exit(1)
     },
     deploy: async () => {
+      if (process.env.NOW_USERNAME == null) {
+        TerminalUtils.error(
+          'In order to deploy to "now" you must supply your "now" username via a NOW_USERNAME environment variable.',
+        )
+        process.exit(1)
+      }
+
+      if (process.env.NOW_TOKEN == null) {
+        TerminalUtils.error(
+          'In order to deploy to "now" you must supply your "now" API token via a NOW_TOKEN environment variable.',
+        )
+        process.exit(1)
+      }
+
       try {
         ChildProcessUtils.execSync('now', ['-v'])
       } catch (err) {
