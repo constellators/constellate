@@ -22,7 +22,7 @@ module.exports = async function developmentService() {
     await preDevelopHook()
   }
 
-  const packages = PackageUtils.getAllPackages()
+  const packages = await PackageUtils.getAllPackages()
   const packagesArray = R.values(packages)
 
   // Firstly clean build for all packages
