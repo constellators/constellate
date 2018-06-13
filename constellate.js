@@ -1,11 +1,5 @@
 const flowProjectConfig = {
-  build: [
-    'flow',
-    {
-      sourceDir: './src',
-      outputDir: './build',
-    },
-  ],
+  build: 'flow',
 }
 
 const packagesConfig = {
@@ -16,17 +10,15 @@ const packagesConfig = {
       'babel',
       {
         nodeVersion: '4.8.3',
-        sourceDir: './src',
-        outputDir: './build',
       },
     ],
   },
 }
 
 module.exports = {
-  packages: ['projects/*'],
-  projects: packagesConfig,
+  // packages: ['projects/*'],
+  // projects: packagesConfig,
 
-  // packageSources: ['projects/*'],
-  // packages: packagesConfig,
+  packageSources: ['projects/*'],
+  packages: packagesConfig,
 }

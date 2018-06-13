@@ -8,17 +8,15 @@
     "flow:symlinks": "flow-mono create-symlinks flow/.flowconfig",
     "flow:types": "flow-mono install-types",
     "publish": "constellate build && lerna publish",
-    "publish:core": "constellate build && lerna publish --skip-git --npm-tag=core",
+    "publish:core": "constellate build && lerna publish --skip-git --npm-tag=core --force-publish=constellate-plugin-babel,constellate-plugin-flow,constellate-dev-utils,constellate",
     "test": "constellate test",
     "update": "yarn upgrade-interactive --latest --exact"
   },
-  "dependencies": {
-    "constellate": "0.23.0-Core2",
-    "constellate-plugin-build-babel": "0.19.8-core2",
-    "constellate-plugin-build-flow": "0.19.8-core2"
-  },
   "devDependencies": {
     "babel-eslint": "8.2.3",
+    "constellate": "^0.26.5-core",
+    "constellate-plugin-babel": "^0.26.2-core",
+    "constellate-plugin-flow": "^0.26.1-core",
     "eslint": "4.19.1",
     "eslint-config-airbnb": "16.1.0",
     "eslint-config-prettier": "2.9.0",
