@@ -8,7 +8,7 @@
     "flow:symlinks": "flow-mono create-symlinks flow/.flowconfig",
     "flow:types": "flow-mono install-types",
     "publish": "constellate build && lerna publish",
-    "publish:core": "constellate build && lerna publish --skip-git --temp-tag --npm-tag=core",
+    "publish:core": "constellate build && lerna publish --skip-git --npm-tag=core",
     "test": "constellate test",
     "update": "yarn upgrade-interactive --latest --exact"
   },
