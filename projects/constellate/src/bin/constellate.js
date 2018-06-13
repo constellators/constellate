@@ -4,6 +4,7 @@
 /* eslint-disable no-console */
 
 const yargs = require('yargs')
+const { TerminalUtils } = require('constellate-dev-utils')
 const buildCommand = require('../commands/build')
 const cleanCommand = require('../commands/clean')
 const developCommand = require('../commands/develop')
@@ -12,10 +13,12 @@ const preventScriptExit = require('../utils/prevent-script-exit')
 
 const onComplete = (err, output) => {
   if (err) {
-    console.error(err)
+    TerminalUtils.error(err)
     process.exit(1)
   }
-  console.log(output)
+  if (output) {
+    TerminalUtils.info(output)
+  }
   process.exit(0)
 }
 
@@ -27,10 +30,10 @@ yargs
   .demandCommand()
   .help('h')
   .alias('h', 'help')
-  .parse(process.argv, (err, argv, output) => {
-    console.log(argv)
-    console.log(typeof argv.promisedResult)
+  .parse(process.argv.slice(2), (err, argv, output) => {
+    TerminalUtils.verbose(argv)
     if (argv.promisedResult) {
+      TerminalUtils.verbose('Waiting for async command to complete...')
       argv.promisedResult.then(
         result => onComplete(null, result),
         error => onComplete(error),
