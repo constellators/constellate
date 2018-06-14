@@ -1,6 +1,8 @@
 Constellate Roadmap / Todo:
 
 Bugs:
+  ☐           ? pkg.plugins.buildPlugin.outputDir()
+    We need to update plugins to contain a "config" prop, where plugins will have defaults applied and then different parts of code can call it.
   ✔ An unexpected error is printed when executing constellate with an invalid command. @done (2018-4-3 21:03:28)
   ✔ The child process cache on the script plugin doesn't allow for parallel executed scripts. @done (2018-3-7 18:19:51)
   ✔ Merge the develop and webpack plugins into a single package to aid dependency resolution. @done (2018-3-5 15:13:40)
@@ -26,6 +28,7 @@ Docs:
   ☐ Usage of process.stdin.read() to stop process exiting (even though it has child processes)
 
 Features/Chores:
+  ☐ Allow the ability to specify packages to be ignored by the development process (e.g. watching test libraries not useful and waste of resources).
   ☐ Read the lerna config for package sources if none specified in constellate config
   ☐ Change deployment process to allow for the selection of independent versions for each package as well as being able to specify that the latest version should be deployed.
   ✔ Change default packages root to "packages" rather than "projects" and make configurable via config @done (2018-6-11 19:05:54)

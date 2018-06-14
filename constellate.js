@@ -5,6 +5,11 @@ const flowProjectConfig = {
 const packagesConfig = {
   constellate: flowProjectConfig,
   'constellate-dev-utils': flowProjectConfig,
+  'constellate-plugin-babel': flowProjectConfig,
+  'constellate-plugin-flow': flowProjectConfig,
+  'constellate-plugin-now': flowProjectConfig,
+  'constellate-plugin-webpack': flowProjectConfig,
+  'constellate-plugin-webpack-node': flowProjectConfig,
   'constellate-utils': {
     build: [
       'babel',
@@ -16,9 +21,6 @@ const packagesConfig = {
 }
 
 module.exports = {
-  // packages: ['projects/*'],
-  // projects: packagesConfig,
-
-  packageSources: ['projects/*'],
+  packageSources: ['packages/*'],
   packages: packagesConfig,
 }

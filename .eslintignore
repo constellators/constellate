@@ -1,4 +1,2 @@
 packages/*/build
-projects/*/build
 packages/*/flow-typed
-projects/*/flow-typed

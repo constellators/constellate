@@ -1,7 +1,7 @@
 {
   "lerna": "2.11.0",
   "npmClient": "yarn",
-  "packages": ["projects/*"],
+  "packages": ["packages/*"],
   "registry": "https://registry.npmjs.org/",
   "version": "independent"
 }

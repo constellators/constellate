@@ -9,32 +9,22 @@ const globby = require('globby')
 const flowRemoveTypes = require('flow-remove-types')
 
 const packages = [
-  {
-    pkg: {
-      paths: {
-        root: path.resolve(process.cwd(), './projects/constellate'),
-      },
-    },
-    options: {
-      outputDir: path.resolve(process.cwd(), './projects/constellate/build'),
-      sourceDir: 'src',
-    },
-  },
-  {
-    pkg: {
-      paths: {
-        root: path.resolve(process.cwd(), './projects/constellate-dev-utils'),
-      },
-    },
-    options: {
-      outputDir: path.resolve(
-        process.cwd(),
-        './projects/constellate-dev-utils/build',
-      ),
-      sourceDir: 'src',
+  'constellate',
+  'constellate-dev-utils',
+  'constellate-plugin-babel',
+  'constellate-plugin-flow',
+  'constellate-plugin-now',
+].map(packageName => ({
+  pkg: {
+    paths: {
+      root: path.resolve(process.cwd(), `./packages/${packageName}`),
     },
   },
-]
+  options: {
+    outputDir: path.resolve(process.cwd(), `./packages/${packageName}/build`),
+    sourceDir: 'src',
+  },
+}))
 
 const maxConcurrentTranspiles = os.cpus().length
 
@@ -84,6 +74,24 @@ async function flowBuildPlugin(pkg, options) {
   await Promise.all(R.map(queueTranspile, filePaths))
 }
 
-module.exports = Promise.all(
+Promise.all(
   packages.map(({ pkg, options }) => flowBuildPlugin(pkg, options)),
+).then(
+  () => {
+    console.log('Done')
+    process.exit(0)
+  },
+  err => {
+    console.error(err)
+    process.exit(1)
+  },
 )
+
+function preventScriptExit() {
+  ;(function wait() {
+    // eslint-disable-next-line no-constant-condition
+    if (true) setTimeout(wait, 1000)
+  })()
+}
+
+preventScriptExit()
