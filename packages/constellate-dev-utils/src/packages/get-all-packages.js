@@ -18,6 +18,7 @@ let cache = null
 
 const defaultPackageConfig = {
   srcDir: 'src',
+  entryFile: 'index.js',
   outputDir: 'build',
   buildPlugin: null,
   developPlugin: 'build-develop',
@@ -60,7 +61,13 @@ const toPackage = packagePath => {
     paths: {
       monoRepoRoot: process.cwd(),
       monoRepoRootNodeModules: path.resolve(process.cwd(), './node_modules'),
-      packageBuildOutput: path.resolve(packagePath, config.srcDir),
+      packageBuildOutput: path.resolve(packagePath, config.outputDir),
+      packageSrc: path.resolve(packagePath, config.srcDir),
+      packageEntryFile: path.resolve(
+        packagePath,
+        config.srcDir,
+        config.entryFile,
+      ),
       packageJson: packageJsonPath,
       packageLockJson: path.resolve(packagePath, './package-lock.json'),
       packageNodeModules: path.resolve(packagePath, './node_modules'),

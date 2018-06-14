@@ -1,5 +1,5 @@
 const flowProjectConfig = {
-  build: 'flow',
+  buildPlugin: 'flow',
 }
 
 const packagesConfig = {
@@ -11,7 +11,7 @@ const packagesConfig = {
   'constellate-plugin-webpack': flowProjectConfig,
   'constellate-plugin-webpack-node': flowProjectConfig,
   'constellate-utils': {
-    build: [
+    buildPlugin: [
       'babel',
       {
         nodeVersion: '4.8.3',

@@ -23,7 +23,7 @@ type TaskName = 'build' | 'develop' | 'deploy' | 'clean'
 
 type ChildProcessMap = {
   [key: TaskName]: {
-    [key: Package]: ChildProcess,
+    [key: string]: ChildProcess,
   },
 }
 
@@ -46,10 +46,10 @@ module.exports = function scriptPlugin(
   }
 
   const addChildProcess = (task: TaskName, processInstance: ChildProcess) => {
-    childProcessMap[task][pkg] = processInstance
+    childProcessMap[task][pkg.name] = processInstance
   }
 
-  const getChildProcess = (task: TaskName) => childProcessMap[task][pkg]
+  const getChildProcess = (task: TaskName) => childProcessMap[task][pkg.name]
 
   const killChildProcessFor = (task: TaskName) => {
     const childProcess = getChildProcess(task)
