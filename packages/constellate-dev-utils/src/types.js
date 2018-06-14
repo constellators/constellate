@@ -21,14 +21,8 @@ export type PackagePaths = {
   packageWebpackCache: string,
 }
 
-export type BuildPluginConfig = {
-  srcDir: string,
-  outputDir: string,
-}
-
 export type BuildPlugin = {
   name: string,
-  config: BuildPluginConfig,
   clean: () => Promise<mixed>,
   build: () => Promise<mixed>,
 }
@@ -40,9 +34,13 @@ export type DeployPlugin = {
   deploy: DeployPath => Promise<mixed>,
 }
 
+export type DevelopInstance = {
+  kill: () => Promise<void>,
+}
+
 export type DevelopPlugin = {
   name: string,
-  develop: PackageWatcher => Promise<mixed>,
+  develop: PackageWatcher => Promise<DevelopInstance>,
 }
 
 export type PackagePlugins = {

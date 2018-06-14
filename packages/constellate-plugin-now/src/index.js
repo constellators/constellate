@@ -1,6 +1,6 @@
 // @flow
 
-import type { Package } from 'constellate-dev-utils/build/types'
+import type { Package, DeployPlugin } from 'constellate-dev-utils/build/types'
 
 const R = require('ramda')
 const pWhilst = require('p-whilst')
@@ -11,7 +11,7 @@ const tempWrite = require('temp-write')
 const writeJsonFile = require('write-json-file')
 const { TerminalUtils, ChildProcessUtils } = require('constellate-dev-utils')
 
-module.exports = function nowDeploy(pkg: Package, options) {
+module.exports = function nowDeploy(pkg: Package, options): DeployPlugin {
   if (R.isNil(options.alias) || R.isEmpty(options.alias)) {
     TerminalUtils.error(
       'You must supply an "alias" for the "now" deploy plugin.',

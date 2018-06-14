@@ -1,6 +1,10 @@
 // @flow
 
-import type { Package } from 'constellate-dev-utils/build/types'
+import type {
+  Package,
+  PackageWatcher,
+  DevelopInstance,
+} from 'constellate-dev-utils/build/types'
 
 const webpack = require('webpack')
 const getPort = require('get-port')
@@ -24,7 +28,10 @@ const killDevServerFor = pkg => {
   })
 }
 
-module.exports = function develop(pkg: Package, watcher) {
+module.exports = function develop(
+  pkg: Package,
+  watcher: PackageWatcher,
+): Promise<DevelopInstance> {
   const devInstance = devInstanceMap[pkg.name]
   if (devInstance) {
     return Promise.resolve(devInstance.api)

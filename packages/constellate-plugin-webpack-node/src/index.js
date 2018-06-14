@@ -1,6 +1,6 @@
 // @flow
 
-import type { Package } from 'constellate-dev-utils/build/types'
+import type { Package, BuildPlugin } from 'constellate-dev-utils/build/types'
 import type { PluginOptions } from './types'
 
 const fs = require('fs-extra')
@@ -10,7 +10,7 @@ const bundle = require('./bundle')
 module.exports = function webpackNodeBuildPlugin(
   pkg: Package,
   options: PluginOptions = {},
-) {
+): BuildPlugin {
   return {
     name: 'constellate-plugin-webpack-node',
     build: () => bundle(pkg, options),

@@ -1,6 +1,6 @@
 // @flow
 
-import type { Package } from 'constellate-dev-utils/build/types'
+import type { Package, BuildPlugin } from 'constellate-dev-utils/build/types'
 
 const os = require('os')
 const path = require('path')
@@ -27,7 +27,7 @@ type PluginOptions = {
 module.exports = function flowBuildPlugin(
   pkg: Package,
   options: PluginOptions,
-) {
+): BuildPlugin {
   const patterns = (
     options.inputs || ['**/*.js', '!__tests__', '!test.js']
   ).concat(['!node_modules/**/*', `!${pkg.paths.packageBuildOutput}/**/*`])

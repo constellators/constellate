@@ -1,6 +1,10 @@
 // @flow
 
-import type { Package } from 'constellate-dev-utils/build/types'
+import type {
+  Package,
+  BuildPlugin,
+  DevelopPlugin,
+} from 'constellate-dev-utils/build/types'
 
 const fs = require('fs-extra')
 const { TerminalUtils } = require('constellate-dev-utils')
@@ -8,7 +12,9 @@ const bundle = require('./bundle')
 const develop = require('./develop')
 
 // :: Package, Options -> DevelopAPI
-module.exports = function webpackBuildPlugin(pkg: Package) {
+module.exports = function webpackBuildPlugin(
+  pkg: Package,
+): BuildPlugin & DevelopPlugin {
   return {
     name: 'constellate-plugin-webpack',
     build: () => bundle(pkg),
@@ -23,6 +29,6 @@ module.exports = function webpackBuildPlugin(pkg: Package) {
       TerminalUtils.error('"deploy" not supported by "webpack" plugin')
       process.exit(1)
     },
-    develop: watcher => develop(pkg, options, watcher),
+    develop: watcher => develop(pkg, watcher),
   }
 }

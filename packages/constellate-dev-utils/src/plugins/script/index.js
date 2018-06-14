@@ -1,12 +1,28 @@
+// @flow
+
+import type {
+  Package,
+  BuildPlugin,
+  DevelopPlugin,
+  DeployPlugin,
+} from '../../types'
+
 const R = require('ramda')
 const readPkg = require('read-pkg')
 const TerminalUtils = require('../../terminal')
 const ChildProcessUtils = require('../../childProcess')
 const DevelopPluginUtils = require('../utils')
 
-// :: (Package, DevelopOptions, Watcher) -> DevelopAPI
-module.exports = function scriptPlugin(pkg, options) {
-  if (!options.scriptName) {
+type Options = {
+  scriptName?: string,
+  scriptRunOnce?: boolean,
+}
+
+module.exports = function scriptPlugin(
+  pkg: Package,
+  options: Options,
+): BuildPlugin & DevelopPlugin & DeployPlugin {
+  if (!options.scriptName || typeof options.scriptName !== 'string') {
     throw new Error(
       `No scriptName was provided for the develop configuration of ${
         pkg.name

@@ -1,14 +1,13 @@
 // @flow
 
-import type { Package } from '../../types'
+import type { Package, DevelopPlugin } from '../../types'
 
 const PackageUtils = require('../../packages')
 const TerminalUtils = require('../../terminal')
 
-// :: (Package, DevelopOptions, Watcher) -> DevelopAPI
-module.exports = function buildPlugin(pkg: Package) {
+module.exports = function buildDevelopPlugin(pkg: Package): DevelopPlugin {
   return {
-    name: 'constellate-core-plugin/build',
+    name: 'constellate-core-plugin/build-develop',
     clean: () => {
       TerminalUtils.error('"clean" not supported by "build" plugin')
       process.exit(1)
@@ -21,7 +20,7 @@ module.exports = function buildPlugin(pkg: Package) {
       PackageUtils.buildPackage(pkg)
         // we ensure that nothing is returned as we won't be resolving a
         // develop instance with kill cmd etc
-        .then(() => undefined),
+        .then(() => ({ kill: () => Promise.resolve(undefined) })),
     deploy: () => {
       TerminalUtils.error('"deploy" not supported by "build" plugin')
       process.exit(1)

@@ -1,10 +1,13 @@
 // @flow
 
-import type { Package } from 'constellate-dev-utils/build/types'
+import type { Package, PackageWatcher } from 'constellate-dev-utils/build/types'
 
 const { TerminalUtils } = require('constellate-dev-utils')
 
-module.exports = function createPackageConductor(pkg: Package, watcher) {
+module.exports = function createPackageConductor(
+  pkg: Package,
+  watcher: PackageWatcher,
+) {
   let runningDevelopInstance
 
   return {

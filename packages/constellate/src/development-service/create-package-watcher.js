@@ -1,6 +1,6 @@
 // @flow
 
-import type { Package } from 'constellate-dev-utils/build/types'
+import type { Package, PackageWatcher } from 'constellate-dev-utils/build/types'
 
 const chokidar = require('chokidar')
 const { TerminalUtils } = require('constellate-dev-utils')
@@ -8,7 +8,7 @@ const { TerminalUtils } = require('constellate-dev-utils')
 module.exports = function createPackageWatcher(
   onChange: Function,
   pkg: Package,
-) {
+): PackageWatcher {
   TerminalUtils.verbose(`Creating watcher for ${pkg.name}.`)
 
   const createWatcher = () => {

@@ -1,6 +1,6 @@
 // @flow
 
-import type { Package } from 'constellate-dev-utils/build/types'
+import type { Package, BuildPlugin } from 'constellate-dev-utils/build/types'
 
 const path = require('path')
 const babel = require('babel-core')
@@ -35,7 +35,7 @@ type PluginOptions = {
 module.exports = function babelBuildPlugin(
   pkg: Package,
   options: PluginOptions = {},
-) {
+): BuildPlugin {
   const patterns = (
     options.inputs || ['**/*.js', '**/*.jsx', '!__tests__', '!test.js']
   ).concat([

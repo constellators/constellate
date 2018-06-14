@@ -20,7 +20,7 @@ const defaultPackageConfig = {
   srcDir: 'src',
   outputDir: 'build',
   buildPlugin: null,
-  developPlugin: 'build',
+  developPlugin: 'build-develop',
   deployPlugin: null,
   dependencies: [],
 }
