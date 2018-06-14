@@ -1,5 +1,6 @@
 // @flow
 
+import type { ChildProcess } from 'child_process'
 import type {
   Package,
   BuildPlugin,
@@ -18,6 +19,14 @@ type Options = {
   scriptRunOnce?: boolean,
 }
 
+type TaskName = 'build' | 'develop' | 'deploy' | 'clean'
+
+type ChildProcessMap = {
+  [key: TaskName]: {
+    [key: Package]: ChildProcess,
+  },
+}
+
 module.exports = function scriptPlugin(
   pkg: Package,
   options: Options,
@@ -29,12 +38,21 @@ module.exports = function scriptPlugin(
       }.`,
     )
   }
-  const childProcessMap = {}
-  const addChildProcess = (task, processInstance) => {
-    childProcessMap[task] = processInstance
+  const childProcessMap: ChildProcessMap = {
+    build: {},
+    clean: {},
+    develop: {},
+    deploy: {},
   }
-  const killChildProcessFor = task => {
-    const childProcess = childProcessMap[task]
+
+  const addChildProcess = (task: TaskName, processInstance: ChildProcess) => {
+    childProcessMap[task][pkg] = processInstance
+  }
+
+  const getChildProcess = (task: TaskName) => childProcessMap[task][pkg]
+
+  const killChildProcessFor = (task: TaskName) => {
+    const childProcess = getChildProcess(task)
     if (!childProcess) {
       TerminalUtils.verbose(
         `No running "${task}" script process for ${pkg.name} to kill`,
@@ -53,18 +71,18 @@ module.exports = function scriptPlugin(
 
   const pkgJson = readPkg.sync(pkg.paths.packageJson)
 
-  const returnAPI = {
-    kill: () => killChildProcessFor(pkg),
-  }
+  const runScript = (task: TaskName) => async () => {
+    const returnAPI = {
+      kill: () => killChildProcessFor(task),
+    }
 
-  const runScript = task => async () => {
-    const existingProcess = childProcessMap[pkg.name]
+    const existingProcess = getChildProcess(task)
     if (options.scriptRunOnce && existingProcess) {
       return returnAPI
     }
 
     if (existingProcess) {
-      await killChildProcessFor(pkg)
+      await killChildProcessFor(task)
     }
 
     await new Promise((resolve, reject) => {
