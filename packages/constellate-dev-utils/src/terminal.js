@@ -1,5 +1,11 @@
 // @flow
 
+/* eslint-disable no-console */
+
+import type { Package } from './types'
+
+const StringUtils = require('./strings')
+
 type MultiSelectOptions = {
   choices: Array<string>,
   selected?: Array<string>,
@@ -31,40 +37,81 @@ type ConfirmAnswer = {
   value: boolean,
 }
 
-/* eslint-disable no-console */
-
 const chalk = require('chalk')
 const inquirer = require('inquirer')
 
+const formatVerbose = msg => chalk.dim(msg)
+const formatError = msg => chalk.red.bold(msg)
+const formatWarning = msg => chalk.yellow(msg)
+const formatTitle = msg => chalk.bold.magenta(msg)
+const formatInfo = msg => chalk.blue(msg)
+const formatSuccess = msg => chalk.green(msg)
+const formatHeader = msg => chalk.bold(msg)
+
 function verbose(msg: string): void {
   if (process.env.VERBOSE) {
-    console.log(chalk.dim(msg))
+    console.log(formatVerbose(msg))
+  }
+}
+
+function verbosePkg(pkg: Package, msg: string): void {
+  if (process.env.VERBOSE) {
+    console.log(StringUtils.packageMsg(pkg, formatVerbose(msg)))
   }
 }
 
 function error(msg: string, err?: Error): void {
-  console.log(chalk.red.bold(msg))
-  console.log(err || new Error(msg))
+  console.log(formatError(msg))
+  if (err && err.stack) {
+    console.log(err.stack)
+  }
+}
+
+function errorPkg(pkg: Package, msg: string, err?: Error): void {
+  console.log(StringUtils.packageMsg(pkg, formatError(msg)))
+  if (err && err.stack) {
+    console.log(StringUtils.packageMsg(pkg, err.stack))
+  }
 }
 
 function warning(msg: string): void {
-  console.log(chalk.yellow(msg))
+  console.log(formatWarning(msg))
+}
+
+function warningPkg(pkg: Package, msg: string): void {
+  console.log(StringUtils.packageMsg(pkg, formatWarning(msg)))
 }
 
 function title(msg: string): void {
-  console.log(chalk.bold.magenta(msg))
+  console.log(formatTitle(msg))
+}
+
+function titlePkg(pkg: Package, msg: string): void {
+  console.log(StringUtils.packageMsg(pkg, formatTitle(msg)))
 }
 
 function info(msg: string): void {
-  console.log(chalk.blue(msg))
+  console.log(formatInfo(msg))
+}
+
+function infoPkg(pkg: Package, msg: string): void {
+  console.log(StringUtils.packageMsg(pkg, formatInfo(msg)))
 }
 
 function success(msg: string): void {
-  console.log(chalk.green(msg))
+  console.log(formatSuccess(msg))
+}
+
+function successPkg(pkg: Package, msg: string): void {
+  console.log(StringUtils.packageMsg(pkg, formatSuccess(msg)))
 }
 
 function header(msg: string): void {
-  console.log(chalk.bold(msg))
+  console.log(formatHeader(msg))
+}
+
+function headerPkg(pkg: Package, msg: string): void {
+  console.log(StringUtils.packageMsg(pkg, formatHeader(msg)))
 }
 
 function multiSelect(
@@ -141,15 +188,22 @@ function confirm(message: string): Promise<ConfirmAnswer> {
 }
 
 module.exports = {
-  header,
-  title,
+  confirm,
   error,
-  warning,
+  errorPkg,
+  header,
+  headerPkg,
   info,
-  success,
-  verbose,
+  infoPkg,
+  input,
   multiSelect,
   select,
-  input,
-  confirm,
+  success,
+  successPkg,
+  title,
+  titlePkg,
+  verbose,
+  verbosePkg,
+  warning,
+  warningPkg,
 }

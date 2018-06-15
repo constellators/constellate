@@ -83,18 +83,16 @@ module.exports = async function developmentService() {
     ) {
       // Do nothing as the package currently being built will result in this
       // package being built via it's dependancy chain.
-      TerminalUtils.verbose(
-        `Skipping queue of ${
-          packageToQueue.name
-        } as represented by the package currently being processed`,
+      TerminalUtils.verbosePkg(
+        packageToQueue,
+        `Skipping development service queue as represented by a queued package`,
       )
     } else if (R.any(packageHasDependant(packageToQueue), toProcessQueue)) {
       // Do nothing as one of the queued packagesToDevelop will result in this package
       // getting built via it's dependancy chain.
-      TerminalUtils.verbose(
-        `Skipping queue of ${
-          packageToQueue.name
-        } as represented by the items within the queue`,
+      TerminalUtils.verbosePkg(
+        packageToQueue,
+        `Skipping development service queue as represented by a queued package`,
       )
     } else {
       // Queue the package for building.
@@ -130,8 +128,9 @@ module.exports = async function developmentService() {
       .then(() => ({ success: true }))
       // Or, failed 😭
       .catch(err => {
-        TerminalUtils.error(
-          `Please fix the following issue on ${pkg.name}:`,
+        TerminalUtils.errorPkg(
+          pkg,
+          `An error occurred whilst trying to start development instance.`,
           err,
         )
         return { success: false }
@@ -143,10 +142,9 @@ module.exports = async function developmentService() {
 
         // If the build succeeded we will queue dependants
         if (success) {
-          TerminalUtils.verbose(
-            `Develop process ran successfully for ${
-              pkg.name
-            }, queueing dependants...`,
+          TerminalUtils.verbosePkg(
+            pkg,
+            `Develop process ran successfully, queueing dependants...`,
           )
           const packageDependants = getPackageDependants(pkg)
           packageDependants.forEach(queuePackageForProcessing)

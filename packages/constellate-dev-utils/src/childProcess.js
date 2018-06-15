@@ -1,10 +1,11 @@
 // @flow
 
-import type { Chalk } from 'chalk'
 import type { ExecaChildProcess } from 'execa'
+import type { Package } from './types'
 
 const execa = require('execa')
 const TerminalUtils = require('./terminal')
+const StringUtils = require('./strings')
 
 function exec(
   command: string,
@@ -33,10 +34,8 @@ function exec(
   ).then(result => result.stdout)
 }
 
-function execHijack(
-  color: Chalk,
-  title: string,
-  titleMinLength: number,
+function execPkg(
+  pkg: Package,
   command: string,
   args?: Array<string> = [],
   opts?: Object = {},
@@ -51,27 +50,14 @@ function execHijack(
     }),
   )
 
-  const cleanData = data =>
-    data
-      .toString()
-      .replace(/^(\n)+/, '')
-      .replace(/(\n)+$/, '')
-
-  const formattedPrefix = color(`${title.padEnd(titleMinLength)}|`)
-
-  const formatMsg = msg =>
-    `${formattedPrefix} ${msg.replace(/\n/gi, `\n${formattedPrefix} `)}`
-
   childProcess.stdout.on('data', data => {
-    const cleaned = cleanData(data)
     // eslint-disable-next-line no-console
-    console.log(formatMsg(cleaned))
+    console.log(StringUtils.packageMsg(pkg, data))
   })
 
   childProcess.stderr.on('data', data => {
-    const cleaned = cleanData(data)
     // eslint-disable-next-line no-console
-    console.error(formatMsg(cleaned))
+    console.error(StringUtils.packageMsg(pkg, data))
   })
 
   return childProcess
@@ -103,34 +89,8 @@ function execSync(
   ).stdout
 }
 
-function spawn(
-  command: string,
-  args?: Array<string> = [],
-  opts?: Object = {},
-): ExecaChildProcess {
-  TerminalUtils.verbose(
-    `spawn child process: ${command} ${args.join(' ')}${
-      opts.cwd ? ` (${opts.cwd})` : ''
-    }`,
-  )
-
-  return execa(
-    command,
-    args,
-    Object.assign(
-      {},
-      {
-        env: process.env,
-        stdio: 'inherit',
-      },
-      opts,
-    ),
-  )
-}
-
 module.exports = {
   exec,
-  execHijack,
+  execPkg,
   execSync,
-  spawn,
 }

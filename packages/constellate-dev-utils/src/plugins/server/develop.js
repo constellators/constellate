@@ -29,10 +29,8 @@ const killChildProcessFor = (pkg: Package): Promise<void> => {
 module.exports = function develop(pkg: Package): Promise<DevelopInstance> {
   const startServer = (): Promise<void> =>
     new Promise((resolve, reject) => {
-      const childProcess = ChildProcessUtils.execHijack(
-        pkg.color,
-        pkg.name,
-        pkg.maxPackageNameLength + 1,
+      const childProcess = ChildProcessUtils.execPkg(
+        pkg,
         // Spawn a node process
         'node',
         // That runs the main file

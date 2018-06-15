@@ -99,10 +99,8 @@ module.exports = function scriptPlugin(
         `Executing script "${options.scriptName}" for ${pkg.name}`,
       )
 
-      const childProcess = ChildProcessUtils.execHijack(
-        pkg.color,
-        pkg.name,
-        pkg.maxPackageNameLength + 1,
+      const childProcess = ChildProcessUtils.execPkg(
+        pkg,
         'npm',
         ['run', options.scriptName],
         {

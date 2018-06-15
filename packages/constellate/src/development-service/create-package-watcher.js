@@ -9,7 +9,7 @@ module.exports = function createPackageWatcher(
   onChange: Function,
   pkg: Package,
 ): PackageWatcher {
-  TerminalUtils.verbose(`Creating watcher for ${pkg.name}.`)
+  TerminalUtils.verbosePkg(pkg, `Creating development source watcher.`)
 
   const createWatcher = () => {
     const watcher = chokidar.watch(

@@ -17,16 +17,15 @@ module.exports = function createPackageConductor(
   return {
     // :: void -> Promise
     start: () => {
-      TerminalUtils.verbose(`Starting develop implementation for ${pkg.name}`)
-
       if (!pkg.plugins.developPlugin) {
-        TerminalUtils.verbose(
-          `No develop plugin for package, skipping package conductor creation: ${
-            pkg.name
-          }`,
+        TerminalUtils.verbosePkg(
+          pkg,
+          `No develop plugin, skipping develop execution/conductor`,
         )
         return Promise.resolve(noPluginResult)
       }
+
+      TerminalUtils.verbosePkg(pkg, `Starting develop plugin`)
 
       return pkg.plugins.developPlugin
         .develop(watcher)

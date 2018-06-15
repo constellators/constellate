@@ -92,7 +92,7 @@ module.exports = async function deploymentService() {
     rollbackExit(0)
   }
 
-  ChildProcessUtils.execSync('yarn', ['install'])
+  await ChildProcessUtils.exec('yarn', ['install'])
 
   const packagesToDeploy = namesOfPackagesToDeploy.map(x => allPackages[x])
 
