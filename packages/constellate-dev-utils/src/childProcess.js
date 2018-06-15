@@ -17,6 +17,8 @@ function exec(
     }`,
   )
 
+  process.env.FORCE_COLOR = 'true'
+
   return execa(
     command,
     args,
@@ -38,6 +40,8 @@ function execHijack(
   args?: Array<string> = [],
   opts?: Object = {},
 ): ExecaChildProcess {
+  process.env.FORCE_COLOR = 'true'
+
   const childProcess = execa(
     command,
     args,
@@ -82,6 +86,8 @@ function execSync(
   args?: Array<string> = [],
   opts?: Object = {},
 ): string {
+  process.env.FORCE_COLOR = 'true'
+
   TerminalUtils.verbose(
     `execSync child process: ${command} ${args.join(' ')}${
       opts.cwd ? ` (${opts.cwd})` : ''
