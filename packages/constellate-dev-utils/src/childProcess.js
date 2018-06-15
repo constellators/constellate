@@ -57,7 +57,7 @@ function execHijack(
       .replace(/^(\n)+/, '')
       .replace(/(\n)+$/, '')
 
-  const formattedPrefix = color(`${title.padEnd(titleMinLength, ' ')}|`)
+  const formattedPrefix = color(`${title.padEnd(titleMinLength)}|`)
 
   const formatMsg = msg =>
     `${formattedPrefix} ${msg.replace(/\n/gi, `\n${formattedPrefix} `)}`

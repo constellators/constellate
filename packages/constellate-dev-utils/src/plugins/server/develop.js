@@ -55,10 +55,6 @@ module.exports = function develop(pkg: Package): Promise<DevelopInstance> {
           )
           reject(new Error(`${pkg.name} has problems. Please fix`))
         } else {
-          childProcess.stderr.on('data', data => {
-            TerminalUtils.error(`Runtime error in ${pkg.name}`, data.toString())
-          })
-
           childProcess.on('close', () => {
             TerminalUtils.verbose(`Server process ${pkg.name} stopped`)
           })

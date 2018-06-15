@@ -159,7 +159,7 @@ module.exports = async function getAllPackages(
   // convert into a Package
   const packages = packagePaths.map(toPackage)
 
-  const maxPackageNameLength = Math.max(packages.map(x => x.name.length))
+  const maxPackageNameLength = Math.max(...packages.map(x => x.name.length))
 
   packages.forEach(x => {
     // eslint-disable-next-line no-param-reassign
