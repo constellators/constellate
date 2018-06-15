@@ -55,7 +55,6 @@ function execHijack(
       .toString()
       .replace(/^(\n)+/, '')
       .replace(/(\n)+$/, '')
-      .trim()
 
   const formattedPrefix = color(`[${title}]`)
 
