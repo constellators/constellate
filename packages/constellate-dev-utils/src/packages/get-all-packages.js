@@ -308,9 +308,10 @@ module.exports = async function getAllPackages(
     allPackages => {
       const maxPackageNameLength = Math.max(
         ...allPackages
-          .filter(x => x.plugins.developPlugin)
+          // .filter(x => x.plugins.developPlugin)
           .map(x => x.name.length),
       )
+      console.log('⚽️', maxPackageNameLength)
       allPackages.forEach(x => {
         // eslint-disable-next-line no-param-reassign
         x.maxPackageNameLength = maxPackageNameLength
