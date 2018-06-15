@@ -11,9 +11,29 @@ const tempWrite = require('temp-write')
 const writeJsonFile = require('write-json-file')
 const { TerminalUtils, ChildProcessUtils } = require('constellate-dev-utils')
 
-module.exports = function nowDeploy(pkg: Package, options): DeployPlugin {
+type NowConfig = {
+  forwardNpm?: boolean,
+  public?: boolean,
+}
+
+type NowAliasRules = {}
+
+type Options = {
+  additionalAliasRules?: Array<NowAliasRules>,
+  alias?: string,
+  disableRemovePrevious?: boolean,
+  deployTimeoutMins?: number,
+  passThroughEnvVars?: Array<string>,
+  nowConfig?: NowConfig,
+}
+
+module.exports = function nowDeploy(
+  pkg: Package,
+  options: Options = {},
+): DeployPlugin {
   if (R.isNil(options.alias) || R.isEmpty(options.alias)) {
-    TerminalUtils.error(
+    TerminalUtils.errorPkg(
+      pkg,
       'You must supply an "alias" for the "now" deploy plugin.',
     )
     process.exit(1)
@@ -22,27 +42,29 @@ module.exports = function nowDeploy(pkg: Package, options): DeployPlugin {
   return {
     name: 'constellate-plugin-now',
     build: () => {
-      TerminalUtils.error('"build" not supported by "now" plugin')
+      TerminalUtils.errorPkg(pkg, '"build" not supported by "now" plugin')
       process.exit(1)
     },
     clean: () => {
-      TerminalUtils.error('"clean" not supported by "now" plugin')
+      TerminalUtils.errorPkg(pkg, '"clean" not supported by "now" plugin')
       process.exit(1)
     },
     develop: () => {
-      TerminalUtils.error('"develop" not supported by "now" plugin')
+      TerminalUtils.errorPkg(pkg, '"develop" not supported by "now" plugin')
       process.exit(1)
     },
     deploy: async () => {
       if (process.env.NOW_USERNAME == null) {
-        TerminalUtils.error(
+        TerminalUtils.errorPkg(
+          pkg,
           'In order to deploy to "now" you must supply your "now" username via a NOW_USERNAME environment variable.',
         )
         process.exit(1)
       }
 
       if (process.env.NOW_TOKEN == null) {
-        TerminalUtils.error(
+        TerminalUtils.errorPkg(
+          pkg,
           'In order to deploy to "now" you must supply your "now" API token via a NOW_TOKEN environment variable.',
         )
         process.exit(1)
@@ -51,7 +73,8 @@ module.exports = function nowDeploy(pkg: Package, options): DeployPlugin {
       try {
         ChildProcessUtils.execSync('now', ['-v'])
       } catch (err) {
-        TerminalUtils.error(
+        TerminalUtils.errorPkg(
+          pkg,
           'You need to have the "now" CLI installed on your machine and available on your PATH in order to deploy to now.',
         )
         throw err
@@ -62,7 +85,10 @@ module.exports = function nowDeploy(pkg: Package, options): DeployPlugin {
       const alias = options.alias
       const envVars = options.passThroughEnvVars
         ? options.passThroughEnvVars.reduce(
-            (acc, cur) => [...acc, '-e', `${cur}=${process.env[cur]}`],
+            (acc, cur) =>
+              process.env[cur]
+                ? [...acc, '-e', `${cur}=${process.env[cur]}`]
+                : acc,
             [],
           )
         : []
@@ -78,7 +104,7 @@ module.exports = function nowDeploy(pkg: Package, options): DeployPlugin {
           // User overrides
           options.nowConfig || {},
         ),
-        // Fixed - these must be provided via the env for forced safety
+        // These must be provided via the env for forced safety:
         {
           token: process.env.NOW_TOKEN,
           user: {
@@ -97,10 +123,10 @@ module.exports = function nowDeploy(pkg: Package, options): DeployPlugin {
         nowConfigPath,
         '-C',
         '-t',
-        process.env.NOW_TOKEN,
+        process.env.NOW_TOKEN || '',
       ]
 
-      const deployResponse = await ChildProcessUtils.exec('now', args, {
+      const deployResponse = await ChildProcessUtils.execPkg(pkg, 'now', args, {
         cwd: pkg.paths.packageRoot,
       })
       const deploymentIdRegex = /(https:\/\/.+\.now\.sh)/g
@@ -109,9 +135,7 @@ module.exports = function nowDeploy(pkg: Package, options): DeployPlugin {
         process.exit(1)
       }
       const deploymentId = deployResponse.match(deploymentIdRegex)[0]
-      TerminalUtils.info(
-        `Creating deployment (${deploymentId}) for ${pkg.name}...`,
-      )
+      TerminalUtils.infoPkg(pkg, `Creating deployment (${deploymentId})...`)
 
       // Now we need to wait for the deployment to be ready.
 
@@ -121,7 +145,8 @@ module.exports = function nowDeploy(pkg: Package, options): DeployPlugin {
         if (ready) {
           return
         }
-        TerminalUtils.error(
+        TerminalUtils.errorPkg(
+          pkg,
           dedent(`
           The deployment process timed out. :( There may be an issue with your deployment or with "now". You could try to manually deploy using the following commands to gain more insight into the issue:
 
@@ -141,50 +166,55 @@ module.exports = function nowDeploy(pkg: Package, options): DeployPlugin {
           if (/READY/.test(status)) {
             ready = true
           } else {
-            TerminalUtils.info('...')
+            TerminalUtils.infoPkg(pkg, '...')
           }
         },
       )
 
-      TerminalUtils.info(
-        `Setting up alias for new deployment of ${pkg.name} to ${alias}....`,
+      TerminalUtils.infoPkg(
+        pkg,
+        `Setting up alias for new deployment to ${alias}....`,
       )
-      await ChildProcessUtils.exec('now', ['alias', 'set', deploymentId, alias])
+      await ChildProcessUtils.execPkg(pkg, 'now', [
+        'alias',
+        'set',
+        deploymentId,
+        alias,
+      ])
 
       // We need to do this at this point before attaching the rules as the rules
       // seem to indicate the deployment as not being aliased :-/
       if (!options.disableRemovePrevious) {
         // Removes previous deployments 👍
         try {
-          TerminalUtils.info(
-            `Removing unaliased deployments for ${pkg.name}...`,
-          )
-          await ChildProcessUtils.exec('now', [
+          TerminalUtils.infoPkg(pkg, `Removing unaliased deployments...`)
+          await ChildProcessUtils.execPkg(pkg, 'now', [
             'rm',
             deploymentName,
             '--safe',
             '-y',
           ])
         } catch (err) {
-          TerminalUtils.verbose(
-            'Failed to remove previous deployments. There may not be any available.',
+          TerminalUtils.errorPkg(
+            pkg,
+            'Failed to remove previous deployments. There may not have been any previous deployments.',
           )
-          TerminalUtils.verbose(err)
+          TerminalUtils.verbosePkg(pkg, err.stack)
         }
       }
 
       if (options.additionalAliasRules) {
-        TerminalUtils.info('Attaching additional alias rules...')
+        TerminalUtils.infoPkg(pkg, 'Attaching additional alias rules...')
         const aliasRulesPath = tempWrite.sync()
         writeJsonFile.sync(aliasRulesPath, {
           rules: [
-            ...options.additionalAliasRules,
+            ...(options.additionalAliasRules || []),
             {
               dest: deploymentId,
             },
           ],
         })
-        await ChildProcessUtils.exec('now', [
+        await ChildProcessUtils.execPkg(pkg, 'now', [
           'alias',
           alias,
           '-r',
@@ -195,16 +225,20 @@ module.exports = function nowDeploy(pkg: Package, options): DeployPlugin {
       const minScale = R.path(['scale', 'min'], options)
       if (minScale) {
         const maxScale = R.path(['scale', 'max'], options)
-        TerminalUtils.info(
-          `Setting the scale factor to ${minScale} ${maxScale || ''}....`,
+        TerminalUtils.infoPkg(
+          pkg,
+          `Setting the scale factor to min(${minScale}) ${
+            maxScale ? `max(${maxScale})` : ''
+          }....`,
         )
-        await ChildProcessUtils.exec(
+        await ChildProcessUtils.execPkg(
+          pkg,
           'now',
           ['scale', deploymentId, minScale, maxScale].filter(x => x != null),
         )
       }
 
-      TerminalUtils.success(`${pkg.name} has been successfully deployed`)
+      TerminalUtils.successPkg(pkg, `Deployment successful`)
     },
   }
 }

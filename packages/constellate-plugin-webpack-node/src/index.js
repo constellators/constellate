@@ -22,11 +22,15 @@ module.exports = function webpackNodeBuildPlugin(
         resolve()
       }),
     deploy: () => {
-      TerminalUtils.error('"deploy" not supported by "webpack-node" plugin')
+      TerminalUtils.errorPkg(
+        pkg,
+        '"deploy" not supported by "webpack-node" plugin',
+      )
       process.exit(1)
     },
     develop: () => {
-      TerminalUtils.error(
+      TerminalUtils.errorPkg(
+        pkg,
         '"develop" not supported by "webpack-node" plugin. Why not try the "server" plugin instead.',
       )
       process.exit(1)

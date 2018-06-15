@@ -39,7 +39,10 @@ module.exports = function develop(
 
   return getPort()
     .then(port => {
-      TerminalUtils.verbose(`Found free port ${port} for webpack dev server`)
+      TerminalUtils.verbosePkg(
+        pkg,
+        `Found free port ${port} for webpack dev server`,
+      )
       return new Promise((resolve, reject) => {
         let hasResolved = false
         let showNextSuccess = false
@@ -49,8 +52,9 @@ module.exports = function develop(
 
         const server = new WebpackDevServer(compiler, config.devServer)
         server.listen(port, '0.0.0.0', () => {
-          TerminalUtils.verbose(
-            `${pkg.name} listening on http://0.0.0.0:${port}`,
+          TerminalUtils.verbosePkg(
+            pkg,
+            `Web dev server listening on http://0.0.0.0:${port}`,
           )
         })
 
@@ -59,8 +63,9 @@ module.exports = function develop(
         compiler.plugin('done', doneStats => {
           const doneError = extractError(pkg, null, doneStats)
           if (doneError && hasResolved) {
-            TerminalUtils.error(
-              `Please fix the following issue on ${pkg.name}\n\n${doneError}`,
+            TerminalUtils.errorPkg(
+              pkg,
+              `Please fix the following issue:\n\n${doneError}`,
             )
             showNextSuccess = hasResolved && true
           } else {
@@ -82,7 +87,8 @@ module.exports = function develop(
                     reject(doneError)
                   })
                 } catch (err) {
-                  TerminalUtils.verbose(
+                  TerminalUtils.verbosePkg(
+                    pkg,
                     'Could not close existing web-dev-server',
                   )
                   TerminalUtils.verbose(err)

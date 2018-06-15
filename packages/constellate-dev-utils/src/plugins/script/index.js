@@ -54,14 +54,16 @@ module.exports = function scriptPlugin(
   const killChildProcessFor = (task: TaskName) => {
     const childProcess = getChildProcess(task)
     if (!childProcess) {
-      TerminalUtils.verbose(
-        `No running "${task}" script process for ${pkg.name} to kill`,
+      TerminalUtils.verbosePkg(
+        pkg,
+        `No running "${task}" script process to kill`,
       )
       return Promise.resolve()
     }
     return DevelopPluginUtils.killChildProcess(pkg, childProcess).then(() => {
-      TerminalUtils.verbose(
-        `Killed "${task}" script process for ${pkg.name} successfully`,
+      TerminalUtils.verbosePkg(
+        pkg,
+        `Killed "${task}" script process successfully`,
       )
       if (childProcessMap[task]) {
         delete childProcessMap[task]
@@ -95,9 +97,7 @@ module.exports = function scriptPlugin(
         )
       }
 
-      TerminalUtils.info(
-        `Executing script "${options.scriptName}" for ${pkg.name}`,
-      )
+      TerminalUtils.infoPkg(pkg, `Executing script "${options.scriptName}"`)
 
       const childProcess = ChildProcessUtils.execPkg(
         pkg,
@@ -109,8 +109,9 @@ module.exports = function scriptPlugin(
       )
 
       childProcess.catch(err => {
-        TerminalUtils.verbose(
-          `Error executing script "${options.scriptName}" for ${pkg.name}`,
+        TerminalUtils.verbosePkg(
+          pkg,
+          `Error executing script "${options.scriptName}"`,
         )
         reject(err)
       })
@@ -119,8 +120,9 @@ module.exports = function scriptPlugin(
       // error that may have occurred
       process.nextTick(() => {
         childProcess.on('close', () => {
-          TerminalUtils.verbose(
-            `Stopped script "${options.scriptName}" process for ${pkg.name}`,
+          TerminalUtils.verbosePkg(
+            pkg,
+            `Stopped script "${options.scriptName}" process`,
           )
         })
         addChildProcess(task, childProcess)

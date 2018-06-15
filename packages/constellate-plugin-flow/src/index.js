@@ -67,11 +67,11 @@ module.exports = function flowBuildPlugin(
         resolve()
       }),
     deploy: () => {
-      TerminalUtils.error('"deploy" not supported by "flow" plugin')
+      TerminalUtils.errorPkg(pkg, '"deploy" not supported by "flow" plugin')
       process.exit(1)
     },
     develop: () => {
-      TerminalUtils.error('"develop" not supported by "flow" plugin')
+      TerminalUtils.errorPkg(pkg, '"develop" not supported by "flow" plugin')
       process.exit(1)
     },
   }

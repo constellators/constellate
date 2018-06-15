@@ -82,11 +82,11 @@ module.exports = function babelBuildPlugin(
         resolve()
       }),
     deploy: () => {
-      TerminalUtils.error('"deploy" not supported by "babel" plugin')
+      TerminalUtils.errorPkg(pkg, '"deploy" not supported by "babel" plugin')
       process.exit(1)
     },
     develop: () => {
-      TerminalUtils.error('"develop" not supported by "babel" plugin')
+      TerminalUtils.errorPkg(pkg, '"develop" not supported by "babel" plugin')
       process.exit(1)
     },
   }

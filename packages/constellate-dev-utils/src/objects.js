@@ -1,3 +1,5 @@
+// @flow
+
 const deepMerge = require('deepmerge')
 
 /**
@@ -9,7 +11,7 @@ const deepMerge = require('deepmerge')
  *
  * @return {Object} - The merged object.
  */
-function mergeDeep(left, right) {
+function mergeDeep(left: Object, right: Object): Object {
   return deepMerge(left, right)
 }
 

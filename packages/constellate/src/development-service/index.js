@@ -191,8 +191,7 @@ module.exports = async function developmentService() {
   // Ensure graceful shutting down:
   gracefulShutdownManager(packageDevelopConductors, packageWatchers)
 
-  // prevent node process from exiting. (until CTRL + C is pressed at least)
   return new Promise(() => {
-    // NEVER RESOLVE
+    // Never resolve as we are going to wait to CTRL + C to exit.
   })
 }

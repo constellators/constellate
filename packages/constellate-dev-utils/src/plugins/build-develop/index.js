@@ -9,11 +9,11 @@ module.exports = function buildDevelopPlugin(pkg: Package): DevelopPlugin {
   return {
     name: 'constellate-core-plugin/build-develop',
     clean: () => {
-      TerminalUtils.error('"clean" not supported by "build" plugin')
+      TerminalUtils.errorPkg(pkg, '"clean" not supported by "build" plugin')
       process.exit(1)
     },
     build: () => {
-      TerminalUtils.error('"build" not supported by "build" plugin')
+      TerminalUtils.errorPkg(pkg, '"build" not supported by "build" plugin')
       process.exit(1)
     },
     develop: () =>
@@ -22,7 +22,7 @@ module.exports = function buildDevelopPlugin(pkg: Package): DevelopPlugin {
         // develop instance with kill cmd etc
         .then(() => ({ kill: () => Promise.resolve(undefined) })),
     deploy: () => {
-      TerminalUtils.error('"deploy" not supported by "build" plugin')
+      TerminalUtils.errorPkg(pkg, '"deploy" not supported by "build" plugin')
       process.exit(1)
     },
   }

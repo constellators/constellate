@@ -15,16 +15,8 @@ const multiLineStringToArray = (str: string): Array<string> =>
   )(str)
 
 const packageMsg = (pkg: Package, msg: string) => {
-  // const cleanData = data =>
-  //   data
-  //     .toString()
-  //     .replace(/^(\n)+/, '')
-  //     .replace(/(\n)+$/, '')
-
-  // const cleaned = cleanData(data)
-
   const formattedPrefix = pkg.color(
-    `${pkg.name.padEnd(pkg.maxPackageNameLength)}|`,
+    `${pkg.name.padEnd(pkg.maxPackageNameLength + 1)}|`,
   )
 
   return `${formattedPrefix} ${(msg || '')

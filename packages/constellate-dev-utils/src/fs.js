@@ -1,8 +1,10 @@
+// @flow
+
 const TerminalUtils = require('./terminal')
 const path = require('path')
 const fs = require('fs-extra')
 
-function resolvePackage(resolvedPackageName) {
+function resolvePackage(resolvedPackageName: string) {
   const packagePath = require.resolve(resolvedPackageName)
   TerminalUtils.verbose(`Trying to resolve package ${packagePath}`)
   let resolvedPackage

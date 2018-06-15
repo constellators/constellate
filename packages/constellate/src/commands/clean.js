@@ -1,3 +1,5 @@
+// @flow
+
 const { TerminalUtils, PackageUtils } = require('constellate-dev-utils')
 const R = require('ramda')
 const pSeries = require('p-series')

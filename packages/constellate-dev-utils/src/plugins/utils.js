@@ -1,15 +1,15 @@
 // @flow
 
-import type { ChildProcess } from 'child_process'
+import type { ExecaChildProcess } from 'execa'
 import type { Package } from '../types'
 
 const TerminalUtils = require('../terminal')
 
 function killChildProcess(
   pkg: Package,
-  childProcess: ChildProcess,
+  childProcess: ExecaChildProcess,
 ): Promise<void> {
-  TerminalUtils.verbose(`Killing ${pkg.name}...`)
+  TerminalUtils.verbosePkg(pkg, `Killing child process...`)
 
   return new Promise(resolve => {
     let killed = false
@@ -19,14 +19,14 @@ function killChildProcess(
     })
 
     childProcess.catch(err => {
-      TerminalUtils.verbose(`${pkg.name} was not killed with errors`)
-      TerminalUtils.verbose(err)
+      TerminalUtils.verbosePkg(pkg, `Process killed with errors`)
+      TerminalUtils.verbosePkg(pkg, err)
       resolve()
     })
 
     const checkInterval = setInterval(() => {
       if (killed) {
-        TerminalUtils.verbose(`Kill for ${pkg.name} resolved`)
+        TerminalUtils.verbosePkg(pkg, `Process killed`)
         clearInterval(checkInterval)
         resolve()
       }
@@ -34,7 +34,7 @@ function killChildProcess(
 
     childProcess.kill('SIGTERM')
   }).catch(err => {
-    TerminalUtils.verbose(`Fatal error whilst killing ${pkg.name}`)
+    TerminalUtils.verbosePkg(pkg, `Fatal error whilst killing process`)
     throw err
   })
 }

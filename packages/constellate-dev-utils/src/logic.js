@@ -1,3 +1,5 @@
+// @flow
+
 const R = require('ramda')
 
 const execIfFunc = x => (typeof x === 'function' ? x() : x)

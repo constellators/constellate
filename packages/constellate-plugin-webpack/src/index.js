@@ -26,7 +26,7 @@ module.exports = function webpackBuildPlugin(
         resolve()
       }),
     deploy: () => {
-      TerminalUtils.error('"deploy" not supported by "webpack" plugin')
+      TerminalUtils.errorPkg(pkg, '"deploy" not supported by "webpack" plugin')
       process.exit(1)
     },
     develop: watcher => develop(pkg, watcher),

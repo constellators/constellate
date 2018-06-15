@@ -40,7 +40,7 @@ module.exports = function develop(pkg: Package): Promise<DevelopInstance> {
         },
       )
       childProcess.catch(err => {
-        TerminalUtils.verbose(`Error starting ${pkg.name}`)
+        TerminalUtils.verbosePkg(pkg, `Error starting`)
         reject(err)
       })
 
@@ -48,13 +48,14 @@ module.exports = function develop(pkg: Package): Promise<DevelopInstance> {
       // error that may have occurred
       process.nextTick(() => {
         if (!childProcess.stderr) {
-          TerminalUtils.verbose(
+          TerminalUtils.verbosePkg(
+            pkg,
             'Not resolving server as childProcess was not created properly. An error probably occurred.',
           )
           reject(new Error(`${pkg.name} has problems. Please fix`))
         } else {
           childProcess.on('close', () => {
-            TerminalUtils.verbose(`Server process ${pkg.name} stopped`)
+            TerminalUtils.verbosePkg(pkg, `Server process stopped`)
           })
 
           childProcessMap[pkg.name] = childProcess

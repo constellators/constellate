@@ -1,6 +1,8 @@
-function throttle(duration, fn) {
+// @flow
+
+function throttle(duration: number, fn: () => mixed) {
   let throttler = null
-  return (...args) => {
+  return (...args: Array<mixed>) => {
     if (throttler) {
       clearTimeout(throttler)
     }
