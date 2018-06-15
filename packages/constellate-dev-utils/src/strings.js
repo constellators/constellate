@@ -27,10 +27,9 @@ const packageMsg = (pkg: Package, msg: string) => {
     `${pkg.name.padEnd(pkg.maxPackageNameLength)}|`,
   )
 
-  return `${formattedPrefix} ${(msg || '').replace(
-    /\n/gi,
-    `\n${formattedPrefix} `,
-  )}`
+  return `${formattedPrefix} ${(msg || '')
+    .toString()
+    .replace(/\n/gi, `\n${formattedPrefix} `)}`
 }
 
 module.exports = {
