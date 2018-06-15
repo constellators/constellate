@@ -64,18 +64,14 @@ function execHijack(
 
   childProcess.stdout.on('data', data => {
     const cleaned = cleanData(data)
-    if (cleaned !== '') {
-      // eslint-disable-next-line no-console
-      console.log(formatMsg(cleaned))
-    }
+    // eslint-disable-next-line no-console
+    console.log(formatMsg(cleaned))
   })
 
   childProcess.stderr.on('data', data => {
     const cleaned = cleanData(data)
-    if (cleaned !== '') {
-      // eslint-disable-next-line no-console
-      console.error(formatMsg(cleaned))
-    }
+    // eslint-disable-next-line no-console
+    console.error(formatMsg(cleaned))
   })
 
   return childProcess

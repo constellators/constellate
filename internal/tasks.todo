@@ -28,6 +28,7 @@ Docs:
   ☐ Usage of process.stdin.read() to stop process exiting (even though it has child processes)
 
 Features/Chores:
+  ☐ Change server develop plugin to use entry file, or use "main" via useMain flag.
   ☐ Allow the ability to specify packages to be ignored by the development process (e.g. watching test libraries not useful and waste of resources).
   ☐ Read the lerna config for package sources if none specified in constellate config
   ☐ Change deployment process to allow for the selection of independent versions for each package as well as being able to specify that the latest version should be deployed.

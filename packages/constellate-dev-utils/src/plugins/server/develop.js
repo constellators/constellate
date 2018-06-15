@@ -29,15 +29,14 @@ const killChildProcessFor = (pkg: Package): Promise<void> => {
 module.exports = function develop(pkg: Package): Promise<DevelopInstance> {
   const startServer = (): Promise<void> =>
     new Promise((resolve, reject) => {
-      const childProcess = ChildProcessUtils.spawn(
+      const childProcess = ChildProcessUtils.execHijack(
+        pkg.color,
+        pkg.name,
         // Spawn a node process
         'node',
         // That runs the main file
         [path.resolve(pkg.paths.packageRoot, pkg.packageJson.main)],
-        // Ensure that output supports color etc
-        // We use pipe for the error so that we can log a header for ther error.
         {
-          stdio: [process.stdin, process.stdout, 'pipe'],
           cwd: pkg.paths.packageRoot,
         },
       )
