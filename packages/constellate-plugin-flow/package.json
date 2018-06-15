@@ -1,5 +1,5 @@
 {
-  "version": "0.26.4",
+  "version": "0.26.5",
   "name": "constellate-plugin-flow",
   "description": "Flow plugin for Constellate projects.",
   "main": "build/index.js",
@@ -7,7 +7,7 @@
     "build"
   ],
   "dependencies": {
-    "constellate-dev-utils": "^0.26.5",
+    "constellate-dev-utils": "^0.26.6",
     "flow-remove-types": "1.2.3",
     "fs-extra": "6.0.1",
     "globby": "8.0.1",
