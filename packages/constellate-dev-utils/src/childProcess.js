@@ -36,6 +36,7 @@ function exec(
 function execHijack(
   color: Chalk,
   title: string,
+  titleMinLength: number,
   command: string,
   args?: Array<string> = [],
   opts?: Object = {},
@@ -56,7 +57,7 @@ function execHijack(
       .replace(/^(\n)+/, '')
       .replace(/(\n)+$/, '')
 
-  const formattedPrefix = color(`[${title}]`)
+  const formattedPrefix = color(`${title.padEnd(titleMinLength, ' ')}|`)
 
   const formatMsg = msg =>
     `${formattedPrefix} ${msg.replace(/\n/gi, `\n${formattedPrefix} `)}`

@@ -32,6 +32,7 @@ module.exports = function develop(pkg: Package): Promise<DevelopInstance> {
       const childProcess = ChildProcessUtils.execHijack(
         pkg.color,
         pkg.name,
+        pkg.maxPackageNameLength + 1,
         // Spawn a node process
         'node',
         // That runs the main file

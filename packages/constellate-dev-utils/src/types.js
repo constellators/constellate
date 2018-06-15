@@ -58,6 +58,7 @@ export type Package = {
   dependants: Array<string>,
   dependencies: Array<string>,
   devDependencies: Array<string>,
+  maxPackageNameLength: number,
   name: string,
   packageJson: Object,
   packageName: string,
