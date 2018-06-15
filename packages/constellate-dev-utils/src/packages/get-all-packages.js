@@ -159,13 +159,6 @@ module.exports = async function getAllPackages(
   // convert into a Package
   const packages = packagePaths.map(toPackage)
 
-  const maxPackageNameLength = Math.max(...packages.map(x => x.name.length))
-
-  packages.forEach(x => {
-    // eslint-disable-next-line no-param-reassign
-    x.maxPackageNameLength = maxPackageNameLength
-  })
-
   // :: Package -> Array<string>
   const getSoftDependencies = pkg =>
     (pkg.config.softDependencies || []).reduce((acc, dependencyName) => {
@@ -311,6 +304,19 @@ module.exports = async function getAllPackages(
           plugins: getPlugins(pkg),
         }),
       )(allPackages),
+    // Attach max length to packages,
+    allPackages => {
+      const maxPackageNameLength = Math.max(
+        ...allPackages
+          .filter(x => x.plugins.developPlugin)
+          .map(x => x.name.length),
+      )
+      allPackages.forEach(x => {
+        // eslint-disable-next-line no-param-reassign
+        x.maxPackageNameLength = maxPackageNameLength
+      })
+      return allPackages
+    },
     // Verbose logging
     R.map(pkg => {
       TerminalUtils.verbose(
