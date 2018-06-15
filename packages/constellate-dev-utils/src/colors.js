@@ -46,11 +46,11 @@ let bgIndex = 0
 let fgIndex = -1
 
 const nextColorPair = (): Chalk => {
-  let nextFgIndex = fgIndex + 1
-  if (nextFgIndex === bgIndex) {
-    nextFgIndex += 1
+  fgIndex += 1
+  if (fgIndex === bgIndex) {
+    fgIndex += 1
   }
-  if (nextFgIndex + 1 > foreground.length) {
+  if (fgIndex + 1 > foreground.length) {
     fgIndex = -1
     bgIndex += 1
     if (bgIndex + 1 > background.length) {
@@ -58,7 +58,9 @@ const nextColorPair = (): Chalk => {
     }
     return nextColorPair()
   }
-  return chalk[background[bgIndex]][foreground[fgIndex]]
+  const bg = background[bgIndex]
+  const fg = foreground[fgIndex]
+  return chalk[bg][fg]
 }
 
 module.exports = {

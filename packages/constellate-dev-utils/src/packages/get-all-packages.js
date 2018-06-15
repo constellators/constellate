@@ -55,7 +55,7 @@ const toPackage = packagePath => {
   )
   return {
     name: packageName,
-    consolePrefix: ColorUtils.nextColorPair()(packageName),
+    color: ColorUtils.nextColorPair(),
     config,
     packageJson,
     packageName: packageJson.name,

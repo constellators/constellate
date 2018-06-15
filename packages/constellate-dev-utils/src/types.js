@@ -2,6 +2,7 @@
 /* eslint-disable no-use-before-define */
 
 import type { ChildProcess } from 'child_process'
+import type { Chalk } from 'chalk'
 
 export type PackageVersions = { [string]: string }
 
@@ -53,7 +54,7 @@ export type PackagePlugins = {
 
 export type Package = {
   config: Object,
-  consolePrefix: string,
+  color: Chalk,
   dependants: Array<string>,
   dependencies: Array<string>,
   devDependencies: Array<string>,

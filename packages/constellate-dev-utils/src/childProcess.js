@@ -1,5 +1,6 @@
 // @flow
 
+import type { Chalk } from 'chalk'
 import type { ExecaChildProcess } from 'execa'
 
 const execa = require('execa')
@@ -31,7 +32,8 @@ function exec(
 }
 
 function execHijack(
-  prefix: string,
+  color: Chalk,
+  title: string,
   command: string,
   args?: Array<string> = [],
   opts?: Object = {},
@@ -51,10 +53,10 @@ function execHijack(
       .replace(/(\n)+$/, '')
       .trim()
 
-  const formattedPrefix = `[${prefix}] - `
+  const formattedPrefix = color(`[${title}]`)
 
   const formatMsg = msg =>
-    `${formattedPrefix} - ${msg.replace(/\n/gi, `\n${formattedPrefix}`)}`
+    `${formattedPrefix} ${msg.replace(/\n/gi, `\n${formattedPrefix} `)}`
 
   childProcess.stdout.on('data', data => {
     const cleaned = cleanData(data)
