@@ -21,3 +21,6 @@ Thumbs.db
 # Transpiled Packages
 packages/*/build
 
+# Generated files
+packages/*/.flowconfig
+
