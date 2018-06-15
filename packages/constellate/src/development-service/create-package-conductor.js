@@ -19,7 +19,7 @@ module.exports = function createPackageConductor(
     start: () => {
       TerminalUtils.verbose(`Starting develop implementation for ${pkg.name}`)
 
-      if (pkg.plugins.developPlugin) {
+      if (!pkg.plugins.developPlugin) {
         TerminalUtils.verbose(
           `No develop plugin for package, skipping package conductor creation: ${
             pkg.name
