@@ -58,7 +58,7 @@ const nextColorPair = (): Chalk => {
     }
     return nextColorPair()
   }
-  return chalk[background[bgIndex]]
+  return chalk[background[bgIndex]][foreground[fgIndex]]
 }
 
 module.exports = {
