@@ -4,6 +4,10 @@ import type { Package, PackageWatcher } from 'constellate-dev-utils/build/types'
 
 const { TerminalUtils } = require('constellate-dev-utils')
 
+const noPluginResult = {
+  kill: () => Promise.resolve(),
+}
+
 module.exports = function createPackageConductor(
   pkg: Package,
   watcher: PackageWatcher,
@@ -15,12 +19,13 @@ module.exports = function createPackageConductor(
     start: () => {
       TerminalUtils.verbose(`Starting develop implementation for ${pkg.name}`)
 
-      if (!pkg.plugins.developPlugin) {
-        throw new Error(
-          `Trying to run develop plugin on package without one specified: ${
+      if (pkg.plugins.developPlugin) {
+        TerminalUtils.verbose(
+          `No develop plugin for package, skipping package conductor creation: ${
             pkg.name
           }`,
         )
+        return Promise.resolve(noPluginResult)
       }
 
       return pkg.plugins.developPlugin

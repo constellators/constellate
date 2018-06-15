@@ -22,7 +22,7 @@ const defaultPackageConfig = {
   entryFile: 'index.js',
   outputDir: 'build',
   buildPlugin: null,
-  developPlugin: 'build-develop',
+  developPlugin: null,
   deployPlugin: null,
   dependencies: [],
 }
