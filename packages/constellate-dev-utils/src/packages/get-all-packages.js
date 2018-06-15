@@ -11,6 +11,7 @@ const R = require('ramda')
 const TerminalUtils = require('../terminal')
 const AppUtils = require('../app')
 const ObjectUtils = require('../objects')
+const ColorUtils = require('../colors')
 const resolvePlugin = require('../plugins/resolvePlugin')
 const resolvePackageRoots = require('./resolve-package-roots')
 
@@ -54,6 +55,7 @@ const toPackage = packagePath => {
   )
   return {
     name: packageName,
+    consolePrefix: ColorUtils.nextColorPair()(packageName),
     config,
     packageJson,
     packageName: packageJson.name,

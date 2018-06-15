@@ -99,14 +99,15 @@ module.exports = function scriptPlugin(
         `Executing script "${options.scriptName}" for ${pkg.name}`,
       )
 
-      const childProcess = ChildProcessUtils.spawn(
+      const childProcess = ChildProcessUtils.execHijack(
+        pkg.consolePrefix,
         'npm',
         ['run', options.scriptName],
         {
-          stdio: 'inherit',
           cwd: pkg.paths.packageRoot,
         },
       )
+
       childProcess.catch(err => {
         TerminalUtils.verbose(
           `Error executing script "${options.scriptName}" for ${pkg.name}`,

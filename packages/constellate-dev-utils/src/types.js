@@ -1,6 +1,8 @@
 // @flow
 /* eslint-disable no-use-before-define */
 
+import type { ChildProcess } from 'child_process'
+
 export type PackageVersions = { [string]: string }
 
 export type PackageWatcher = {
@@ -51,6 +53,7 @@ export type PackagePlugins = {
 
 export type Package = {
   config: Object,
+  consolePrefix: string,
   dependants: Array<string>,
   dependencies: Array<string>,
   devDependencies: Array<string>,
@@ -63,3 +66,21 @@ export type Package = {
 }
 
 export type PackageMap = { [string]: Package }
+
+declare module 'execa' {
+  declare type ExecaChildProcess = ChildProcess & Promise<string, Error>
+  declare type Execa = (
+    cmd: string,
+    args: ?Array<string>,
+    opts: ?Object,
+  ) => ExecaChildProcess
+
+  declare type ExecaStatics = {
+    spawn: Execa,
+    sync: ChildProcess,
+  }
+
+  declare type ExecaWithStatics = Execa & ExecaStatics
+
+  declare module.exports: ExecaWithStatics
+}

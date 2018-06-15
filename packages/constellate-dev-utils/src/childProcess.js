@@ -1,13 +1,19 @@
 // @flow
 
-import type { ChildProcess } from 'child_process'
+import type { ExecaChildProcess } from 'execa'
 
 const execa = require('execa')
 const TerminalUtils = require('./terminal')
 
-function exec(command: string, args?: Array<string> = [], opts?: Object = {}): Promise<string> {
+function exec(
+  command: string,
+  args?: Array<string> = [],
+  opts?: Object = {},
+): ExecaChildProcess {
   TerminalUtils.verbose(
-    `exec child process: ${command} ${args.join(' ')}${opts.cwd ? ` (${opts.cwd})` : ''}`,
+    `exec child process: ${command} ${args.join(' ')}${
+      opts.cwd ? ` (${opts.cwd})` : ''
+    }`,
   )
 
   return execa(
@@ -24,9 +30,60 @@ function exec(command: string, args?: Array<string> = [], opts?: Object = {}): P
   ).then(result => result.stdout)
 }
 
-function execSync(command: string, args?: Array<string> = [], opts?: Object = {}): string {
+function execHijack(
+  prefix: string,
+  command: string,
+  args?: Array<string> = [],
+  opts?: Object = {},
+): ExecaChildProcess {
+  const childProcess = execa(
+    command,
+    args,
+    Object.assign({}, opts, {
+      env: process.env,
+    }),
+  )
+
+  const cleanData = data =>
+    data
+      .toString()
+      .replace(/^(\n)+/, '')
+      .replace(/(\n)+$/, '')
+      .trim()
+
+  const formattedPrefix = `[${prefix}] - `
+
+  const formatMsg = msg =>
+    `${formattedPrefix} - ${msg.replace(/\n/gi, `\n${formattedPrefix}`)}`
+
+  childProcess.stdout.on('data', data => {
+    const cleaned = cleanData(data)
+    if (cleaned !== '') {
+      // eslint-disable-next-line no-console
+      console.log(formatMsg(cleaned))
+    }
+  })
+
+  childProcess.stderr.on('data', data => {
+    const cleaned = cleanData(data)
+    if (cleaned !== '') {
+      // eslint-disable-next-line no-console
+      console.error(formatMsg(cleaned))
+    }
+  })
+
+  return childProcess
+}
+
+function execSync(
+  command: string,
+  args?: Array<string> = [],
+  opts?: Object = {},
+): string {
   TerminalUtils.verbose(
-    `execSync child process: ${command} ${args.join(' ')}${opts.cwd ? ` (${opts.cwd})` : ''}`,
+    `execSync child process: ${command} ${args.join(' ')}${
+      opts.cwd ? ` (${opts.cwd})` : ''
+    }`,
   )
 
   return execa.sync(
@@ -46,9 +103,11 @@ function spawn(
   command: string,
   args?: Array<string> = [],
   opts?: Object = {},
-): Promise<ChildProcess> {
+): ExecaChildProcess {
   TerminalUtils.verbose(
-    `spawn child process: ${command} ${args.join(' ')}${opts.cwd ? ` (${opts.cwd})` : ''}`,
+    `spawn child process: ${command} ${args.join(' ')}${
+      opts.cwd ? ` (${opts.cwd})` : ''
+    }`,
   )
 
   return execa(
@@ -67,6 +126,7 @@ function spawn(
 
 module.exports = {
   exec,
+  execHijack,
   execSync,
   spawn,
 }

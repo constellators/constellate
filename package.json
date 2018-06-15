@@ -5,11 +5,9 @@
   ],
   "scripts": {
     "build": "node ./scripts/build.js && constellate build",
-    "flow:init": "yarn run build && rimraf projects/*/flow-typed && flow-mono create-symlinks flow/.flowconfig && flow-mono install-types",
-    "publish": "yarn run build && lerna publish",
-    "publish:core": "yarn run build && lerna publish --skip-git --npm-tag=core --force-publish=constellate-plugin-babel,constellate-plugin-flow,constellate-dev-utils,constellate",
-    "test": "constellate test",
-    "update": "yarn upgrade-interactive --latest --exact"
+    "bootstrap": "yarn install && yarn flow-types",
+    "flow-types": "yarn run build && rimraf projects/*/flow-typed && flow-mono create-symlinks flow/.flowconfig && flow-mono install-types",
+    "publish": "yarn run build && lerna publish"
   },
   "devDependencies": {
     "babel-eslint": "8.2.3",
